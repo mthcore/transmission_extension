@@ -1,0 +1,114 @@
+// ===========================================
+// Torrent List - Main torrent table styles
+// ===========================================
+
+@use "variables" as *;
+@use "mixins" as *;
+
+.torrent-list-layer {
+  position: relative;
+  overflow: auto;
+  flex-grow: 1;
+  min-height: 20px;
+  background: $card-bg;
+}
+
+div.torrent-list-layer table {
+  .name {
+    text-align: left;
+
+    div {
+      overflow: hidden;
+      position: relative;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .size,
+  .upped,
+  .remaining,
+  .downloaded {
+    text-align: right;
+  }
+
+  .order,
+  .eta,
+  .seeds_peers,
+  .shared {
+    text-align: center;
+  }
+
+  .status div {
+    @include text-ellipsis;
+    text-align: center;
+
+    .error_icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 16px;
+      background-image: url(../img/error_icon.svg);
+      opacity: 1;
+      vertical-align: middle;
+    }
+  }
+}
+
+div.torrent-list-layer tr:nth-child(even) {
+  background-color: $bg-color;
+}
+
+table.torrent-table-head {
+  position: fixed;
+  z-index: 2;
+  @include no-select;
+}
+
+table.torrent-table-body thead {
+  visibility: hidden;
+}
+
+// Action buttons
+div.torrent-list-layer table td.actions div.btns {
+  a {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 10px;
+    opacity: 0.5;
+    vertical-align: middle;
+    border-radius: $radius-sm;
+    transition: opacity $transition-base, background-color $transition-base;
+
+    &:hover {
+      opacity: 1;
+      background-color: rgba($primary-color, 0.15);
+    }
+  }
+}
+
+div.torrent-list-layer table tr:hover td.actions div.btns > a,
+div.torrent-list-layer table tr.selected td.actions div.btns > a {
+  opacity: 0.8;
+}
+
+div.torrent-list-layer table tr.selected td.actions div.btns > a {
+  filter: invert(100%);
+}
+
+div.torrent-list-layer table td.actions div.btns > a.start {
+  background-image: url('../img/play.svg');
+}
+
+div.torrent-list-layer table td.actions div.btns > a.pause {
+  background-image: url('../img/pause.svg');
+}
+
+div.torrent-list-layer table td.actions div.btns > a.stop {
+  background-image: url('../img/stop.svg');
+}

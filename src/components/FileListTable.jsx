@@ -3,9 +3,7 @@ import {observer} from "mobx-react";
 import TableHeadColumn from "./TableHeadColumn";
 import PropTypes from "prop-types";
 import FileListTableItem from "./FileListTableItem";
-import FileMenu from "./FileMenu";
-import FileColumnMenu from "./FileColumnMenu";
-import {contextMenu} from "react-contexify";
+import FileColumnContextMenu from "./FileColumnMenu";
 import Interval from "./Interval";
 import getLogger from "../tools/getLogger";
 import RootStoreCtx from "../tools/RootStoreCtx";
@@ -23,19 +21,32 @@ class FileListTable extends React.PureComponent {
     this.rootStore.torrentList.addSelectedId(this.fileListStore.id, true);
   }
 
-  handleScroll = (e) => {
-    const fileList = e.currentTarget;
-    const fixedHead = this.refFixedHead.current;
-
-    // required for ff only
-    const isWide = fileList.scrollWidth >= document.body.clientWidth;
-
-    if (isWide && fileList.scrollLeft > 0) {
-        fixedHead.style.left = `${fileList.scrollLeft * -1}px`;
-    } else
-    if (fixedHead.style.left) {
-      fixedHead.style.left = '';
+  componentWillUnmount() {
+    if (this.scrollRafId) {
+      cancelAnimationFrame(this.scrollRafId);
     }
+  }
+
+  scrollRafId = null;
+
+  handleScroll = (e) => {
+    const scrollLeft = e.currentTarget.scrollLeft;
+    const scrollWidth = e.currentTarget.scrollWidth;
+    if (this.scrollRafId) return;
+    this.scrollRafId = requestAnimationFrame(() => {
+      this.scrollRafId = null;
+      const fixedHead = this.refFixedHead.current;
+      if (!fixedHead) return;
+
+      // required for ff only
+      const isWide = scrollWidth >= document.body.clientWidth;
+
+      if (isWide && scrollLeft > 0) {
+        fixedHead.style.left = `${scrollLeft * -1}px`;
+      } else if (fixedHead.style.left) {
+        fixedHead.style.left = '';
+      }
+    });
   };
 
   /**@return {RootStore}*/
@@ -98,14 +109,15 @@ class FileListTable extends React.PureComponent {
             <Interval interval={uiUpdateInterval} onFire={this.onIntervalFire}/>
             <div onScroll={this.handleScroll} className="fl-layer">
               {spinner}
-              <table ref={this.refFixedHead} className="fl-table-head" border="0" cellSpacing="0" cellPadding="0">
-                <FileListTableHead withStyle={true}/>
-              </table>
+              <FileColumnContextMenu>
+                <table ref={this.refFixedHead} className="fl-table-head" border="0" cellSpacing="0" cellPadding="0">
+                  <FileListTableHead withStyle={true}/>
+                </table>
+              </FileColumnContextMenu>
               <table className="fl-table-body" border="0" cellSpacing="0" cellPadding="0">
                 <FileListTableHead/>
                 <FileListTableFiles/>
               </table>
-              <FileColumnMenu/>
             </div>
             <div className="bottom-menu">
               {directory}
@@ -144,8 +156,8 @@ class FileListTableHead extends React.PureComponent {
     return this.context;
   }
 
-  handleSort = (column, directoin) => {
-    this.rootStore.config.setFilesSort(column, directoin);
+  handleSort = (column, direction) => {
+    this.rootStore.config.setFilesSort(column, direction);
   };
 
   handleMoveColumn = (from, to) => {
@@ -197,15 +209,6 @@ class FileListTableHeadColumn extends TableHeadColumn {
     this.fileListStore.toggleSelectAll();
   };
 
-  handleContextMenu = (e) => {
-    e.preventDefault();
-
-    contextMenu.show({
-      id: 'file_column_menu',
-      event: e
-    });
-  };
-
   render() {
     const {column, isSorted, sortDirection} = this.props;
     const classList = [column.column];
@@ -243,9 +246,9 @@ class FileListTableHeadColumn extends TableHeadColumn {
       );
     }
 
-    let arraw = null;
+    let arrow = null;
     if (column.order !== 0) {
-      arraw = (
+      arrow = (
         <i className="arrow"/>
       );
     }
@@ -256,10 +259,10 @@ class FileListTableHeadColumn extends TableHeadColumn {
     }
 
     return (
-      <th ref={this.refTh} onClick={onClick} onContextMenu={this.handleContextMenu} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={chrome.i18n.getMessage(column.lang)} draggable={true}>
+      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={chrome.i18n.getMessage(column.lang)} draggable={true}>
         {body}
         <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>
-        {arraw}
+        {arrow}
         {style}
       </th>
     );
@@ -284,8 +287,7 @@ class FileListTableFiles extends React.PureComponent {
 
     return (
       <tbody>
-      {files}
-      <FileMenu/>
+        {files}
       </tbody>
     );
   }

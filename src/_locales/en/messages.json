@@ -205,7 +205,7 @@
         "message": "Unlimited"
     },
     "Open_file": {
-        "message": "Get file",
+        "message": "Add torrent file...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -369,7 +369,7 @@
     "hideSeedStatusItem": {
         "message": "Hide torrents with status \"Seeding\""
     },
-    "hideFnishStatusItem": {
+    "hideFinishStatusItem": {
         "message": "Hide torrents with status \"Finished\""
     },
     "showSpeedGraph": {
@@ -387,16 +387,16 @@
     "popupUpdateInterval": {
         "message": "Update interval the list of torrents"
     },
-    "fixCirilicIf": {
+    "fixCyrillicIf": {
         "message": "Fix Cyrillic if..."
     },
-    "fixCirilicTitle": {
+    "fixCyrillicTitle": {
         "message": "Incorrectly displays the names of the torrents"
     },
-    "fixCirilicTorrentPath": {
+    "fixCyrillicTorrentPath": {
         "message": "Incorrectly sets the directory to the newly added torrent"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "Show notify when completing download"
     },
     "displayActiveTorrentCountIcon": {
@@ -454,7 +454,7 @@
         "message": "Refresh"
     },
     "checkSettings": {
-        "message": "Сheck the settings"
+        "message": "Check the settings"
     },
     "showFreeSpace": {
         "message": "Display the number of available disk space"
@@ -518,5 +518,8 @@
     },
     "shortName": {
         "message": "Short name"
+    },
+    "portIncorrect": {
+        "message": "Port is incorrect"
     }
 }

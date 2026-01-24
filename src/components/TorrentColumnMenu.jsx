@@ -1,42 +1,43 @@
 import React from "react";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
-import ColumnMenuItem from "./ColumnMenuItem";
-import {FixedMenu} from "./FixedReactContexify";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
-const TorrentColumnMenu = React.memo(() => {
+const TorrentColumnContextMenu = observer(({children}) => {
   return (
-    <FixedMenu id="torrent_column_menu" className="torrent-column-menu">
-      <TorrentColumnMenuBody/>
-    </FixedMenu>
-  )
+    <ContextMenu.Root>
+      <ContextMenu.Trigger asChild>
+        {children}
+      </ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <TorrentColumnMenuContent />
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
 });
 
-@observer
-class TorrentColumnMenuBody extends React.PureComponent {
-  static contextType = RootStoreCtx;
+const TorrentColumnMenuContent = observer(() => {
+  const rootStore = React.useContext(RootStoreCtx);
 
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  handleToggleColumn = ({event: e, props, column}) => {
+  const handleToggleColumn = (column) => {
     column.toggleDisplay();
-    this.rootStore.config.saveTorrentsColumns();
+    rootStore.config.saveTorrentsColumns();
   };
 
-  render() {
-    const items = this.rootStore.config.torrentColumns.map((column) => {
-      return (
-        <ColumnMenuItem key={column.column} column={column} onToggleColumn={this.handleToggleColumn}>{chrome.i18n.getMessage(column.lang)}</ColumnMenuItem>
-      );
-    });
+  return (
+    <ContextMenu.Content className="context-menu">
+      {rootStore.config.torrentColumns.map((column) => (
+        <ContextMenu.Item
+          key={column.column}
+          className="context-menu-item"
+          onSelect={() => handleToggleColumn(column)}
+        >
+          {column.display && <span className="context-menu-check">●</span>}
+          {chrome.i18n.getMessage(column.lang)}
+        </ContextMenu.Item>
+      ))}
+    </ContextMenu.Content>
+  );
+});
 
-    return (
-      items
-    );
-  }
-}
-
-export default TorrentColumnMenu;
+export default TorrentColumnContextMenu;

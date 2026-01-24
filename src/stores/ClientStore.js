@@ -142,9 +142,6 @@ const ClientStore = types.model('ClientStore', {
         self.torrents.set(torrent.id, torrent);
       });
     },
-    /*setFileList(torrentId, files) {
-      self.files.set(torrentId, files);
-    },*/
     setTorrents(torrents) {
       self.torrents = torrents;
     },

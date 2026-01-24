@@ -1,7 +1,6 @@
 import React from "react";
 import {observer} from "mobx-react";
-import {contextMenu} from "react-contexify";
-import SpeedMenu from "./SpeedMenu";
+import SpeedContextMenu from "./SpeedMenu";
 import SpaceWatcher from "./SpaceWatcher";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
@@ -13,30 +12,6 @@ class Footer extends React.PureComponent {
   get rootStore() {
     return this.context;
   }
-
-  handleDownloadContextMenu = (e) => {
-    e.preventDefault();
-
-    contextMenu.show({
-      id: 'speed_menu',
-      event: e,
-      props: {
-        type: 'download'
-      }
-    });
-  };
-
-  handleUploadContextMenu = (e) => {
-    e.preventDefault();
-
-    contextMenu.show({
-      id: 'speed_menu',
-      event: e,
-      props: {
-        type: 'upload'
-      }
-    });
-  };
 
   handleResetDownloadSpeed = (e) => {
     e.preventDefault();
@@ -116,9 +91,12 @@ class Footer extends React.PureComponent {
             <div>{this.rootStore.client.lastErrorMessage}</div>
           </td>
           {spaceWatcher}
-          <td onContextMenu={this.handleDownloadContextMenu} className="speed download">{downloadSpeedStr}{downloadLimit}</td>
-          <td onContextMenu={this.handleUploadContextMenu} className="speed upload">{uploadSpeedStr}{uploadLimit}{openInTab}</td>
-          <SpeedMenu/>
+          <SpeedContextMenu type="download">
+            <td className="speed download">{downloadSpeedStr}{downloadLimit}</td>
+          </SpeedContextMenu>
+          <SpeedContextMenu type="upload">
+            <td className="speed upload">{uploadSpeedStr}{uploadLimit}{openInTab}</td>
+          </SpeedContextMenu>
         </tr>
         </tfoot>
       </table>

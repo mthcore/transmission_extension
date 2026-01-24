@@ -1,0 +1,93 @@
+// ===========================================
+// Context Menu - Radix UI styles
+// ===========================================
+
+@use "variables" as *;
+
+.context-menu {
+  background: $card-bg;
+  box-shadow: $shadow-md;
+  border-radius: $radius;
+  font-size: $font-size-base;
+  z-index: 1000;
+  padding: 4px 0;
+  min-width: 180px;
+  border: 1px solid $border-color;
+  animation: contextMenuFadeIn 0.15s ease;
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 6px 16px 6px 24px;
+  cursor: pointer;
+  color: $text-color;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: $font-size-base;
+  outline: none;
+  transition: background-color $transition-base, color $transition-base;
+
+  &:hover,
+  &:focus,
+  &[data-highlighted] {
+    background-color: $primary-color;
+    color: #fff;
+    outline: none;
+  }
+
+  &[data-disabled] {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.context-menu-subtrigger {
+  justify-content: space-between;
+
+  &[data-state="open"] {
+    background-color: $primary-color;
+    color: #fff;
+  }
+}
+
+.context-menu-arrow {
+  margin-left: auto;
+  font-size: 10px;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background-color: $border-color;
+  margin: 4px 0;
+}
+
+.context-menu-check {
+  position: absolute;
+  left: 8px;
+}
+
+// Legacy context menu
+ul.context-menu-list label {
+  position: absolute;
+  left: 4px;
+
+  &.context {
+    left: auto;
+  }
+}

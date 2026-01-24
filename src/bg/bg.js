@@ -10,9 +10,9 @@ const {serializeError} = require('serialize-error');
 const logger = getLogger('background');
 
 const notificationIcons = {
-  complete: require('!file-loader!../assets/img/notification_done.png').default,
-  add: require('!file-loader!../assets/img/notification_add.png').default,
-  error: require('!file-loader!../assets/img/notification_error.png').default,
+  complete: 'assets/img/notification_done.png',
+  add: 'assets/img/notification_add.png',
+  error: 'assets/img/notification_error.png',
 };
 
 class Bg {
@@ -295,9 +295,7 @@ class Bg {
 }
 
 function setBadgeText(text) {
-  chrome.browserAction.setBadgeText({
-    text: text
-  });
+  chrome.action.setBadgeText({ text: text });
 }
 
 function showNotification(id, iconUrl, title = '', message = '') {
@@ -314,11 +312,9 @@ function setBadgeBackgroundColor(color) {
   if (colors.length === 4) {
     colors.push(parseInt(255 * colors.pop(), 10));
   }
-  chrome.browserAction.setBadgeBackgroundColor({
-    color: colors
-  });
+  chrome.action.setBadgeBackgroundColor({ color: colors });
 }
 
-const bg = window.bg = new Bg();
+const bg = self.bg = new Bg();
 
 export default bg;

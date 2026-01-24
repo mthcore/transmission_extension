@@ -1,0 +1,157 @@
+// ===========================================
+// File List - Torrent files overlay
+// ===========================================
+
+@use "variables" as *;
+@use "mixins" as *;
+
+div.file-list-layer-temp {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(#000, 0.3);
+}
+
+.file-list-warpper {
+  @include absolute-fill;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+div.fl-layer {
+  position: relative;
+  overflow: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+div.file-list {
+  z-index: 4;
+  @include card;
+  border-radius: $radius;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+table.fl-table-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  @include no-select;
+}
+
+table.fl-table-body thead {
+  display: none;
+}
+
+div.fl-layer tr:nth-child(even) {
+  background-color: $bg-color;
+}
+
+div.fl-layer table {
+  .name > div {
+    text-align: left;
+    text-overflow: ellipsis;
+  }
+
+  .size,
+  .downloaded {
+    text-align: right;
+  }
+
+  .prio {
+    text-align: center;
+
+    div {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+div.fl-layer td div {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+// Bottom menu
+div.file-list div.bottom-menu {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: 1px solid $border-color;
+  gap: 8px;
+
+  input {
+    font-size: $font-size-base;
+    border: none;
+    color: $text-secondary;
+    flex-grow: 99;
+    background: transparent;
+  }
+
+  .space {
+    flex-grow: 1;
+  }
+
+  a {
+    border: 1px solid transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+
+    &.update {
+      background-image: url("../img/refresh.svg");
+      background-size: 18px;
+    }
+
+    &.close {
+      background-image: url('../img/close.svg');
+      background-size: 18px;
+    }
+
+    &:hover {
+      background-color: $input-bg;
+      border-color: $border-color;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Folder tags
+div.fl-layer a.folder {
+  background-color: $input-bg;
+  border-radius: $radius-sm;
+  color: $text-color;
+  margin-right: 2px;
+  padding: 1px 4px;
+  text-decoration: none;
+  font-size: $font-size-sm;
+  transition: background-color $transition-base;
+
+  &:hover {
+    background-color: $border-color;
+  }
+}
+
+// Folder color variants
+@each $index, $color in $folder-colors {
+  div.fl-layer a.folder.c#{$index} {
+    background-color: $color;
+  }
+}

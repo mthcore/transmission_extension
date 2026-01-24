@@ -1,176 +1,121 @@
 import React from "react";
-import {Item, Separator} from "react-contexify";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
-import PropTypes from "prop-types";
 import speedToStr from "../tools/speedToStr";
-import {FixedMenu} from "./FixedReactContexify";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
-const SpeedMenu = React.memo(() => {
+const SpeedContextMenu = observer(({children, type}) => {
   return (
-    <FixedMenu id="speed_menu" className="speed-menu">
-      <SpeedMenuBody/>
-    </FixedMenu>
-  )
+    <ContextMenu.Root>
+      <ContextMenu.Trigger asChild>
+        {children}
+      </ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <SpeedMenuContent type={type} />
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
 });
 
-@observer
-class SpeedMenuBody extends React.PureComponent {
-  static propTypes = {
-    propsFromTrigger: PropTypes.object,
-  };
+const SpeedMenuContent = observer(({type}) => {
+  const rootStore = React.useContext(RootStoreCtx);
+  const settings = rootStore.client.settings;
 
-  static defaultProps = {
-    propsFromTrigger: {},
-  };
+  const isAltSpeed = settings?.altSpeedEnabled;
 
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  get menuType() {
-    return this.props.propsFromTrigger.type;
-  }
-
-  get isAltSpeed() {
-    return this.rootStore.client.settings.altSpeedEnabled;
-  }
-
-  get speedLimit() {
-    if (this.menuType === 'download') {
-      if (this.isAltSpeed) {
-        return this.rootStore.client.settings.altDownloadSpeedLimit;
+  const getSpeedLimit = () => {
+    if (type === 'download') {
+      if (isAltSpeed) {
+        return settings.altDownloadSpeedLimit;
       } else {
-        return this.rootStore.client.settings.downloadSpeedLimit;
+        return settings.downloadSpeedLimit;
       }
-    } else
-    if (this.menuType === 'upload') {
-      if (this.isAltSpeed) {
-        return this.rootStore.client.settings.altUploadSpeedLimit;
+    } else if (type === 'upload') {
+      if (isAltSpeed) {
+        return settings.altUploadSpeedLimit;
       } else {
-        return this.rootStore.client.settings.uploadSpeedLimit;
+        return settings.uploadSpeedLimit;
       }
     }
-  }
+    return 0;
+  };
 
-  get speedLimitEnabled() {
-    if (this.isAltSpeed) {
+  const getSpeedLimitEnabled = () => {
+    if (isAltSpeed) {
       return true;
     }
-    if (this.menuType === 'download') {
-      return this.rootStore.client.settings.downloadSpeedLimitEnabled;
-    } else
-    if (this.menuType === 'upload') {
-      return this.rootStore.client.settings.uploadSpeedLimitEnabled;
+    if (type === 'download') {
+      return settings?.downloadSpeedLimitEnabled;
+    } else if (type === 'upload') {
+      return settings?.uploadSpeedLimitEnabled;
     }
-  }
-
-  handleUnlimited = ({event: e, props}) => {
-    if (this.menuType === 'download') {
-      if (this.isAltSpeed) {
-        this.rootStore.client.setAltSpeedEnabled(false);
-      } else {
-        this.rootStore.client.setDownloadSpeedLimitEnabled(false);
-      }
-    } else
-    if (this.menuType === 'upload') {
-      if (this.isAltSpeed) {
-        this.rootStore.client.setAltSpeedEnabled(false);
-      } else {
-        this.rootStore.client.setUploadSpeedLimitEnabled(false);
-      }
-    }
+    return false;
   };
 
-  handleSetSpeedLimit = ({event: e, props, speed}) => {
-    if (this.menuType === 'download') {
-      if (this.isAltSpeed) {
-        this.rootStore.client.setAltDownloadSpeedLimit(speed);
+  const handleUnlimited = () => {
+    if (type === 'download') {
+      if (isAltSpeed) {
+        rootStore.client.setAltSpeedEnabled(false);
       } else {
-        this.rootStore.client.setDownloadSpeedLimit(speed);
+        rootStore.client.setDownloadSpeedLimitEnabled(false);
       }
-    } else
-    if (this.menuType === 'upload') {
-      if (this.isAltSpeed) {
-        this.rootStore.client.setAltUploadSpeedLimit(speed);
+    } else if (type === 'upload') {
+      if (isAltSpeed) {
+        rootStore.client.setAltSpeedEnabled(false);
       } else {
-        this.rootStore.client.setUploadSpeedLimit(speed);
+        rootStore.client.setUploadSpeedLimitEnabled(false);
       }
     }
   };
 
-  render() {
-    const items = [];
-
-    let selected = null;
-    if (this.rootStore.client.settings && !this.speedLimitEnabled) {
-      selected = (
-        <label>●</label>
-      );
+  const handleSetSpeedLimit = (speed) => {
+    if (type === 'download') {
+      if (isAltSpeed) {
+        rootStore.client.setAltDownloadSpeedLimit(speed);
+      } else {
+        rootStore.client.setDownloadSpeedLimit(speed);
+      }
+    } else if (type === 'upload') {
+      if (isAltSpeed) {
+        rootStore.client.setAltUploadSpeedLimit(speed);
+      } else {
+        rootStore.client.setUploadSpeedLimit(speed);
+      }
     }
-    items.push(
-      <Item key={'unlimited'} onClick={this.handleUnlimited}>{selected}{chrome.i18n.getMessage('MENU_UNLIMITED')}</Item>
-    );
-
-    if (this.rootStore.client.settings) {
-      items.push(
-        <Separator key={`_`}/>
-      );
-
-      getSpeedArray(this.speedLimit, 10, true).forEach((speed) => {
-        const selected = this.speedLimitEnabled && speed === this.speedLimit;
-        const isDefault = speed === this.speedLimit;
-        items.push(
-          <SpeedLimitItem key={`speed-${speed}`} speed={speed} selected={selected} isDefault={isDefault} onSetSpeedLimit={this.handleSetSpeedLimit}/>
-        );
-      });
-    }
-
-    return (
-      items
-    );
-  }
-}
-
-class SpeedLimitItem extends React.PureComponent {
-  static propTypes = {
-    speed: PropTypes.number.isRequired,
-    selected: PropTypes.bool.isRequired,
-    isDefault: PropTypes.bool.isRequired,
-    onSetSpeedLimit: PropTypes.func.isRequired,
   };
 
-  handleClick = ({event, props}) => {
-    this.props.onSetSpeedLimit({event, props, speed: this.props.speed});
-  };
+  const speedLimit = getSpeedLimit();
+  const speedLimitEnabled = getSpeedLimitEnabled();
 
-  render() {
-    let selected = null;
-    if (this.props.selected) {
-      selected = (
-        <label>●</label>
-      )
-    }
+  return (
+    <ContextMenu.Content className="context-menu">
+      <ContextMenu.Item className="context-menu-item" onSelect={handleUnlimited}>
+        {settings && !speedLimitEnabled && <span className="context-menu-check">●</span>}
+        {chrome.i18n.getMessage('MENU_UNLIMITED')}
+      </ContextMenu.Item>
 
-    const speed = speedToStr(this.props.speed * 1024);
-
-    let value = null;
-    if (this.props.isDefault) {
-      value = (
-        <b>{speed}</b>
-      )
-    } else {
-      value = speed;
-    }
-
-    return (
-      <Item onClick={this.handleClick}>{selected}{value}</Item>
-    );
-  }
-}
+      {settings && (
+        <>
+          <ContextMenu.Separator className="context-menu-separator" />
+          {getSpeedArray(speedLimit, 10, true).map((speed) => {
+            const selected = speedLimitEnabled && speed === speedLimit;
+            const isDefault = speed === speedLimit;
+            return (
+              <ContextMenu.Item
+                key={`speed-${speed}`}
+                className="context-menu-item"
+                onSelect={() => handleSetSpeedLimit(speed)}
+              >
+                {selected && <span className="context-menu-check">●</span>}
+                {isDefault ? <b>{speedToStr(speed * 1024)}</b> : speedToStr(speed * 1024)}
+              </ContextMenu.Item>
+            );
+          })}
+        </>
+      )}
+    </ContextMenu.Content>
+  );
+});
 
 function getSpeedArray(currentLimit, count, maybeZero) {
   if (!maybeZero && !currentLimit) {
@@ -192,4 +137,4 @@ function getSpeedArray(currentLimit, count, maybeZero) {
   return arr;
 }
 
-export default SpeedMenu;
+export default SpeedContextMenu;

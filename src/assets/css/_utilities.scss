@@ -1,0 +1,43 @@
+// ===========================================
+// Utilities - Misc utility styles
+// ===========================================
+
+@use "variables" as *;
+
+// Settings button
+div.btn.setup {
+  display: inline-block;
+  float: right;
+  width: 18px;
+  height: 18px;
+  background-image: url(../img/settings.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  cursor: pointer;
+  margin-right: 4px;
+  opacity: 0.6;
+  transition: opacity $transition-base;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Open in tab button
+.openInTab {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  opacity: 0.4;
+  cursor: pointer;
+  float: right;
+  margin-right: 4px;
+  background-image: url(../img/openInTab.svg);
+  background-size: 16px;
+  transition: opacity $transition-base;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

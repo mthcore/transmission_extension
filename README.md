@@ -1,4 +1,117 @@
-For building extension from source code, do: 
-- npm i
-- npm run release
-In ./dist you will see bundle.
+# Transmission Easy Client
+
+A browser extension that adds a Transmission WebUI directly in your web browser. Manage your torrents without leaving your browser.
+
+> **Forked from [Feverqwe/Transmission](https://github.com/Feverqwe/Transmission)**
+
+## Features
+
+- Add torrents via URL, magnet links, or torrent files
+- Context menu integration for quick torrent adding
+- Real-time torrent status monitoring
+- Speed graphs and statistics
+- File priority management
+- Label/category organization
+- Multiple download directories support
+- Notifications on download completion
+- Alternative speed limits (turtle mode)
+- Cloud settings sync
+
+## Supported Browsers
+
+- Google Chrome (88+)
+- Mozilla Firefox
+- Opera
+
+## Supported Languages
+
+- English (en)
+- French (fr)
+- Spanish (es)
+- Portuguese - Brazil (pt_BR)
+- Chinese - Simplified (zh_CN)
+- Russian (ru)
+
+## Installation
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/AzMusic/Transmission.git
+cd Transmission
+
+# Install dependencies
+npm install
+
+# Build for all browsers
+npm run release
+```
+
+The built extension will be in the `./dist` folder.
+
+### Build Commands
+
+| Command                  | Description                        |
+| ------------------------ | ---------------------------------- |
+| `npm run build`          | Build for Chrome (production)      |
+| `npm run build:firefox`  | Build for Firefox (production)     |
+| `npm run build:opera`    | Build for Opera (production)       |
+| `npm run watch`          | Build for Chrome with watch mode   |
+| `npm run watch:firefox`  | Build for Firefox with watch mode  |
+| `npm run release`        | Build and package for all browsers |
+
+## Configuration
+
+1. Click on the extension icon and go to **Options**
+2. Configure your Transmission server:
+   - **IP Address**: Your Transmission server address
+   - **Port**: RPC port (default: 9091)
+   - **Path**: RPC path (default: /transmission/rpc)
+   - **Username/Password**: If authentication is enabled
+   - **Use SSL**: Enable for HTTPS connections
+
+## Usage
+
+- **Popup**: Click the extension icon to view and manage torrents
+- **Context Menu**: Right-click on any torrent/magnet link to add it
+- **Drag & Drop**: Drag torrent files onto the popup
+
+---
+
+## Changelog
+
+### Version 3.0.0
+
+Major update with Manifest V3 migration and improvements.
+
+- Migrated from Manifest V2 to Manifest V3
+- Context menus migrated to Radix UI
+- Combobox migrated to rc-select
+- Translation improvements across all languages
+- Dependencies updated (React 19, MobX 6, Webpack 5)
+
+---
+
+### Version 2.2.2 (Original)
+
+Last version from the original Feverqwe/Transmission repository.
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Credits
+
+- Original project by [Feverqwe](https://github.com/Feverqwe)
+- Fork maintained by [AzMusic](https://github.com/AzMusic)

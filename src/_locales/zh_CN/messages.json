@@ -193,7 +193,7 @@
         "message": "无限制"
     },
     "Open_file": {
-        "message": "打开文件",
+        "message": "添加种子文件...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -261,7 +261,7 @@
         "message": "高级"
     },
     "resume": {
-        "message": "简历",
+        "message": "继续",
         "originalKey": "STM_TORRENTS_RESUMEALL",
         "modifed": 1
     },
@@ -306,28 +306,28 @@
 
 
     "torrentAdded": {
-        "message": "洪流加入!"
+        "message": "Torrent 已添加！"
     },
     "unexpectedError": {
-        "message": "Unexpected error!"
+        "message": "意外错误！"
     },
     "fileSizeError": {
         "message": "文件过大"
     },
     "addInTorrentClient": {
-        "message": "在添加Transmission的"
+        "message": "添加到 Transmission"
     },
     "enterNewDirPath": {
-        "message": "输入路径到新目录"
+        "message": "输入新目录路径"
     },
     "torrentFileExists": {
-        "message": "也许torrent文件已经存在！"
+        "message": "该种子文件可能已存在！"
     },
     "currentDirectory": {
-        "message": "目前的目錄 "
+        "message": "当前目录"
     },
     "openInTab": {
-        "message": "打开账单"
+        "message": "在标签页中打开"
     },
     "optClient": {
         "message": "Transmission"
@@ -345,26 +345,26 @@
         "message": "备份"
     },
     "restore": {
-        "message": "復原 "
+        "message": "恢复"
     },
     "useSSL": {
-        "message": "Use SSL"
+        "message": "使用 SSL"
     },
     "path": {
         "message": "路径",
         "note": "URL path"
     },
     "hideSeedStatusItem": {
-        "message": "藏洪地位 \"做种中\""
+        "message": "隐藏状态为\"做种中\"的种子"
     },
-    "hideFnishStatusItem": {
-        "message": "藏洪地位 \"已完成\""
+    "hideFinishStatusItem": {
+        "message": "隐藏状态为\"已完成\"的种子"
     },
     "showSpeedGraph": {
         "message": "显示速度图"
     },
     "popupHeight": {
-        "message": "身高弹出窗口"
+        "message": "弹出窗口高度"
     },
     "px": {
         "message": "像素"
@@ -373,25 +373,25 @@
         "message": "毫秒"
     },
     "popupUpdateInterval": {
-        "message": "山洪更新间隔列表"
+        "message": "种子列表更新间隔"
     },
-    "fixCirilicIf": {
-        "message": "Fix Cyrillic if..."
+    "fixCyrillicIf": {
+        "message": "修复西里尔文如果..."
     },
-    "fixCirilicTitle": {
-        "message": "Incorrectly displays the names of the torrents"
+    "fixCyrillicTitle": {
+        "message": "种子名称显示不正确"
     },
-    "fixCirilicTorrentPath": {
-        "message": "Incorrectly sets the directory to the newly added torrent"
+    "fixCyrillicTorrentPath": {
+        "message": "新添加种子的目录设置不正确"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "完成下载时，显示通知"
     },
     "displayActiveTorrentCountIcon": {
         "message": "显示扩展程序图标下载种子的数量"
     },
     "backgroundUpdateInterval": {
-        "message": "间隔背景更新种子名单"
+        "message": "后台种子列表更新间隔"
     },
     "notificationTimeout": {
         "message": "隐藏通知后，"
@@ -403,7 +403,7 @@
         "message": "标签显示列表"
     },
     "selectDownloadCategoryOnAddItemFromContextMenu": {
-        "message": "打开“下载中”类别加入洪流时，"
+        "message": "添加种子时打开\"下载中\"分类"
     },
     "treeViewContextMenu": {
         "message": "树视图上下文菜单"
@@ -448,7 +448,7 @@
         "message": "显示的可用磁盘空间的数量"
     },
     "freeSpace": {
-        "message": "免费空间"
+        "message": "可用空间"
     },
     "startNow": {
         "message": "现在开始"
@@ -460,7 +460,7 @@
         "message": "输入文件名"
     },
     "move": {
-        "message": "打动"
+        "message": "移动"
     },
     "moveNewPath": {
         "message": "进入新路径"
@@ -475,10 +475,10 @@
         "message": "临时限速"
     },
     "torrentFileIsExists": {
-        "message": "激流中前加入"
+        "message": "该种子之前已添加"
     },
     "reannounce": {
-        "message": "问多用户"
+        "message": "请求更多用户"
     },
     "extra": {
         "message": "额外"
@@ -506,5 +506,8 @@
     },
     "shortName": {
         "message": "简称"
+    },
+    "portIncorrect": {
+        "message": "端口不正确"
     }
 }

@@ -1,11 +1,10 @@
-import "react-contexify/dist/ReactContexify.min.css";
 import "rc-select/assets/index.css";
-import "../assets/css/stylesheet.less";
+import "../assets/css/stylesheet.scss";
 import React from "react";
 import Menu from "../components/Menu";
 import {useObserver} from "mobx-react";
 import PropTypes from "prop-types";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import RootStore from "../stores/RootStore";
 import TorrentListTable from "../components/TorrentListTable";
 import FileListTable from "../components/FileListTable";
@@ -150,8 +149,9 @@ const Dialogs = React.memo(() => {
 const SetPopupHeight = React.memo(({height}) => {
   React.useEffect(() => {
     const root = document.getElementById('root');
-    root.style.minHeight = height + 'px';
-    root.style.maxHeight = height + 'px';
+    const finalHeight = Math.max(height, 600);
+    root.style.minHeight = finalHeight + 'px';
+    root.style.maxHeight = finalHeight + 'px';
   }, [height]);
   return null;
 });
@@ -166,7 +166,7 @@ const GoInOptions = React.memo(({isPopup}) => {
     } else {
       location.href = '/options.html#/#redirect'
     }
-  }, []);
+  }, [isPopup]);
   return null;
 });
 GoInOptions.propTypes = {
@@ -175,9 +175,8 @@ GoInOptions.propTypes = {
 
 const rootStore = window.rootStore = RootStore.create();
 
-ReactDOM.render(
+createRoot(document.getElementById('root')).render(
   <RootStoreCtx.Provider value={rootStore}>
     <Index/>
-  </RootStoreCtx.Provider>,
-  document.getElementById('root')
+  </RootStoreCtx.Provider>
 );

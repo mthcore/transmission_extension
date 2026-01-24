@@ -1,0 +1,60 @@
+// ===========================================
+// Progress - Progress bar styles
+// ===========================================
+
+@use "variables" as *;
+
+table {
+  th.done,
+  td.done {
+    position: relative;
+    padding: 4px 8px;
+    overflow: hidden;
+  }
+
+  td.done {
+    .progress_b {
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      border: none;
+      background-color: $progress-bg;
+      border-radius: 2px;
+      color: $text-color;
+      height: 16px;
+      overflow: hidden;
+
+      .val {
+        flex-grow: 1;
+        text-align: center;
+        z-index: 1;
+        font-size: $font-size-xs;
+        font-weight: 600;
+        line-height: 16px;
+      }
+
+      .progress_b_i {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        border-radius: 2px;
+        z-index: 0;
+        transition: width 0.3s ease, background-color 0.3s ease;
+
+        // Progress bar colors
+        &.downloading {
+          background-color: $progress-download;
+        }
+
+        &.seeding {
+          background-color: $progress-seed;
+        }
+
+        &.complete {
+          background-color: $progress-seed;
+        }
+      }
+    }
+  }
+}

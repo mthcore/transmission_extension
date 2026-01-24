@@ -86,7 +86,7 @@
         "message": "Adicionado"
     },
     "OV_COL_DATE_COMPLETED": {
-        "message": "Completed On"
+        "message": "Concluído em"
     },
     "Actions": {
         "message": "Ações"
@@ -205,7 +205,7 @@
         "message": "Ilimitado"
     },
     "Open_file": {
-        "message": "Abra o arquivo",
+        "message": "Adicionar arquivo torrent...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -321,7 +321,7 @@
         "message": "Torrente foi adicionada!"
     },
     "unexpectedError": {
-        "message": "Unexpected error!"
+        "message": "Erro inesperado!"
     },
     "fileSizeError": {
         "message": "Arquivo é muito grande"
@@ -360,7 +360,7 @@
         "message": "Restaurar"
     },
     "useSSL": {
-        "message": "Use SSL"
+        "message": "Usar SSL"
     },
     "path": {
         "message": "Caminho",
@@ -369,7 +369,7 @@
     "hideSeedStatusItem": {
         "message": "Esconder torrents com status \"Enviando\""
     },
-    "hideFnishStatusItem": {
+    "hideFinishStatusItem": {
         "message": "Esconder torrents com estatuto \"Finalizado\""
     },
     "showSpeedGraph": {
@@ -387,16 +387,16 @@
     "popupUpdateInterval": {
         "message": "Intervalo de atualização da lista de torrents"
     },
-    "fixCirilicIf": {
-        "message": "Fix Cyrillic if..."
+    "fixCyrillicIf": {
+        "message": "Corrigir cirílico se..."
     },
-    "fixCirilicTitle": {
-        "message": "Incorrectly displays the names of the torrents"
+    "fixCyrillicTitle": {
+        "message": "Exibe incorretamente os nomes dos torrents"
     },
-    "fixCirilicTorrentPath": {
-        "message": "Incorrectly sets the directory to the newly added torrent"
+    "fixCyrillicTorrentPath": {
+        "message": "Define incorretamente o diretório do torrent recém-adicionado"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "Mostrar notificar quando concluir o download"
     },
     "displayActiveTorrentCountIcon": {
@@ -454,7 +454,7 @@
         "message": "Refrescar"
     },
     "checkSettings": {
-        "message": "Сheck as configurações"
+        "message": "Verificar configurações"
     },
     "showFreeSpace": {
         "message": "Indique o número de espaço disponível em disco"
@@ -463,34 +463,34 @@
         "message": "Espaço livre"
     },
     "startNow": {
-        "message": "Start now"
+        "message": "Iniciar agora"
     },
     "rename": {
-        "message": "Rename"
+        "message": "Renomear"
     },
     "renameText": {
-        "message": "Enter file name"
+        "message": "Digite o nome do arquivo"
     },
     "move": {
-        "message": "Move"
+        "message": "Mover"
     },
     "moveNewPath": {
-        "message": "Enter new path"
+        "message": "Digite o novo caminho"
     },
     "fullPath": {
-        "message": "Directory (full path)"
+        "message": "Diretório (caminho completo)"
     },
     "guiPath": {
-        "message": "WebUI path"
+        "message": "Caminho WebUI"
     },
     "altSpeedEnable": {
-        "message": "Temporary Speed Limits"
+        "message": "Limites de velocidade temporários"
     },
     "torrentFileIsExists": {
-        "message": "Torrent was added before"
+        "message": "Torrent já foi adicionado"
     },
     "reannounce": {
-        "message": "Ask more peers"
+        "message": "Solicitar mais peers"
     },
     "extra": {
         "message": "Extra"
@@ -502,7 +502,7 @@
         "message": "Bottom"
     },
     "requireAuthentication": {
-        "message": "Authentication is required"
+        "message": "Autenticação necessária"
     },
     "badgeColor": {
         "message": "Notificação de cor"
@@ -518,5 +518,8 @@
     },
     "shortName": {
         "message": "Nome curto"
+    },
+    "portIncorrect": {
+        "message": "A porta está incorreta"
     }
 }

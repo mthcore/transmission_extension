@@ -1,4 +1,4 @@
-const filesize = require('filesize');
+const {filesize} = require('filesize');
 
 const sizePsList = JSON.parse(chrome.i18n.getMessage('sizePsList'));
 

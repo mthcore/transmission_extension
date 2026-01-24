@@ -1,8 +1,8 @@
 import {observer} from "mobx-react";
 import React from "react";
 import PropTypes from "prop-types";
-import {contextMenu} from "react-contexify";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import FileContextMenu from "./FileContextMenu";
 
 @observer
 class FileListTableItem extends React.PureComponent {
@@ -35,31 +35,6 @@ class FileListTableItem extends React.PureComponent {
         this.fileListStore.addSelectedId(this.fileStore.name);
       }
     } else {
-      this.fileListStore.removeSelectedId(this.fileStore.name);
-    }
-  };
-
-  handleContextMenu = (e) => {
-    e.preventDefault();
-
-    let onHide = null;
-    if (!this.fileStore.selected) {
-      onHide = this.handleContextMenuHide;
-      this.fileListStore.addSelectedId(this.fileStore.name);
-    }
-
-    contextMenu.show({
-      id: 'file_menu',
-      event: e,
-      props: {
-        source: e.currentTarget,
-        onHide: onHide,
-      }
-    });
-  };
-
-  handleContextMenuHide = () => {
-    if (this.fileListStore) {
       this.fileListStore.removeSelectedId(this.fileStore.name);
     }
   };
@@ -104,14 +79,15 @@ class FileListTableItem extends React.PureComponent {
           break;
         }
         case 'done': {
-          const backgroundColor = (fileStore.size === fileStore.downloaded && fileStore.priority !== 0) ? '#41B541' : '#3687ED';
+          const isComplete = fileStore.size === fileStore.downloaded && fileStore.priority !== 0;
+          const progressClass = isComplete ? 'complete' : 'downloading';
           const width = fileStore.progressStr;
 
           columns.push(
             <td key={name} className={name}>
               <div className="progress_b">
                 <div className="val">{fileStore.progressStr}</div>
-                <div className="progress_b_i" style={{backgroundColor, width}}/>
+                <div className={`progress_b_i ${progressClass}`} style={{width}}/>
               </div>
             </td>
           );
@@ -134,9 +110,11 @@ class FileListTableItem extends React.PureComponent {
     }
 
     return (
-      <tr onContextMenu={this.handleContextMenu} className={classList.join(' ')}>
-        {columns}
-      </tr>
+      <FileContextMenu fileId={fileStore.name}>
+        <tr className={classList.join(' ')}>
+          {columns}
+        </tr>
+      </FileContextMenu>
     );
   }
 }

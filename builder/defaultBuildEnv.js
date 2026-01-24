@@ -5,7 +5,7 @@ const mode = getArgvValue('--mode') || 'development';
 
 const version = require('../src/manifest').version;
 
-const browser = getArgvValue('--BROWSER') || 'chrome';
+const browser = process.env.BROWSER || getArgvValue('--BROWSER') || 'chrome';
 
 let targets;
 if (browser === 'firefox') {
@@ -33,7 +33,7 @@ global.BUILD_ENV = {
   distName: `transmissionEasyClient-${browser}-${version}`,
   outputPath: path.join(__dirname, `../dist/${browser}`),
   mode,
-  devtool: mode === 'development' ? 'inline-source-map' : 'none',
+  devtool: mode === 'development' ? 'inline-source-map' : false,
   version,
   browser,
   babelEnvOptions,

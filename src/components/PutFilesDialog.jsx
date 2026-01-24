@@ -40,7 +40,9 @@ class PutFilesDialog extends React.PureComponent {
 
     const urls = files.map(file => URL.createObjectURL(file));
 
-    this.rootStore.client.sendFiles(urls, directory);
+    this.rootStore.client.sendFiles(urls, directory).finally(() => {
+      urls.forEach(url => URL.revokeObjectURL(url));
+    });
 
     this.dialogStore.close();
   };

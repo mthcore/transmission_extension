@@ -201,7 +201,7 @@
         "message": "Illimité"
     },
     "Open_file": {
-        "message": "Ouvrir le fichier",
+        "message": "Ajouter un fichier torrent...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -306,7 +306,7 @@
         "modifed": 1
     },
     "deleteSelected": {
-        "message": "Supprimé le fichier sélectionné",
+        "message": "Supprimer la sélection",
         "originalKey": "DLG_RSSDOWNLOADER_35",
         "modifed": 1
     },
@@ -365,7 +365,7 @@
     "hideSeedStatusItem": {
         "message": "Cacher torrents ayant le statut \"Partage\""
     },
-    "hideFnishStatusItem": {
+    "hideFinishStatusItem": {
         "message": "Cacher torrents ayant le statut \"Terminé\""
     },
     "showSpeedGraph": {
@@ -381,25 +381,25 @@
         "message": "millisecondes"
     },
     "popupUpdateInterval": {
-        "message": "Mettre à jour l'intervalle la liste des torrents"
+        "message": "Intervalle de mise à jour de la liste"
     },
-    "fixCirilicIf": {
-        "message": "Fix Cyrillic if..."
+    "fixCyrillicIf": {
+        "message": "Corriger le cyrillique si..."
     },
-    "fixCirilicTitle": {
-        "message": "Incorrectly displays the names of the torrents"
+    "fixCyrillicTitle": {
+        "message": "Les noms des torrents s'affichent incorrectement"
     },
-    "fixCirilicTorrentPath": {
-        "message": "Incorrectly sets the directory to the newly added torrent"
+    "fixCyrillicTorrentPath": {
+        "message": "Le répertoire du nouveau torrent est incorrect"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "Afficher une notification lorsque un téléchargement est terminé"
     },
     "displayActiveTorrentCountIcon": {
         "message": "Afficher le nombre de torrents en téléchargement dans l'icone Transmission"
     },
     "backgroundUpdateInterval": {
-        "message": "Intervalle fond actualiser la liste des torrents"
+        "message": "Intervalle de mise à jour en arrière-plan"
     },
     "notificationTimeout": {
         "message": "Masquer notification après"
@@ -441,7 +441,7 @@
         "message": "Retirez tous les paramètres dans le cloud"
     },
     "showFileList": {
-        "message": "Liste des fiches"
+        "message": "Liste des fichiers"
     },
     "selectAll": {
         "message": "Sélectionner tous"
@@ -450,7 +450,7 @@
         "message": "Rafraîchir"
     },
     "checkSettings": {
-        "message": "Les paramètres Сheck"
+        "message": "Vérifier les paramètres"
     },
     "showFreeSpace": {
         "message": "Pour afficher le nombre d'espace disque disponible"
@@ -486,7 +486,7 @@
         "message": "Torrent a été ajouté avant"
     },
     "reannounce": {
-        "message": "Demander plus d'pairs"
+        "message": "Demander plus de pairs"
     },
     "extra": {
         "message": "Supplémentaire"
@@ -501,7 +501,7 @@
         "message": "Authentification requise"
     },
     "badgeColor": {
-        "message": "La Notification de la couleur"
+        "message": "Couleur de notification"
     },
     "magnetUri": {
         "message": "Magnet-URI"
@@ -514,5 +514,8 @@
     },
     "shortName": {
         "message": "Nom court"
+    },
+    "portIncorrect": {
+        "message": "Le port est incorrect"
     }
 }

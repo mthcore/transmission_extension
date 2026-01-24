@@ -205,7 +205,7 @@
         "message": "Sín Límite"
     },
     "Open_file": {
-        "message": "Abrir archivo",
+        "message": "Añadir archivo torrent...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -321,7 +321,7 @@
         "message": "Se añadió Torrent!"
     },
     "unexpectedError": {
-        "message": "Unexpected error!"
+        "message": "¡Error inesperado!"
     },
     "fileSizeError": {
         "message": "El archivo es demasiado grande"
@@ -369,14 +369,14 @@
     "hideSeedStatusItem": {
         "message": "Ocultar torrentes con estatus \"Semillas\""
     },
-    "hideFnishStatusItem": {
+    "hideFinishStatusItem": {
         "message": "Ocultar torrentes con estatus \"Finalizado\""
     },
     "showSpeedGraph": {
         "message": "Mostrar gráfico de velocidad"
     },
     "popupHeight": {
-        "message": "Height popup window"
+        "message": "Altura de la ventana emergente"
     },
     "px": {
         "message": "px"
@@ -387,16 +387,16 @@
     "popupUpdateInterval": {
         "message": "Intervalo de actualización de la lista de los torrentes"
     },
-    "fixCirilicIf": {
-        "message": "Fix Cyrillic if..."
+    "fixCyrillicIf": {
+        "message": "Corregir cirílico si..."
     },
-    "fixCirilicTitle": {
-        "message": "Incorrectly displays the names of the torrents"
+    "fixCyrillicTitle": {
+        "message": "Muestra incorrectamente los nombres de los torrents"
     },
-    "fixCirilicTorrentPath": {
-        "message": "Incorrectly sets the directory to the newly added torrent"
+    "fixCyrillicTorrentPath": {
+        "message": "Establece incorrectamente el directorio del torrent recién añadido"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "Mostrar notificar al completar descarga"
     },
     "displayActiveTorrentCountIcon": {
@@ -454,7 +454,7 @@
         "message": "Refrescar"
     },
     "checkSettings": {
-        "message": "Сheck los ajustes"
+        "message": "Verificar configuración"
     },
     "showFreeSpace": {
         "message": "Mostrar el número de espacio disponible en disco"
@@ -496,10 +496,10 @@
         "message": "Extra"
     },
     "queueTop": {
-        "message": "Top"
+        "message": "Arriba"
     },
     "queueBottom": {
-        "message": "Bottom"
+        "message": "Abajo"
     },
     "requireAuthentication": {
         "message": "La autenticación es necesaria"
@@ -518,5 +518,8 @@
     },
     "shortName": {
         "message": "Nombre corto"
+    },
+    "portIncorrect": {
+        "message": "El puerto es incorrecto"
     }
 }

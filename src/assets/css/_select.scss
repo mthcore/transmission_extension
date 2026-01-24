@@ -1,0 +1,225 @@
+// ===========================================
+// Select - RC Select dropdown styles (v14)
+// ===========================================
+
+@use "sass:color";
+@use "variables" as *;
+@use "mixins" as *;
+
+.rc-select {
+  color: $text-color;
+  width: 100%;
+  outline: 0;
+  font-size: $font-size-base;
+
+  .rc-select-selector {
+    outline: none;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    white-space: nowrap;
+    height: 28px;
+    line-height: 26px;
+    background-color: $card-bg;
+    transition: border-color $transition-base, box-shadow $transition-base;
+    padding: 0 !important;
+
+    &:hover {
+      border-color: color.adjust($border-color, $lightness: -10%);
+    }
+
+    .rc-select-selection-wrap {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .rc-select-selection-search {
+      position: absolute;
+      inset: 0;
+
+      .rc-select-selection-search-input {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+    }
+
+    .rc-select-selection-item,
+    .rc-select-selection-placeholder {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 26px;
+      line-height: 26px;
+      padding: 0 30px 0 10px;
+      font-weight: normal;
+      @include text-ellipsis;
+    }
+  }
+
+  &.rc-select-focused .rc-select-selector {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+  }
+
+  &.rc-select-open .rc-select-selector {
+    border-color: $primary-color;
+  }
+
+  .rc-select-arrow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 26px;
+    width: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    .rc-select-arrow-icon::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border: 5px solid transparent;
+      border-top-color: $text-secondary;
+      display: block;
+      margin-top: 4px;
+      transition: transform $transition-slow;
+    }
+  }
+
+  &.rc-select-open .rc-select-arrow .rc-select-arrow-icon::after {
+    transform: rotate(180deg);
+    margin-top: -4px;
+  }
+}
+
+// Dropdown
+.rc-select-dropdown {
+  border: 1px solid $border-color;
+  border-top-color: $primary-color;
+  color: $text-color;
+  z-index: 1000;
+  box-shadow: $shadow-md;
+  border-radius: 0 0 $radius-sm $radius-sm;
+  background: $card-bg;
+  min-height: auto;
+  max-height: none;
+  overflow: hidden;
+
+  .rc-virtual-list-scrollbar,
+  .rc-virtual-list-scrollbar-vertical {
+    display: none !important;
+  }
+
+  .rc-select-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 28px 8px 12px;
+    color: $text-color;
+    font-size: $font-size-base;
+    line-height: 1.4;
+    transition: background-color $transition-fast;
+    cursor: pointer;
+
+    .rc-select-item-option-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+
+      > span:last-child {
+        @include text-ellipsis;
+      }
+    }
+
+    .rc-select-item-option-state {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $primary-color;
+      font-size: 12px;
+    }
+
+    &.rc-select-item-option-active {
+      background-color: $input-bg;
+    }
+
+    &.rc-select-item-option-selected {
+      color: #fff;
+      background-color: $primary-color;
+
+      .image {
+        filter: brightness(0) invert(1);
+      }
+
+      .rc-select-item-option-state {
+        color: #fff;
+      }
+    }
+
+    &:last-child {
+      border-bottom-left-radius: $radius-sm;
+      border-bottom-right-radius: $radius-sm;
+    }
+  }
+}
+
+// Category icons
+.rc-select-selection-item,
+.rc-select-item {
+  .image {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 8px;
+    flex-shrink: 0;
+
+    &[data-image] {
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+    }
+
+    &[data-image="ALL"] {
+      background-image: url('../img/c_all.svg');
+    }
+
+    &[data-image="DL"] {
+      background-image: url('../img/c_down.svg');
+    }
+
+    &[data-image="SEEDING"] {
+      background-image: url('../img/c_uplo.svg');
+    }
+
+    &[data-image="COMPL"] {
+      background-image: url('../img/c_comp.svg');
+    }
+
+    &[data-image="ACTIVE"] {
+      background-image: url('../img/c_active.svg');
+    }
+
+    &[data-image="INACTIVE"] {
+      background-image: url('../img/c_iact.svg');
+    }
+  }
+
+  > span:last-child {
+    @include text-ellipsis;
+  }
+}
+
+.rc-select-selection-item {
+  .image {
+    vertical-align: text-bottom;
+  }
+}

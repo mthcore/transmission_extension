@@ -1,42 +1,43 @@
 import React from "react";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
-import ColumnMenuItem from "./ColumnMenuItem";
-import {FixedMenu} from "./FixedReactContexify";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
-const FileColumnMenu = React.memo(() => {
+const FileColumnContextMenu = observer(({children}) => {
   return (
-    <FixedMenu id="file_column_menu" className="file-column-menu">
-      <FileColumnMenuBody/>
-    </FixedMenu>
-  )
+    <ContextMenu.Root>
+      <ContextMenu.Trigger asChild>
+        {children}
+      </ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <FileColumnMenuContent />
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
 });
 
-@observer
-class FileColumnMenuBody extends React.PureComponent {
-  static contextType = RootStoreCtx;
+const FileColumnMenuContent = observer(() => {
+  const rootStore = React.useContext(RootStoreCtx);
 
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  handleToggleColumn = ({event: e, props, column}) => {
+  const handleToggleColumn = (column) => {
     column.toggleDisplay();
-    this.rootStore.config.saveFilesColumns();
+    rootStore.config.saveFilesColumns();
   };
 
-  render() {
-    const items = this.rootStore.config.filesColumns.map((column) => {
-      return (
-        <ColumnMenuItem key={column.column} column={column} onToggleColumn={this.handleToggleColumn}>{chrome.i18n.getMessage(column.lang)}</ColumnMenuItem>
-      );
-    });
+  return (
+    <ContextMenu.Content className="context-menu">
+      {rootStore.config.filesColumns.map((column) => (
+        <ContextMenu.Item
+          key={column.column}
+          className="context-menu-item"
+          onSelect={() => handleToggleColumn(column)}
+        >
+          {column.display && <span className="context-menu-check">●</span>}
+          {chrome.i18n.getMessage(column.lang)}
+        </ContextMenu.Item>
+      ))}
+    </ContextMenu.Content>
+  );
+});
 
-    return (
-      items
-    );
-  }
-}
-
-export default FileColumnMenu;
+export default FileColumnContextMenu;

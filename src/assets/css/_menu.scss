@@ -1,0 +1,96 @@
+// ===========================================
+// Menu - Top toolbar styles
+// ===========================================
+
+@use "variables" as *;
+@use "mixins" as *;
+
+.menu {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  flex-shrink: 0;
+  background: $card-bg;
+  border-bottom: 1px solid $border-color;
+  padding: 0 8px;
+  gap: 4px;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &.separate {
+      height: 24px;
+      width: 1px;
+      background-color: $border-color;
+      margin: 0 4px;
+    }
+
+    &.graph {
+      flex-grow: 2;
+      flex-shrink: 1;
+      position: relative;
+      width: auto;
+      overflow: hidden;
+    }
+
+    &.select {
+      width: 160px;
+      margin: 0;
+      height: auto;
+    }
+  }
+
+  a.btn {
+    @include icon-button;
+  }
+
+  a.refresh {
+    background-image: url("../img/refresh.svg");
+    background-size: 20px;
+  }
+
+  a.wui {
+    background-image: url("../img/wui.svg");
+    background-size: 20px;
+  }
+
+  a.start_all {
+    background-image: url("../img/play_all.svg");
+    background-size: 20px;
+  }
+
+  a.pause_all {
+    background-image: url("../img/pause_all.svg");
+    background-size: 20px;
+  }
+
+  a.add_file {
+    background-image: url("../img/add.svg");
+    background-size: 20px;
+  }
+
+  a.add_magnet {
+    background-image: url("../img/magnet.svg");
+    background-size: 20px;
+  }
+
+  a.alt_speed {
+    background-image: url("../img/alt_speed.svg");
+    background-size: 20px;
+
+    &.active {
+      background-color: rgba($primary-color, 0.15);
+      border-color: $primary-color;
+      filter: invert(39%) sepia(95%) saturate(1000%) hue-rotate(200deg);
+    }
+  }
+}

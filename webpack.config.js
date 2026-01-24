@@ -1,9 +1,9 @@
 require('./builder/defaultBuildEnv');
-const {DefinePlugin} = require('webpack');
+const {DefinePlugin, ProvidePlugin} = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -24,6 +24,7 @@ const config = {
     filename: '[name].js',
     chunkFilename: '[name].chunk.js',
     path: path.join(outputPath, 'src'),
+    clean: false,
   },
   mode: mode,
   devtool: devtool,
@@ -32,8 +33,8 @@ const config = {
       cacheGroups: {
         commons: {
           name: "commons",
-          chunks: chunk => ['bg', 'index', 'options'].includes(chunk.name),
-          minChunks: 3,
+          chunks: chunk => ['index', 'options'].includes(chunk.name),
+          minChunks: 2,
           priority: 10,
         },
         commons_ui: {
@@ -43,7 +44,11 @@ const config = {
           priority: 5,
         },
       }
-    }
+    },
+    minimizer: [
+      '...',
+      new CssMinimizerPlugin(),
+    ],
   },
   module: {
     rules: [
@@ -66,28 +71,33 @@ const config = {
         }
       },
       {
-        test: /\.(css|less)$/,
-        use: [{
-          loader: MiniCssExtractPlugin.loader
-        }, {
-          loader: "css-loader"
-        }, {
-          loader: "less-loader"
-        }]
+        test: /\.(css|scss|sass)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       },
       {
         test: /\.(gif|png|svg)$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 8192
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8192
           }
-        }]
+        }
       },
     ]
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "url": require.resolve("url/"),
+      "querystring": require.resolve("querystring-es3"),
+      "util": require.resolve("util/"),
+      "process": require.resolve("process/browser"),
+    }
   },
   plugins: [
     new CleanWebpackPlugin({
@@ -96,32 +106,29 @@ const config = {
         outputPath,
       ]
     }),
-    new CopyWebpackPlugin([
-      {
-        from: './src/manifest.json',
-        transform: (content, path) => {
-          const manifest = JSON.parse(content);
-          if (browser === 'firefox') {
-            manifest.browser_specific_settings = {
-              gecko: {
-                strict_min_version: '48.0'
-              }
-            };
-
-            manifest.options_ui = {};
-            manifest.options_ui.page = manifest.options_page;
-            manifest.options_ui.open_in_tab = true;
-
-            delete manifest.options_page;
-
-            delete manifest.minimum_chrome_version;
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: './src/manifest.json',
+          transform: (content) => {
+            const manifest = JSON.parse(content);
+            if (browser === 'firefox') {
+              // Firefox V3: add gecko settings, remove Chrome-specific
+              delete manifest.minimum_chrome_version;
+              manifest.browser_specific_settings = {
+                gecko: {
+                  strict_min_version: '109.0'
+                }
+              };
+            }
+            return JSON.stringify(manifest, null, 4);
           }
-          return JSON.stringify(manifest, null, 4);
-        }
-      },
-      {from: './src/assets/icons', to: './assets/icons'},
-      {from: './src/_locales', to: './_locales'},
-    ]),
+        },
+        {from: './src/assets/icons', to: './assets/icons'},
+        {from: './src/assets/img/notification_*.png', to: './assets/img/[name][ext]'},
+        {from: './src/_locales', to: './_locales'},
+      ]
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].chunk.css'
@@ -158,23 +165,10 @@ const config = {
         return obj;
       }, {}),
     }),
+    new ProvidePlugin({
+      process: 'process/browser',
+    }),
   ]
 };
-
-if (mode === 'production') {
-  config.plugins.push(
-    new OptimizeCssAssetsPlugin({
-      assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano'),
-      cssProcessorPluginOptions: {
-        preset: [
-          'default',
-          {discardComments: {removeAll: true}}
-        ],
-      },
-      canPrint: true
-    }),
-  );
-}
 
 module.exports = config;

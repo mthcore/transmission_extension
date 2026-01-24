@@ -1,0 +1,79 @@
+// ===========================================
+// Mixins - Reusable Patterns
+// ===========================================
+
+@use "sass:color";
+@use "variables" as *;
+
+// Button base
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: all $transition-base;
+  outline: none;
+}
+
+// Icon button
+@mixin icon-button($size: 32px) {
+  @include button-base;
+  width: $size;
+  height: $size;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-radius: $radius-sm;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: $input-bg;
+    border-color: $border-color;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Input focus
+@mixin input-focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+}
+
+// Text ellipsis
+@mixin text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// Card style
+@mixin card {
+  background: $card-bg;
+  border-radius: $radius;
+  box-shadow: $shadow-md;
+}
+
+// Scrollable container
+@mixin scrollable {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// User select none
+@mixin no-select {
+  -moz-user-select: none;
+  user-select: none;
+}
+
+// Absolute fill
+@mixin absolute-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

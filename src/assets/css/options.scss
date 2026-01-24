@@ -1,0 +1,492 @@
+// ===========================================
+// Options - Settings page styles
+// ===========================================
+
+@use "sass:color";
+@use "variables" as *;
+@use "mixins" as *;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  background-color: $bg-color;
+  color: $text-color;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  &.loading {
+    visibility: hidden;
+  }
+}
+
+.user-select {
+  -moz-user-select: initial;
+  user-select: initial;
+}
+
+// Links
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-slow;
+
+  &:hover {
+    color: $primary-hover;
+  }
+}
+
+// Typography
+h1 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: $text-color;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-color;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid $primary-color;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-secondary;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid $border-color;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+// Layout
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+div.search_panel {
+  background: $card-bg;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid $border-color;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+div.container > .content {
+  display: flex;
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+// Sidebar Navigation
+div.container > .content > .left {
+  width: 220px;
+  flex-shrink: 0;
+
+  a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: $radius;
+    color: $text-secondary;
+    font-weight: 500;
+    transition: all $transition-slow;
+
+    &:hover {
+      background-color: $input-bg;
+      color: $text-color;
+    }
+
+    &.active {
+      background-color: $primary-color;
+      color: white;
+
+      &:hover {
+        background-color: $primary-hover;
+      }
+    }
+  }
+}
+
+// Main Content Area
+div.container > .content > .right {
+  flex: 1;
+  min-width: 0;
+}
+
+// Page Cards
+.page {
+  background: $card-bg;
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  box-shadow: $shadow-md;
+}
+
+// Form Elements
+label,
+div.optionItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+label > span:first-child {
+  color: $text-secondary;
+  font-weight: 500;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.client label > span:first-child,
+.main label > span:first-child,
+.notify label > span:first-child,
+.ctx label > span:first-child {
+  min-width: 280px;
+}
+
+// Inputs
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  background-color: $input-bg;
+  color: $text-color;
+  font-size: 14px;
+  transition: all $transition-slow;
+  outline: none;
+
+  &:focus {
+    background-color: $input-focus-bg;
+    @include input-focus;
+  }
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 220px;
+}
+
+input[type="number"] {
+  width: 100px;
+}
+
+// Checkboxes
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: $primary-color;
+  cursor: pointer;
+}
+
+// Buttons
+button,
+input[type="button"],
+input[type="submit"] {
+  padding: 0.625rem 1.25rem;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $radius;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-slow;
+  outline: none;
+
+  &:hover {
+    background-color: $primary-hover;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background-color: $border-color;
+    color: $text-secondary;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Secondary Buttons
+.btnList {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  input[type="button"] {
+    background-color: $input-bg;
+    color: $text-color;
+    border: 1px solid $border-color;
+
+    &:hover:not(:disabled) {
+      background-color: $border-color;
+      border-color: color.adjust($border-color, $lightness: -10%);
+    }
+  }
+}
+
+// Textarea
+textarea {
+  width: 100%;
+  min-height: 300px;
+  padding: 1rem;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  background-color: $input-bg;
+  color: $text-color;
+  font-family: $font-family-mono;
+  font-size: $font-size-base;
+  resize: vertical;
+  outline: none;
+  transition: all $transition-slow;
+
+  &:focus {
+    background-color: $input-focus-bg;
+    @include input-focus;
+  }
+}
+
+// Select (folder list)
+select {
+  width: 100%;
+  max-width: 500px;
+  min-height: 120px;
+  padding: 0.5rem;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  background-color: $input-bg;
+  color: $text-color;
+  font-size: 14px;
+  outline: none;
+
+  &:focus {
+    @include input-focus;
+  }
+
+  option {
+    padding: 0.5rem;
+  }
+}
+
+#folderList,
+#labelList {
+  width: 100%;
+  max-width: 500px;
+  height: 150px;
+}
+
+// Status Messages
+.green {
+  color: $success-color;
+  font-weight: 500;
+}
+
+.red {
+  color: $error-color;
+  font-weight: 500;
+}
+
+// Check Container (Apply button area)
+#checkContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-color;
+
+  > div {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Color Picker
+.selectColor {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 2px solid $border-color;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all $transition-slow;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    transform: scale(1.1);
+    border-color: $primary-color;
+  }
+}
+
+// Footer
+.bottom {
+  padding: 1rem;
+  text-align: center;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  border-top: 1px solid $border-color;
+  background: $card-bg;
+
+  a {
+    color: $text-secondary;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+// Info Box
+div.info {
+  background-color: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.2);
+  border-left: 4px solid $primary-color;
+  border-radius: $radius;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+// Context Menu Options
+.ctx {
+  .optionItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+
+      .optionItem {
+        flex-direction: row;
+        margin: 0;
+      }
+    }
+  }
+
+  label > span:first-child {
+    min-width: auto;
+  }
+}
+
+// Loading State
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+// Inline loading spinner
+.loading-inline {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  div.container > .content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  div.container > .content > .left {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    a {
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  label > span:first-child {
+    min-width: auto !important;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 200px;
+  }
+}
+
+// Utility classes
+.sectionList label {
+  display: inline-flex;
+  width: auto;
+  margin-right: 1.5rem;
+}
+
+ol.help li {
+  padding: 0.5rem 0;
+  color: $text-secondary;
+}
+
+.helpImgContainer {
+  text-align: center;
+  margin: 1rem 0;
+
+  img {
+    max-width: 100%;
+    border-radius: $radius;
+    box-shadow: $shadow-md;
+  }
+}

@@ -218,7 +218,7 @@
         "modifed": 1
     },
     "Open_file": {
-        "message": "Открыть файл",
+        "message": "Добавить торрент-файл...",
         "originalKey": "Open file"
     },
     "ST_CAPT_WEBUI": {
@@ -382,7 +382,7 @@
     "hideSeedStatusItem": {
         "message": "Скрыть торренты со статусом \"Раздаются\""
     },
-    "hideFnishStatusItem": {
+    "hideFinishStatusItem": {
         "message": "Скрыть торренты со статусом \"Загружен\""
     },
     "showSpeedGraph": {
@@ -400,16 +400,16 @@
     "popupUpdateInterval": {
         "message": "Интервал обновления списка торрентов"
     },
-    "fixCirilicIf": {
+    "fixCyrillicIf": {
         "message": "Исправить кириллицу если..."
     },
-    "fixCirilicTitle": {
+    "fixCyrillicTitle": {
         "message": "Неправильно отображаются имена торрентов"
     },
-    "fixCirilicTorrentPath": {
+    "fixCyrillicTorrentPath": {
         "message": "Неправильно присваивается директория к добавленному торренту"
     },
-    "showNotificationOnDownloadCompleate": {
+    "showNotificationOnDownloadComplete": {
         "message": "Уведомлять при завершении загрузки торрента"
     },
     "displayActiveTorrentCountIcon": {
@@ -531,5 +531,8 @@
     },
     "shortName": {
         "message": "Короткое имя"
+    },
+    "portIncorrect": {
+        "message": "Порт указан неверно"
     }
 }

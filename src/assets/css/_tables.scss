@@ -1,0 +1,130 @@
+// ===========================================
+// Tables - Base Table Styles
+// ===========================================
+
+@use "variables" as *;
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+
+  tr {
+    cursor: default;
+  }
+
+  th div,
+  td div {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  th div {
+    margin-right: -1px;
+  }
+
+  thead th,
+  tbody td {
+    padding: 6px 8px;
+    box-sizing: border-box;
+  }
+
+  thead {
+    text-align: center;
+    background: linear-gradient(to bottom, $card-bg 0%, $input-bg 100%);
+    border-bottom: 1px solid $border-color;
+
+    tr {
+      line-height: 20px;
+    }
+
+    th {
+      border-right: 1px solid $border-color;
+      position: relative;
+      font-weight: 600;
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+
+  tbody tr {
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $primary-light !important;
+    }
+  }
+
+  // Sort arrow
+  th {
+    .arrow {
+      display: inline-block;
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 14px;
+      opacity: 0.5;
+      transition: transform $transition-slow, opacity $transition-slow;
+    }
+
+    &.sortUp,
+    &.sortDown {
+      .arrow {
+        background-image: url('../img/arrow_up.svg');
+        opacity: 0.8;
+      }
+    }
+
+    &.sortUp .arrow {
+      transform: translateY(-50%) rotate(180deg);
+    }
+  }
+
+  // Checkbox column
+  .checkbox {
+    text-align: center;
+
+    input {
+      margin: 0;
+      vertical-align: middle;
+      accent-color: $primary-color;
+    }
+  }
+}
+
+// Selected row
+table tbody tr.selected {
+  background-color: $primary-color !important;
+  color: #fff;
+}
+
+// Column resize handle
+tr > th {
+  .resize-el {
+    display: block;
+    height: 100%;
+    width: 6px;
+    margin-right: -3px;
+    cursor: col-resize;
+    right: 0;
+    top: 0;
+    position: absolute !important;
+    opacity: 0;
+    z-index: 2;
+  }
+
+  &:last-child .resize-el {
+    width: 3px;
+    margin-right: 0;
+  }
+}

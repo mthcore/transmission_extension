@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import {autorun} from "mobx";
 import React from "react";
-import {curveBasis, easeQuadOut, line, scaleLinear, select, transition} from "d3";
+import {curveBasis, easeQuadOut, line, scaleLinear, select} from "d3";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
 @observer
@@ -62,9 +62,8 @@ class Graph extends React.PureComponent {
 
       const data = speedRoll.getDataFromTime(minTime);
 
-      const t = transition().duration(500).ease(easeQuadOut);
-      downloadLinePath.datum(data).transition(t).attr('d', downloadLine);
-      uploadLinePath.datum(data).transition(t).attr('d', uploadLine);
+      downloadLinePath.datum(data).transition().duration(500).ease(easeQuadOut).attr('d', downloadLine);
+      uploadLinePath.datum(data).transition().duration(500).ease(easeQuadOut).attr('d', uploadLine);
     });
 
     this.refChart.current.appendChild(svg.node());

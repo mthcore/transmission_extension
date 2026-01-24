@@ -92,7 +92,8 @@ class TableHeadColumn extends React.Component {
 
     this.refTh.current.draggable = false;
 
-    this.resizeStartSize = this.refTh.current.clientWidth + 1; // + 1 - border right
+    // Use stored column width instead of clientWidth for consistent behavior
+    this.resizeStartSize = this.props.column.width;
     this.resizeStartClientX = e.clientX;
 
     document.body.addEventListener('mousemove', this.handleBodyMouseMove);
@@ -100,6 +101,11 @@ class TableHeadColumn extends React.Component {
   };
 
   refTh = React.createRef();
+
+  componentWillUnmount() {
+    document.body.removeEventListener('mousemove', this.handleBodyMouseMove);
+    document.body.removeEventListener('mouseup', this.handleBodyMouseUp);
+  }
 
   handleSort = (e) => {
     e.preventDefault();

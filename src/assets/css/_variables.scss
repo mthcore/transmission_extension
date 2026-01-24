@@ -1,0 +1,62 @@
+// ===========================================
+// Variables - Design System
+// ===========================================
+
+// Colors - Primary
+$primary-color: #3b82f6;
+$primary-hover: #2563eb;
+$primary-light: #dbeafe;
+
+// Colors - Background
+$bg-color: #f8fafc;
+$card-bg: #ffffff;
+$input-bg: #f1f5f9;
+$input-focus-bg: #ffffff;
+
+// Colors - Text
+$text-color: #1e293b;
+$text-secondary: #64748b;
+
+// Colors - Borders
+$border-color: #e2e8f0;
+
+// Colors - Status
+$success-color: #22c55e;
+$error-color: #ef4444;
+
+// Colors - Progress
+$progress-download: #3b82f6;
+$progress-seed: #22c55e;
+$progress-bg: #e2e8f0;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+// Border Radius
+$radius: 8px;
+$radius-sm: 4px;
+$radius-lg: 12px;
+
+// Typography
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+$font-size-base: 13px;
+$font-size-sm: 12px;
+$font-size-xs: 11px;
+
+// Transitions
+$transition-fast: 0.1s ease;
+$transition-base: 0.15s ease;
+$transition-slow: 0.2s ease;
+
+// Folder colors
+$folder-colors: (
+  0: #bfdbfe,
+  1: #bbf7d0,
+  2: #fed7aa,
+  3: #fef08a,
+  4: #e9d5ff,
+  5: #fca5a5,
+  6: #d1d5db
+);

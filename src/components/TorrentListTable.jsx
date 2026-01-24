@@ -3,9 +3,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import TableHeadColumn from "./TableHeadColumn";
 import TorrentListTableItem from "./TorrentListTableItem";
-import TorrentMenu from "./TorrentMenu";
-import TorrentColumnMenu from "./TorrentColumnMenu";
-import {contextMenu} from "react-contexify";
+import TorrentColumnContextMenu from "./TorrentColumnMenu";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
 @observer
@@ -21,23 +19,39 @@ class TorrentListTable extends React.PureComponent {
     this.rootStore.flushTorrentList();
   }
 
+  scrollRafId = null;
+
   handleScroll = (e) => {
-    this.refFixedHead.current.style.left = `${e.currentTarget.scrollLeft * -1}px`;
+    const scrollLeft = e.currentTarget.scrollLeft;
+    if (this.scrollRafId) return;
+    this.scrollRafId = requestAnimationFrame(() => {
+      this.scrollRafId = null;
+      if (this.refFixedHead.current) {
+        this.refFixedHead.current.style.left = `${scrollLeft * -1}px`;
+      }
+    });
   };
+
+  componentWillUnmount() {
+    if (this.scrollRafId) {
+      cancelAnimationFrame(this.scrollRafId);
+    }
+  }
 
   refFixedHead = React.createRef();
 
   render() {
     return (
       <div onScroll={this.handleScroll} className="torrent-list-layer">
-        <table ref={this.refFixedHead} className="torrent-table-head" border="0" cellSpacing="0" cellPadding="0">
-          <TorrentListTableHead withStyle={true}/>
-        </table>
+        <TorrentColumnContextMenu>
+          <table ref={this.refFixedHead} className="torrent-table-head" border="0" cellSpacing="0" cellPadding="0">
+            <TorrentListTableHead withStyle={true}/>
+          </table>
+        </TorrentColumnContextMenu>
         <table className="torrent-table-body" border="0" cellSpacing="0" cellPadding="0">
           <TorrentListTableHead/>
           <TorrentListTableTorrents/>
         </table>
-        <TorrentColumnMenu/>
       </div>
     );
   }
@@ -56,8 +70,8 @@ class TorrentListTableHead extends React.PureComponent {
     return this.context;
   }
 
-  handleSort = (column, directoin) => {
-    this.rootStore.config.setTorrentsSort(column, directoin);
+  handleSort = (column, direction) => {
+    this.rootStore.config.setTorrentsSort(column, direction);
   };
 
   handleMoveColumn = (from, to) => {
@@ -107,15 +121,6 @@ class TorrentListTableHeadColumn extends TableHeadColumn {
     this.torrentListStore.toggleSelectAll();
   };
 
-  handleContextMenu = (e) => {
-    e.preventDefault();
-
-    contextMenu.show({
-      id: 'torrent_column_menu',
-      event: e
-    });
-  };
-
   render() {
     const {column, isSorted, sortDirection} = this.props;
     const classList = [column.column];
@@ -153,9 +158,9 @@ class TorrentListTableHeadColumn extends TableHeadColumn {
       );
     }
 
-    let arraw = null;
+    let arrow = null;
     if (column.order !== 0) {
-      arraw = (
+      arrow = (
         <i className="arrow"/>
       );
     }
@@ -166,10 +171,10 @@ class TorrentListTableHeadColumn extends TableHeadColumn {
     }
 
     return (
-      <th ref={this.refTh} onClick={onClick} onContextMenu={this.handleContextMenu} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={chrome.i18n.getMessage(column.lang)} draggable={true}>
+      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={chrome.i18n.getMessage(column.lang)} draggable={true}>
         {body}
         <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>
-        {arraw}
+        {arrow}
         {style}
       </th>
     );
@@ -200,7 +205,6 @@ class TorrentListTableTorrents extends React.PureComponent {
     return (
       <tbody>
         {torrens}
-        <TorrentMenu/>
       </tbody>
     );
   }

@@ -255,6 +255,8 @@ class LabelSelect extends React.PureComponent {
         <Select defaultValue={defaultValue} onChange={this.handleChange}
                 showSearch={false}
                 optionLabelProp="children"
+                virtual={false}
+                listHeight={500}
         >
           {options}
         </Select>

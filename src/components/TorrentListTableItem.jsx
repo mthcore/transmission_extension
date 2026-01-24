@@ -1,8 +1,8 @@
 import {observer} from "mobx-react";
 import React from "react";
 import PropTypes from "prop-types";
-import {contextMenu} from 'react-contexify';
 import RootStoreCtx from "../tools/RootStoreCtx";
+import TorrentContextMenu from "./TorrentContextMenu";
 
 @observer
 class TorrentListTableItem extends React.PureComponent {
@@ -52,29 +52,6 @@ class TorrentListTableItem extends React.PureComponent {
   handleDblClick = (e) => {
     e.preventDefault();
     this.rootStore.createFileList(this.torrentStore.id);
-  };
-
-  handleContextMenu = (e) => {
-    e.preventDefault();
-
-    let onHide = null;
-    if (!this.torrentStore.selected) {
-      onHide = this.handleContextMenuHide;
-      this.torrentListStore.addSelectedId(this.torrentStore.id);
-    }
-
-    contextMenu.show({
-      id: 'torrent_menu',
-      event: e,
-      props: {
-        source: e.currentTarget,
-        onHide: onHide,
-      }
-    });
-  };
-
-  handleContextMenuHide = () => {
-    this.torrentListStore.removeSelectedId(this.torrentStore.id);
   };
 
   render() {
@@ -130,14 +107,14 @@ class TorrentListTableItem extends React.PureComponent {
           break;
         }
         case 'done': {
-          const color = torrent.isSeeding ? '#41B541' : '#3687ED';
+          const progressClass = torrent.isSeeding ? 'seeding' : 'downloading';
           const width = torrent.progressStr;
 
           columns.push(
             <td key={name} className={name}>
               <div className="progress_b">
                 <div className="val">{torrent.progressStr}</div>
-                <div style={{backgroundColor: color, width}} className="progress_b_i"/>
+                <div style={{width}} className={`progress_b_i ${progressClass}`}/>
               </div>
             </td>
           );
@@ -267,10 +244,44 @@ class TorrentListTableItem extends React.PureComponent {
     }
 
     return (
-      <tr className={classList.join(' ')} id={torrent.id} onDoubleClick={this.handleDblClick} onContextMenu={this.handleContextMenu}>
-        {columns}
-      </tr>
+      <TorrentContextMenu torrentId={torrent.id}>
+        <tr className={classList.join(' ')} id={torrent.id} onDoubleClick={this.handleDblClick}>
+          {columns}
+        </tr>
+      </TorrentContextMenu>
     );
+  }
+}
+
+// Global style cache for TorrentName animations
+const styleCache = new Map();
+
+function getOrCreateStyle(moveName, width, elWidth) {
+  if (styleCache.has(moveName)) {
+    const cached = styleCache.get(moveName);
+    cached.useCount++;
+    return moveName;
+  }
+
+  const timeCalc = Math.round(elWidth / width * 3.5);
+  const style = document.createElement('style');
+  style.classList.add(moveName);
+  style.textContent = `@keyframes a_${moveName}{0%{margin-left:2px;}50%{margin-left:-${elWidth - width}px;}90%{margin-left:6px;}100%{margin-left:2px;}}div.${moveName}:hover>span{overflow:visible;animation:a_${moveName} ${timeCalc}s;}`;
+  document.body.appendChild(style);
+
+  styleCache.set(moveName, { style, useCount: 1 });
+  return moveName;
+}
+
+function releaseStyle(moveName) {
+  if (!moveName || !styleCache.has(moveName)) return;
+
+  const cached = styleCache.get(moveName);
+  cached.useCount--;
+
+  if (cached.useCount <= 0) {
+    cached.style.remove();
+    styleCache.delete(moveName);
   }
 }
 
@@ -299,84 +310,31 @@ class TorrentName extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.cleanPreviewStyle();
+    releaseStyle(this.state.movebleClassName);
   }
 
   refSpan = React.createRef();
 
-  cleanPreviewStyle() {
-    const moveName = this.state.movebleClassName;
-    if (moveName) {
-      const style = document.querySelector('style.' + moveName);
-      if (style) {
-        style.dataset.useCount = parseInt(style.dataset.useCount, 10) - 1;
-
-        if (style.dataset.useCount < 1) {
-          style.remove();
-        }
-      }
-    }
-  };
-
   handleMouseEnter = (e) => {
-    this.setState({
-      shouldUpdateCalc: false
-    });
+    this.setState({ shouldUpdateCalc: false });
 
-    this.cleanPreviewStyle();
+    releaseStyle(this.state.movebleClassName);
 
     const width = this.props.width;
     const spanWidth = this.refSpan.current.offsetWidth;
     if (spanWidth < width) {
-      this.setState({
-        movebleClassName: null
-      });
+      this.setState({ movebleClassName: null });
       return;
     }
 
-    let elWidth = Math.ceil(spanWidth / 10);
-    if (elWidth > 10) {
-      if (elWidth < 100) {
-        const t1 = Math.round(elWidth / 10);
-        if (t1 > elWidth / 10) {
-          elWidth = t1 * 10 * 10;
-        } else {
-          elWidth = (t1 * 10 + 5) * 10;
-        }
-      } else {
-        elWidth = elWidth * 10;
-      }
-    } else {
-      elWidth = elWidth * 10;
-    }
+    // Round elWidth to reduce unique style combinations
+    let elWidth = Math.ceil(spanWidth / 50) * 50;
+    if (elWidth < 100) elWidth = 100;
 
-    const timeCalc = Math.round(elWidth / width * 3.5);
-    const moveName = `moveble_${width}_${elWidth}`;
-    let style = document.querySelector('style.' + moveName);
-    if (!style) {
-      style = document.createElement('style');
-      style.classList.add(moveName);
-      style.dataset.useCount = '0';
-      style.textContent = `
-        @keyframes a_${moveName} {
-          0%{margin-left:2px;}
-          50%{margin-left:-${elWidth - width}px;}
-          90%{margin-left:6px;}
-          100%{margin-left:2px;}
-        }
-        div.${moveName}:hover > span {
-          overflow: visible;
-          animation: a_${moveName} ${timeCalc}s;
-        }
-      `.split(/\r?\n/).map(line => line.trim()).join('');
-      document.body.appendChild(style);
-    }
+    const moveName = `mv_${width}_${elWidth}`;
+    getOrCreateStyle(moveName, width, elWidth);
 
-    style.dataset.useCount = parseInt(style.dataset.useCount, 10) + 1;
-
-    this.setState({
-      movebleClassName: moveName
-    });
+    this.setState({ movebleClassName: moveName });
   };
 
   render() {

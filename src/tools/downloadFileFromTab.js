@@ -21,7 +21,10 @@ async function downloadFileFromTab(url, tabId, frameId) {
       throw new Error('Response is empty');
     }
     if (response.error) {
-      throw Object.assign(new Error(), response.error);
+      const err = new Error(response.error.message || 'Unknown error');
+      if (response.error.code) err.code = response.error.code;
+      if (response.error.name) err.name = response.error.name;
+      throw err;
     }
     return response.result;
   }).then(({response, base64}) => {
@@ -36,12 +39,14 @@ async function downloadFileFromTab(url, tabId, frameId) {
 }
 
 const executeScriptPromise = (tabId, options) => {
-  return new Promise((resolve, reject) => {
-    chrome.tabs.executeScript(tabId, options, (results) => {
-      const err = chrome.runtime.lastError;
-      err ? reject(err) : resolve(results);
-    });
-  });
+  const target = { tabId: tabId };
+  if (options.frameId !== undefined) {
+    target.frameIds = [options.frameId];
+  }
+  return chrome.scripting.executeScript({
+    target: target,
+    files: [options.file]
+  }).then(results => results.map(r => r.result));
 };
 
 const tabsSendMessage = (tabId, message, options) => {

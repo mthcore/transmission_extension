@@ -1,9 +1,9 @@
-import "../assets/css/options.less";
+import "../assets/css/options.scss";
 import React from "react";
 import RootStore from "../stores/RootStore";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import {observer} from "mobx-react";
-import {HashRouter, NavLink, Redirect, Route, Switch, withRouter} from "react-router-dom";
+import {HashRouter, NavLink, Navigate, Route, Routes, useLocation} from "react-router-dom";
 import PropTypes from "prop-types";
 import {SketchPicker} from "react-color";
 import Popover from "react-tiny-popover";
@@ -52,39 +52,41 @@ class Options extends React.PureComponent {
         <HashRouter>
           <div className="content">
             <div className="left menu">
-              <NavLink to="/" exact={true} activeClassName="active">{chrome.i18n.getMessage('optClient')}</NavLink>
-              <NavLink to="/main" activeClassName="active">{chrome.i18n.getMessage('optMain')}</NavLink>
-              <NavLink to="/notify" activeClassName="active">{chrome.i18n.getMessage('optNotify')}</NavLink>
-              <NavLink to="/ctx" activeClassName="active">{chrome.i18n.getMessage('optCtx')}</NavLink>
-              <NavLink to="/backup" activeClassName="active">{chrome.i18n.getMessage('backup')}</NavLink>
-              <NavLink to="/restore" activeClassName="active">{chrome.i18n.getMessage('restore')}</NavLink>
+              <NavLink to="/" className={({isActive}) => isActive ? 'active' : ''} end>{chrome.i18n.getMessage('optClient')}</NavLink>
+              <NavLink to="/main" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optMain')}</NavLink>
+              <NavLink to="/notify" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optNotify')}</NavLink>
+              <NavLink to="/ctx" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optCtx')}</NavLink>
+              <NavLink to="/backup" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('backup')}</NavLink>
+              <NavLink to="/restore" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('restore')}</NavLink>
             </div>
             <div className="right">
-              <Switch>
-                <Route path="/" exact={true} component={ClientOptions}/>
-                <Route path="/main" exact={true} component={UiOptions}/>
-                <Route path="/notify" exact={true} component={NotifyOptions}/>
-                <Route path="/ctx" exact={true} component={CtxOptions}/>
-                <Route path="/backup" exact={true} component={BackupOptions}/>
-                <Route path="/restore" exact={true} component={RestoreOptions}/>
-                <Route component={NotFound}/>
-              </Switch>
+              <Routes>
+                <Route path="/" element={<ClientOptions/>}/>
+                <Route path="/main" element={<UiOptions/>}/>
+                <Route path="/notify" element={<NotifyOptions/>}/>
+                <Route path="/ctx" element={<CtxOptions/>}/>
+                <Route path="/backup" element={<BackupOptions/>}/>
+                <Route path="/restore" element={<RestoreOptions/>}/>
+                <Route path="*" element={<Navigate to="/"/>}/>
+              </Routes>
             </div>
           </div>
         </HashRouter>
-        <div className="bottom">
-          <div className="author"><a title="email: leonardspbox@gmail.com"
-                                     href="mailto:leonardspbox@gmail.com">Anton</a>, 2015
-          </div>
-        </div>
+        <footer className="bottom">
+          <span>Made by <a title="leonardspbox@gmail.com" href="mailto:leonardspbox@gmail.com">Anton</a></span>
+        </footer>
       </div>
     );
   }
 }
 
-@withRouter
+const ClientOptions = observer((props) => {
+  const location = useLocation();
+  return <ClientOptionsInner {...props} location={location}/>;
+});
+
 @observer
-class ClientOptions extends React.PureComponent {
+class ClientOptionsInner extends React.PureComponent {
   static propTypes = {
     location: PropTypes.object,
   };
@@ -123,7 +125,7 @@ class ClientOptions extends React.PureComponent {
     });
     return Promise.resolve().then(() => {
       if (!Number.isFinite(port)) {
-        throw new Error('Port is incorrect');
+        throw new Error(chrome.i18n.getMessage('portIncorrect'));
       }
       return this.rootStore.config.setOptions({
         login, password, hostname, port, ssl, pathname, webPathname, authenticationRequired
@@ -161,7 +163,7 @@ class ClientOptions extends React.PureComponent {
         case 'pending': {
           status = (
             <div>
-              <img alt="" src={require('../assets/img/loading.gif').default}/>
+              <div className="loading-inline"/>
             </div>
           );
           break;
@@ -287,7 +289,7 @@ class UiOptions extends OptionsPage {
           <input onChange={this.handleChange} name="hideSeedingTorrents" type="checkbox" defaultChecked={this.configStore.hideSeedingTorrents}/>
         </label>
         <label>
-          <span>{chrome.i18n.getMessage('hideFnishStatusItem')}</span>
+          <span>{chrome.i18n.getMessage('hideFinishStatusItem')}</span>
           <input onChange={this.handleChange} name="hideFinishedTorrents" type="checkbox" defaultChecked={this.configStore.hideFinishedTorrents}/>
         </label>
         <label>
@@ -344,7 +346,7 @@ class NotifyOptions extends OptionsPage {
       <div className="page notify">
         <h2>{chrome.i18n.getMessage('optNotify')}</h2>
         <label>
-          <span>{chrome.i18n.getMessage('showNotificationOnDownloadCompleate')}</span>
+          <span>{chrome.i18n.getMessage('showNotificationOnDownloadComplete')}</span>
           <input defaultChecked={this.configStore.showDownloadCompleteNotifications} onChange={this.handleChange} type="checkbox" name="showDownloadCompleteNotifications"/>
         </label>
         <label>
@@ -672,19 +674,14 @@ class RestoreOptions extends React.PureComponent {
   }
 }
 
-class NotFound extends React.PureComponent {
-  render() {
-    return (
-      <Redirect to={"/"}/>
-    );
-  }
-}
+const NotFound = () => {
+  return <Navigate to="/" replace/>;
+};
 
 const rootStore = window.rootStore = RootStore.create();
 
-ReactDOM.render(
+createRoot(document.getElementById('root')).render(
   <RootStoreCtx.Provider value={rootStore}>
     <Options/>
-  </RootStoreCtx.Provider>,
-  document.getElementById('root')
+  </RootStoreCtx.Provider>
 );
