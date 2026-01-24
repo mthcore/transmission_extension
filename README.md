@@ -38,7 +38,7 @@ A browser extension that adds a Transmission WebUI directly in your web browser.
 
 ```bash
 # Clone the repository
-git clone https://github.com/AzMusic/Transmission.git
+git clone https://github.com/mthcore/transmission_extension.git
 cd Transmission
 
 # Install dependencies
@@ -113,5 +113,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-- Original project by [Feverqwe](https://github.com/Feverqwe)
-- Fork maintained by [AzMusic](https://github.com/AzMusic)
+- Original project by [Feverqwe]/Anton(https://github.com/Feverqwe)
+- Fork by [mthcore](https://github.com/mthcore/transmission_extension)

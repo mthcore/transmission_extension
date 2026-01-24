@@ -1,0 +1,48 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Chrome
+        run: npm run build
+
+      - name: Build Firefox
+        run: npm run build:firefox
+
+      - name: Build Opera
+        run: npm run build:opera
+
+      - name: Check build artifacts
+        run: |
+          echo "Chrome build:"
+          ls -lh dist/chrome/src/*.js
+          echo ""
+          echo "Firefox build:"
+          ls -lh dist/firefox/src/*.js
+          echo ""
+          echo "Opera build:"
+          ls -lh dist/opera/src/*.js

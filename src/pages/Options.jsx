@@ -73,7 +73,7 @@ class Options extends React.PureComponent {
           </div>
         </HashRouter>
         <footer className="bottom">
-          <span>Made by <a title="leonardspbox@gmail.com" href="mailto:leonardspbox@gmail.com">Anton</a></span>
+          <a href="https://github.com/mthcore/transmission_extension" target="_blank" rel="noopener noreferrer">GitHub</a>
         </footer>
       </div>
     );
