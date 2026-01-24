@@ -5,8 +5,7 @@ import BgStore from "../stores/BgStore";
 import {autorun} from "mobx";
 import TransmissionClient from "./transmissionClient";
 import MobxPatchLine from "../tools/mobxPatchLine";
-
-const {serializeError} = require('serialize-error');
+import {serializeError} from 'serialize-error';
 const logger = getLogger('background');
 
 const notificationIcons = {

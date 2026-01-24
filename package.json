@@ -16,22 +16,21 @@
   },
   "dependencies": {
     "@radix-ui/react-context-menu": "^2.2.16",
-    "d3": "^7.9.0",
-    "escape-string-regexp": "^2.0.0",
+    "escape-string-regexp": "^5.0.0",
     "fecha": "^4.2.3",
     "filesize": "^11.0.13",
     "mobx": "^6.15.0",
     "mobx-react": "^9.2.1",
-    "mobx-state-tree": "^5.4.2",
+    "mobx-state-tree": "^7.0.2",
     "promise-limit": "^2.7.0",
     "prop-types": "^15.7.2",
     "rc-select": "^14.16.8",
     "react": "^19.2.3",
     "react-color": "^2.19.3",
     "react-dom": "^19.2.3",
-    "react-router-dom": "^6.30.3",
+    "react-router-dom": "^7.13.0",
     "react-tiny-popover": "^8.1.6",
-    "serialize-error": "^5.0.0",
+    "serialize-error": "^13.0.1",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
@@ -60,6 +59,7 @@
     "url": "^0.11.4",
     "util": "^0.12.5",
     "webpack": "^5.104.1",
+    "webpack-bundle-analyzer": "^5.2.0",
     "webpack-cli": "^6.0.1"
   }
 }

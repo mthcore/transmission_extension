@@ -53,6 +53,12 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
@@ -96,7 +102,10 @@ const config = {
       "url": require.resolve("url/"),
       "querystring": require.resolve("querystring-es3"),
       "util": require.resolve("util/"),
-      "process": require.resolve("process/browser"),
+      "process": require.resolve("process/browser.js"),
+    },
+    alias: {
+      "process/browser": require.resolve("process/browser.js"),
     }
   },
   plugins: [

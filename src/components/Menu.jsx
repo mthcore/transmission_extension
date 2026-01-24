@@ -134,7 +134,7 @@ class Menu extends React.PureComponent {
     }
 
     let graph = null;
-    if (this.rootStore.config.showSpeedGraph) {
+    if (this.rootStore.config.showSpeedGraph && this.rootStore.client) {
       graph = (
         <VisiblePage>
           <ComponentLoader load-page={'graph'}/>

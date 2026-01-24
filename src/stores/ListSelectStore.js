@@ -32,7 +32,7 @@ const ListSelectStore = types.model('ListSelectStore', {
       self.selectedIds = ids;
     },
     isSelectedId(id) {
-      return self.selectedIds.indexOf(id) !== -1;
+      return self._selectedIdsSet.has(id);
     },
     removeSelectedId(id) {
       const ids = self.selectedIds.slice(0);
@@ -68,7 +68,8 @@ const ListSelectStore = types.model('ListSelectStore', {
       self.selectedIds = [];
     },
     syncSelectedIds() {
-      self.selectedIds = self.selectedIds.filter(id => self._sortedIds.indexOf(id) !== -1);
+      const sortedSet = new Set(self._sortedIds);
+      self.selectedIds = self.selectedIds.filter(id => sortedSet.has(id));
     }
   };
 }).views((self) => {
@@ -78,10 +79,19 @@ const ListSelectStore = types.model('ListSelectStore', {
     get _sortedIds() {
       throw new Error('Overwrite me!');
     },
+    // Cached Set for O(1) lookups
+    get _selectedIdsSet() {
+      return new Set(self.selectedIds);
+    },
+    get _sortedIdsSet() {
+      return new Set(self._sortedIds);
+    },
     get isSelectedAll() {
       const ids = self._sortedIds;
+      const sortedSet = self._sortedIdsSet;
       if (ids.length > 0 && self.selectedIds.length === ids.length) {
-        return self.selectedIds.every(id => ids.indexOf(id) !== -1);
+        // O(n) instead of O(n²)
+        return self.selectedIds.every(id => sortedSet.has(id));
       }
       return false;
     },

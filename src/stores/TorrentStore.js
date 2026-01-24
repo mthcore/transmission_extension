@@ -204,7 +204,7 @@ const TorrentStore = types.model('TorrentStore', {
     },
     get selected() {
       /**@type RootStore*/const rootStore = getRoot(self);
-      return rootStore.torrentList.selectedIds.indexOf(self.id) !== -1;
+      return rootStore.torrentList._selectedIdsSet.has(self.id);
     },
     get isStopped() {
       return self.statusCode === 0;

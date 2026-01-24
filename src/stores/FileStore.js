@@ -53,7 +53,7 @@ const FileStore = types.model('FileStore', {
     },
     get selected() {
       /**@type RootStore*/const rootStore = getRoot(self);
-      return rootStore.fileList.selectedIds.indexOf(self.name) !== -1;
+      return rootStore.fileList._selectedIdsSet.has(self.name);
     },
     get nameParts() {
       if (cachedNamePartsName !== self.shortName) {

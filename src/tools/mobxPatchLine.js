@@ -1,7 +1,6 @@
 import {getSnapshot, onPatch} from "mobx-state-tree";
 import ErrorWithCode from "./errorWithCode";
-
-const escapeRegExp = require('escape-string-regexp');
+import escapeStringRegexp from 'escape-string-regexp';
 const INDEX_LIMIT = 1E9;
 
 class MobxPatchLine {
@@ -12,7 +11,7 @@ class MobxPatchLine {
     this.timeLine = [];
     this.idLine = [];
     this.branches = branches;
-    this.branchesRe = branches && new RegExp(`^/(${branches.map(escapeRegExp).join('|')})(\/|$)`);
+    this.branchesRe = branches && new RegExp(`^/(${branches.map(escapeStringRegexp).join('|')})(\/|$)`);
 
     this.index = 0;
 
