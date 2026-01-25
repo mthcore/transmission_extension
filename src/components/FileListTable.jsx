@@ -258,10 +258,13 @@ class FileListTableHeadColumn extends TableHeadColumn {
       onClick = this.handleSort;
     }
 
+    const isFixedColumn = column.column === 'checkbox';
+    const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
+
     return (
-      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={chrome.i18n.getMessage(column.lang)} draggable={true}>
+      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={title} draggable={true}>
         {body}
-        <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>
+        {!isFixedColumn && <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>}
         {arrow}
         {style}
       </th>

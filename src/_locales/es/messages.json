@@ -375,12 +375,6 @@
     "showSpeedGraph": {
         "message": "Mostrar gráfico de velocidad"
     },
-    "popupHeight": {
-        "message": "Altura de la ventana emergente"
-    },
-    "px": {
-        "message": "px"
-    },
     "ms": {
         "message": "ms"
     },

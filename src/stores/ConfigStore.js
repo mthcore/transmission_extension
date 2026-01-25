@@ -120,7 +120,6 @@ const SelectedLabelStore = types.model('SelectedLabelStore', {
  * @property {boolean} [hideSeedingTorrents]
  * @property {boolean} [hideFinishedTorrents]
  * @property {boolean} [showSpeedGraph]
- * @property {number} [popupHeight]
  * @property {boolean} [selectDownloadCategoryAfterPutTorrentFromContextMenu]
  * @property {boolean} [treeViewContextMenu]
  * @property {boolean} [putDefaultPathInContextMenu]
@@ -173,7 +172,6 @@ const ConfigStore = types.model('ConfigStore', {
   hideFinishedTorrents: types.optional(types.boolean, false),
   showSpeedGraph: types.optional(types.boolean, true),
 
-  popupHeight: types.optional(types.number, 600),
   selectDownloadCategoryAfterPutTorrentFromContextMenu: types.optional(types.boolean, false),
   treeViewContextMenu: types.optional(types.boolean, false),
   putDefaultPathInContextMenu: types.optional(types.boolean, false),

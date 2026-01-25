@@ -388,12 +388,6 @@
     "showSpeedGraph": {
         "message": "Отображать график скорости"
     },
-    "popupHeight": {
-        "message": "Высота popup окна"
-    },
-    "px": {
-        "message": "пикселей"
-    },
     "ms": {
         "message": "миллисекунд"
     },

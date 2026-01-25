@@ -363,12 +363,6 @@
     "showSpeedGraph": {
         "message": "显示速度图"
     },
-    "popupHeight": {
-        "message": "弹出窗口高度"
-    },
-    "px": {
-        "message": "像素"
-    },
     "ms": {
         "message": "毫秒"
     },

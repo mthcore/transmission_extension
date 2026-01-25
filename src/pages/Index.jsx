@@ -61,13 +61,6 @@ const Index = React.memo(() => {
       );
     }
 
-    let setPopupHeight = null;
-    if (rootStore.isPopup) {
-      setPopupHeight = (
-        <SetPopupHeight height={rootStore.config.popupHeight}/>
-      );
-    }
-
     const uiUpdateInterval = rootStore.config.uiUpdateInterval;
 
     let goInOptions = null;
@@ -83,7 +76,6 @@ const Index = React.memo(() => {
         <Menu/>
         <TorrentListTable/>
         <Footer/>
-        {setPopupHeight}
         {fileList}
         <Dialogs/>
         {goInOptions}
@@ -145,19 +137,6 @@ const Dialogs = React.memo(() => {
     );
   });
 });
-
-const SetPopupHeight = React.memo(({height}) => {
-  React.useEffect(() => {
-    const root = document.getElementById('root');
-    const finalHeight = Math.max(height, 600);
-    root.style.minHeight = finalHeight + 'px';
-    root.style.maxHeight = finalHeight + 'px';
-  }, [height]);
-  return null;
-});
-SetPopupHeight.propTypes = {
-  height: PropTypes.number.isRequired,
-};
 
 const GoInOptions = React.memo(({isPopup}) => {
   React.useEffect(() => {

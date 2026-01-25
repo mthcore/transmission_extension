@@ -375,12 +375,6 @@
     "showSpeedGraph": {
         "message": "Show speed graph"
     },
-    "popupHeight": {
-        "message": "Height popup window"
-    },
-    "px": {
-        "message": "px"
-    },
     "ms": {
         "message": "ms"
     },

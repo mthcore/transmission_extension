@@ -297,12 +297,6 @@ class UiOptions extends OptionsPage {
           <input onChange={this.handleChange} name="showSpeedGraph" type="checkbox" defaultChecked={this.configStore.showSpeedGraph}/>
         </label>
         <label>
-          <span>{chrome.i18n.getMessage('popupHeight')}</span>
-          <input onChange={this.handleSetInt} name="popupHeight" type="number" min="0" defaultValue={this.configStore.popupHeight}/>
-          {' '}
-          <span>{chrome.i18n.getMessage('px')}</span>
-        </label>
-        <label>
           <span>{chrome.i18n.getMessage('popupUpdateInterval')}</span>
           <input onChange={this.handleSetInt} name="uiUpdateInterval" type="number" min="100" defaultValue={this.configStore.uiUpdateInterval}/>
           {' '}

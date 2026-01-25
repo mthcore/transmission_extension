@@ -375,12 +375,6 @@
     "showSpeedGraph": {
         "message": "Mostrar gráfico de velocidade"
     },
-    "popupHeight": {
-        "message": "Janela popup Altura"
-    },
-    "px": {
-        "message": "px"
-    },
     "ms": {
         "message": "ms"
     },
