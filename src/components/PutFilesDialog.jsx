@@ -3,6 +3,9 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import getLogger from "../tools/getLogger";
+
+const logger = getLogger('PutFilesDialog');
 
 @observer
 class PutFilesDialog extends React.PureComponent {
@@ -40,7 +43,9 @@ class PutFilesDialog extends React.PureComponent {
 
     const urls = files.map(file => URL.createObjectURL(file));
 
-    this.rootStore.client.sendFiles(urls, directory).finally(() => {
+    this.rootStore.client.sendFiles(urls, directory).catch((err) => {
+      logger.error('sendFiles error', err);
+    }).finally(() => {
       urls.forEach(url => URL.revokeObjectURL(url));
     });
 

@@ -136,7 +136,7 @@ const SelectedLabelStore = types.model('SelectedLabelStore', {
  * @property {function} setKeyValue
  * @property {function} addFolder
  * @property {function} hasFolder
- * @property {function} moveTorrensColumn
+ * @property {function} moveTorrentsColumn
  * @property {function} saveTorrentsColumns
  * @property {function} moveFilesColumn
  * @property {function} saveFilesColumns
@@ -214,7 +214,7 @@ const ConfigStore = types.model('ConfigStore', {
     hasFolder(path) {
       return self.folders.some(folder => folder.path === path);
     },
-    moveTorrensColumn(from, to) {
+    moveTorrentsColumn(from, to) {
       const column = resolveIdentifier(TorrentsColumnStore, self, from);
       const columnTarget = resolveIdentifier(TorrentsColumnStore, self, to);
 

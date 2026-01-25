@@ -75,7 +75,7 @@ class TorrentListTableHead extends React.PureComponent {
   };
 
   handleMoveColumn = (from, to) => {
-    this.rootStore.config.moveTorrensColumn(from, to);
+    this.rootStore.config.moveTorrentsColumn(from, to);
   };
 
   handleSaveColumns = () => {

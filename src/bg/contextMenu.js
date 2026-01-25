@@ -75,19 +75,29 @@ class ContextMenu {
 
   handleClick = (info, tab) => {
     const {menuItemId, linkUrl, frameId} = info;
-    const itemInfo = JSON.parse(menuItemId);
+    let itemInfo;
+    try {
+      itemInfo = JSON.parse(menuItemId);
+    } catch (err) {
+      logger.error('Invalid menuItemId JSON', err);
+      return;
+    }
     switch (itemInfo.type) {
       case 'action': {
         switch (itemInfo.name) {
           case 'default': {
             this.bg.whenReady().then(() => {
               return this.onSendLink(linkUrl, tab.id, frameId);
+            }).catch((err) => {
+              logger.error('handleClick default error', err);
             });
             break;
           }
           case 'createFolder': {
             this.bg.whenReady().then(() => {
               return this.onCreateFolder();
+            }).catch((err) => {
+              logger.error('handleClick createFolder error', err);
             });
             break;
           }
@@ -98,6 +108,8 @@ class ContextMenu {
         this.bg.whenReady().then(() => {
           const folder = this.bgStore.config.folders[itemInfo.index];
           return this.onSendLink(linkUrl, tab.id, frameId, folder);
+        }).catch((err) => {
+          logger.error('handleClick folder error', err);
         });
         break;
       }

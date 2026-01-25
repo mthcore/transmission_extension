@@ -9,9 +9,9 @@ import {serializeError} from 'serialize-error';
 const logger = getLogger('background');
 
 const notificationIcons = {
-  complete: 'assets/img/notification_done.png',
-  add: 'assets/img/notification_add.png',
-  error: 'assets/img/notification_error.png',
+  complete: chrome.runtime.getURL('assets/img/notification_done.png'),
+  add: chrome.runtime.getURL('assets/img/notification_add.png'),
+  error: chrome.runtime.getURL('assets/img/notification_error.png'),
 };
 
 class Bg {
@@ -277,7 +277,7 @@ class Bg {
   torrentExistsNotify() {
     const icon = notificationIcons.error;
     const title = chrome.i18n.getMessage('torrentFileExists');
-    showNotification(null, icon, title);
+    showNotification('exists-' + Date.now(), icon, title);
   }
 
   torrentCompleteNotify(torrent) {
@@ -289,7 +289,7 @@ class Bg {
   torrentErrorNotify(message) {
     const icon = notificationIcons.error;
     const title = chrome.i18n.getMessage('OV_FL_ERROR');
-    showNotification(null, icon, title, message);
+    showNotification('error-' + Date.now(), icon, title, message);
   }
 }
 

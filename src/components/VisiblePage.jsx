@@ -12,7 +12,7 @@ const VisiblePage = React.memo(({children}) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     }
-  }, []);
+  }, [handleVisibilityChange]);
 
   if (isHidden) return null;
 

@@ -30,7 +30,7 @@ const Index = React.memo(() => {
     if (rootStore.isPopup) {
       document.body.classList.add('popup');
     }
-  }, []);
+  }, [rootStore]);
 
   const onIntervalFire = React.useCallback((isInit) => {
     if (isInit) {
@@ -41,7 +41,7 @@ const Index = React.memo(() => {
     rootStore.client.updateTorrentList(isInit).catch((err) => {
       logger.error('onIntervalFire updateTorrentList error', err);
     });
-  }, []);
+  }, [rootStore]);
 
   return useObserver(() => {
     if (['idle', 'pending'].includes(rootStore.state)) {

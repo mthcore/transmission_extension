@@ -2,12 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const Interval = React.memo(({interval, onFire}) => {
+  const onFireRef = React.useRef(onFire);
+  onFireRef.current = onFire;
+
   React.useEffect(() => {
     const intervalId = setInterval(() => {
-      onFire(false);
+      onFireRef.current(false);
     }, interval);
 
-    onFire(true);
+    onFireRef.current(true);
     return () => {
       clearInterval(intervalId);
     };

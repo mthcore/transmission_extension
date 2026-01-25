@@ -96,7 +96,7 @@ class FileListTable extends React.PureComponent {
     let directory = null;
     if (this.fileListStore.joinedDirectory) {
       directory = (
-        <input type="text" value={this.fileListStore.joinedDirectory} readOnly="readonly"/>
+        <input type="text" value={this.fileListStore.joinedDirectory} readOnly/>
       );
     }
 

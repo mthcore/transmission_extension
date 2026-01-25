@@ -6,7 +6,7 @@ import {observer} from "mobx-react";
 import {HashRouter, NavLink, Navigate, Route, Routes, useLocation} from "react-router-dom";
 import PropTypes from "prop-types";
 import {SketchPicker} from "react-color";
-import Popover from "react-tiny-popover";
+import {Popover} from "react-tiny-popover";
 import getLogger from "../tools/getLogger";
 import storageGet from "../tools/storageGet";
 import storageSet from "../tools/storageSet";
@@ -673,10 +673,6 @@ class RestoreOptions extends React.PureComponent {
     );
   }
 }
-
-const NotFound = () => {
-  return <Navigate to="/" replace/>;
-};
 
 const rootStore = window.rootStore = RootStore.create();
 
