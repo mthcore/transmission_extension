@@ -70,6 +70,13 @@ h3 {
   letter-spacing: 0.025em;
 }
 
+.hint {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin: -0.5rem 0 1rem 0;
+  font-style: italic;
+}
+
 // Layout
 .container {
   min-height: 100vh;
@@ -162,7 +169,7 @@ label > span:first-child {
 .main label > span:first-child,
 .notify label > span:first-child,
 .ctx label > span:first-child {
-  min-width: 280px;
+  min-width: 450px;
 }
 
 // Inputs
@@ -197,7 +204,58 @@ input[type="number"] {
   width: 100px;
 }
 
-// Checkboxes
+// Toggle Switch
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle-slider {
+      background-color: $primary-color;
+    }
+
+    &:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    &:focus + .toggle-slider {
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
+    }
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $border-color;
+    transition: all 0.2s ease;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: all 0.2s ease;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Legacy checkboxes (for select lists)
 input[type="checkbox"] {
   width: 18px;
   height: 18px;
@@ -396,10 +454,6 @@ div.info {
       }
     }
   }
-
-  label > span:first-child {
-    min-width: auto;
-  }
 }
 
 // Loading State
@@ -488,5 +542,83 @@ ol.help li {
     max-width: 100%;
     border-radius: $radius;
     box-shadow: $shadow-md;
+  }
+}
+
+// Section hint (under h3)
+.section-hint {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin: -0.5rem 0 1rem 0;
+  font-style: italic;
+}
+
+// Directory Manager
+.dir-manager {
+  .dir-form {
+    margin-bottom: 1rem;
+  }
+
+  .dir-form-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    button {
+      white-space: nowrap;
+    }
+  }
+
+  .dir-list-container {
+    display: flex;
+    gap: 0.5rem;
+
+    select {
+      flex: 1;
+      min-height: 120px;
+    }
+
+    .dir-list-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      button {
+        padding: 0.5rem 0.75rem;
+        min-width: 36px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// Backup & Restore
+.backup-restore {
+  .backup-section {
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .backup-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    button {
+      min-width: 120px;
+    }
+  }
+
+  textarea {
+    min-height: 200px;
+    font-size: 12px;
   }
 }

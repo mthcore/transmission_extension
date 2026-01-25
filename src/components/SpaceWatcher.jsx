@@ -60,7 +60,7 @@ class SpaceWatcher extends React.PureComponent {
 
     return (
       <>
-        <td className="space disk" onClick={this.handleUpdate} title={title}>{body}</td>
+        <span className="space disk" onClick={this.handleUpdate} title={title}>{body}</span>
         <Interval interval={60 * 1000} onFire={this.onIntervalFire}/>
       </>
     );

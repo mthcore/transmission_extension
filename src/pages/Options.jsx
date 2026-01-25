@@ -56,8 +56,7 @@ class Options extends React.PureComponent {
               <NavLink to="/main" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optMain')}</NavLink>
               <NavLink to="/notify" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optNotify')}</NavLink>
               <NavLink to="/ctx" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('optCtx')}</NavLink>
-              <NavLink to="/backup" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('backup')}</NavLink>
-              <NavLink to="/restore" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('restore')}</NavLink>
+              <NavLink to="/backup" className={({isActive}) => isActive ? 'active' : ''}>{chrome.i18n.getMessage('backupRestore')}</NavLink>
             </div>
             <div className="right">
               <Routes>
@@ -65,8 +64,7 @@ class Options extends React.PureComponent {
                 <Route path="/main" element={<UiOptions/>}/>
                 <Route path="/notify" element={<NotifyOptions/>}/>
                 <Route path="/ctx" element={<CtxOptions/>}/>
-                <Route path="/backup" element={<BackupOptions/>}/>
-                <Route path="/restore" element={<RestoreOptions/>}/>
+                <Route path="/backup" element={<BackupRestoreOptions/>}/>
                 <Route path="*" element={<Navigate to="/"/>}/>
               </Routes>
             </div>
@@ -210,7 +208,10 @@ class ClientOptionsInner extends React.PureComponent {
           <h3>{chrome.i18n.getMessage('ST_CAPT_ADVANCED')}</h3>
           <label>
             <span>{chrome.i18n.getMessage('requireAuthentication')}</span>
-            <input type="checkbox" name="authenticationRequired" defaultChecked={this.configStore.authenticationRequired}/>
+            <span className="toggle-switch">
+              <input type="checkbox" name="authenticationRequired" defaultChecked={this.configStore.authenticationRequired}/>
+              <span className="toggle-slider"></span>
+            </span>
           </label>
           <label>
             <span>{chrome.i18n.getMessage('guiPath')}</span>
@@ -218,7 +219,10 @@ class ClientOptionsInner extends React.PureComponent {
           </label>
           <label>
             <span>{chrome.i18n.getMessage('useSSL')}</span>
-            <input type="checkbox" name="ssl" defaultChecked={this.configStore.ssl}/>
+            <span className="toggle-switch">
+              <input type="checkbox" name="ssl" defaultChecked={this.configStore.ssl}/>
+              <span className="toggle-slider"></span>
+            </span>
           </label>
           <label>
             <span>{chrome.i18n.getMessage('path')}</span>
@@ -282,19 +286,31 @@ class UiOptions extends OptionsPage {
         <h2>{chrome.i18n.getMessage('optMain')}</h2>
         <label>
           <span>{chrome.i18n.getMessage('showFreeSpace')}</span>
-          <input onChange={this.handleChange} name="showFreeSpace" type="checkbox" defaultChecked={this.configStore.showFreeSpace}/>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} name="showFreeSpace" type="checkbox" defaultChecked={this.configStore.showFreeSpace}/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('hideSeedStatusItem')}</span>
-          <input onChange={this.handleChange} name="hideSeedingTorrents" type="checkbox" defaultChecked={this.configStore.hideSeedingTorrents}/>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} name="hideSeedingTorrents" type="checkbox" defaultChecked={this.configStore.hideSeedingTorrents}/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('hideFinishStatusItem')}</span>
-          <input onChange={this.handleChange} name="hideFinishedTorrents" type="checkbox" defaultChecked={this.configStore.hideFinishedTorrents}/>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} name="hideFinishedTorrents" type="checkbox" defaultChecked={this.configStore.hideFinishedTorrents}/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('showSpeedGraph')}</span>
-          <input onChange={this.handleChange} name="showSpeedGraph" type="checkbox" defaultChecked={this.configStore.showSpeedGraph}/>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} name="showSpeedGraph" type="checkbox" defaultChecked={this.configStore.showSpeedGraph}/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('popupUpdateInterval')}</span>
@@ -341,11 +357,17 @@ class NotifyOptions extends OptionsPage {
         <h2>{chrome.i18n.getMessage('optNotify')}</h2>
         <label>
           <span>{chrome.i18n.getMessage('showNotificationOnDownloadComplete')}</span>
-          <input defaultChecked={this.configStore.showDownloadCompleteNotifications} onChange={this.handleChange} type="checkbox" name="showDownloadCompleteNotifications"/>
+          <span className="toggle-switch">
+            <input defaultChecked={this.configStore.showDownloadCompleteNotifications} onChange={this.handleChange} type="checkbox" name="showDownloadCompleteNotifications"/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('displayActiveTorrentCountIcon')}</span>
-          <input defaultChecked={this.configStore.showActiveCountBadge} onChange={this.handleChange} type="checkbox" name="showActiveCountBadge"/>
+          <span className="toggle-switch">
+            <input defaultChecked={this.configStore.showActiveCountBadge} onChange={this.handleChange} type="checkbox" name="showActiveCountBadge"/>
+            <span className="toggle-slider"></span>
+          </span>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('badgeColor')}</span>
@@ -377,11 +399,7 @@ class CtxOptions extends OptionsPage {
     return (
       <div className="page ctx">
         <h2>{chrome.i18n.getMessage('optCtx')}</h2>
-        <label>
-          <span>{chrome.i18n.getMessage('selectDownloadCategoryOnAddItemFromContextMenu')}</span>
-          <input onChange={this.handleChange} defaultChecked={this.configStore.selectDownloadCategoryAfterPutTorrentFromContextMenu} type="checkbox" name="selectDownloadCategoryAfterPutTorrentFromContextMenu"/>
-        </label>
-        <CtxOptionsDirs/>
+        <CtxOptionsDirs configStore={this.configStore} handleChange={this.handleChange}/>
       </div>
     );
   }
@@ -440,177 +458,133 @@ class CtxOptionsDirs extends OptionsPage {
     });
 
     return (
-      <>
+      <div ref={this.bodyRef} className="dir-manager">
         <h3>{chrome.i18n.getMessage('dirList')}</h3>
-        <div ref={this.bodyRef}>
-          <label>
-            <span>{chrome.i18n.getMessage('treeViewContextMenu')}</span>
-            <input onChange={this.handleChange} defaultChecked={this.configStore.treeViewContextMenu} type="checkbox" name="treeViewContextMenu"/>
-          </label>
-          <label>
-            <span>{chrome.i18n.getMessage('showDefaultFolderContextMenuItem')}</span>
-            <input onChange={this.handleChange} defaultChecked={this.configStore.putDefaultPathInContextMenu} type="checkbox" name="putDefaultPathInContextMenu"/>
-          </label>
-          <div className="optionItem">
-            <form onSubmit={this.handleSubmit} autoComplete="off">
-              <span>{chrome.i18n.getMessage('addItem')}</span>:
-              <div className="optionItem">
-                <span>{chrome.i18n.getMessage('subPath')}</span>
-                {' '}
-                <input name="path" type="text" required={true}/>
-              </div>
-              <div className="optionItem">
-                <span>{chrome.i18n.getMessage('shortName')}</span>
-                {' '}
-                <input name="name" type="text"/>
-                {' '}
-                <button type="submit">{chrome.i18n.getMessage('add')}</button>
-              </div>
-            </form>
+        <p className="section-hint">{chrome.i18n.getMessage('dirListHint')}</p>
+        <form onSubmit={this.handleSubmit} autoComplete="off" className="dir-form">
+          <div className="dir-form-row">
+            <input name="path" type="text" required={true} placeholder={chrome.i18n.getMessage('subPath')}/>
+            <input name="name" type="text" placeholder={chrome.i18n.getMessage('shortName')}/>
+            <button type="submit">{chrome.i18n.getMessage('add')}</button>
           </div>
-          <div className="optionItem">
-            <select ref={this.refDirectorySelect} id="folderList" multiple>
-              {directories}
-            </select>
-          </div>
-          <div className="optionItem">
-            <button type="button" onClick={this.handleRemove}>{chrome.i18n.getMessage('deleteSelected')}</button>
-            {' '}
-            <button type="button" onClick={this.handleMoveUp}>{chrome.i18n.getMessage('up')}</button>
-            {' '}
-            <button type="button" onClick={this.handleMoveDown}>{chrome.i18n.getMessage('down')}</button>
+        </form>
+        <div className="dir-list-container">
+          <select ref={this.refDirectorySelect} id="folderList" multiple>
+            {directories}
+          </select>
+          <div className="dir-list-actions">
+            <button type="button" onClick={this.handleMoveUp} title={chrome.i18n.getMessage('up')}>▲</button>
+            <button type="button" onClick={this.handleMoveDown} title={chrome.i18n.getMessage('down')}>▼</button>
+            <button type="button" onClick={this.handleRemove} title={chrome.i18n.getMessage('deleteSelected')}>✕</button>
           </div>
         </div>
-      </>
-    );
-  }
-}
-
-class BackupOptions extends React.PureComponent {
-  state = {
-    state: 'idle', // idle, pending, done, error
-    saveState: 'idle', // idle, pending, done, error
-    storage: null
-  };
-
-  componentDidMount() {
-    this.handleUpdate();
-  }
-
-  handleUpdate = (e) => {
-    e && e.preventDefault();
-
-    this.setState({
-      state: 'pending',
-    });
-    storageGet().then((storage) => {
-      if (!this.refPage.current) return;
-      this.setState({
-        state: 'done',
-        storage: JSON.stringify(storage)
-      });
-    }, (err) => {
-      if (!this.refPage.current) return;
-      this.setState({
-        state: 'error',
-        storage: ''
-      });
-    });
-  };
-
-  refPage = React.createRef();
-
-  handleSaveInCloud = (e) => {
-    e.preventDefault();
-
-    this.setState({
-      saveState: 'pending'
-    });
-    storageSet({
-      backup: this.refData.current.value
-    }, 'sync').then(() => {
-      if (!this.refPage.current) return;
-      this.setState({
-        saveState: 'done'
-      });
-    }, (err) => {
-      logger.error('handleSaveInCloud error', err);
-      if (!this.refPage.current) return;
-      this.setState({
-        saveState: 'error'
-      });
-    });
-  };
-
-  refData = React.createRef();
-
-  render() {
-    let data = null;
-    if (this.state.state === 'done') {
-      data = (
-        <textarea ref={this.refData} defaultValue={this.state.storage}/>
-      );
-    } else {
-      data = (
-        `Loading: ${this.state.state}`
-      );
-    }
-
-    let saveToCloudDisabled = this.state.state !== 'done';
-    let saveToCloudText = chrome.i18n.getMessage('optSaveInCloud');
-    if (this.state.saveState === 'pending') {
-      saveToCloudDisabled = true;
-    } else
-    if (this.state.saveState === 'error') {
-      saveToCloudText = chrome.i18n.getMessage('OV_FL_ERROR');
-    }
-
-    return (
-      <div ref={this.refPage} className="page backup">
-        <h2>{chrome.i18n.getMessage('backup')}</h2>
-        <form onSubmit={this.handleSaveInCloud}>
-          <div className="btnList">
-            <input onClick={this.handleUpdate} type="button" value={chrome.i18n.getMessage('update')}/>
-            {' '}
-            <input disabled={saveToCloudDisabled} value={saveToCloudText} type="submit"/>
-          </div>
-          {data}
-        </form>
+        <h3>{chrome.i18n.getMessage('options')}</h3>
+        <label>
+          <span>{chrome.i18n.getMessage('treeViewContextMenu')}</span>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} defaultChecked={this.configStore.treeViewContextMenu} type="checkbox" name="treeViewContextMenu"/>
+            <span className="toggle-slider"></span>
+          </span>
+        </label>
+        <label>
+          <span>{chrome.i18n.getMessage('showDefaultFolderContextMenuItem')}</span>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} defaultChecked={this.configStore.putDefaultPathInContextMenu} type="checkbox" name="putDefaultPathInContextMenu"/>
+            <span className="toggle-slider"></span>
+          </span>
+        </label>
+        <label>
+          <span>{chrome.i18n.getMessage('selectDownloadCategoryOnAddItemFromContextMenu')}</span>
+          <span className="toggle-switch">
+            <input onChange={this.handleChange} defaultChecked={this.configStore.selectDownloadCategoryAfterPutTorrentFromContextMenu} type="checkbox" name="selectDownloadCategoryAfterPutTorrentFromContextMenu"/>
+            <span className="toggle-slider"></span>
+          </span>
+        </label>
       </div>
     );
   }
 }
 
-class RestoreOptions extends React.PureComponent {
+class BackupRestoreOptions extends React.PureComponent {
   state = {
-    cloudData: null,
+    loadState: 'idle', // idle, pending, done, error
+    saveState: 'idle', // idle, pending, done, error
+    restoreState: 'idle', // idle, pending, done, error
     hasCloudData: false,
-    data: ''
+    storage: null
   };
 
   componentDidMount() {
+    this.handleLoadConfig();
     this.checkCloudData();
   }
 
   checkCloudData() {
-    storageGet({
-      backup: ''
-    }, 'sync').then((storage) => {
+    storageGet({backup: ''}, 'sync').then((storage) => {
       if (!this.refPage.current) return;
-      this.setState({
-        hasCloudData: !!storage.backup
-      });
+      this.setState({hasCloudData: !!storage.backup});
     }, (err) => {
       logger.error('checkCloudData error', err);
+    });
+  }
+
+  handleLoadConfig = (e) => {
+    e && e.preventDefault();
+    this.setState({loadState: 'pending'});
+    storageGet().then((storage) => {
       if (!this.refPage.current) return;
       this.setState({
-        hasCloudData: false
+        loadState: 'done',
+        storage: JSON.stringify(storage, null, 2)
       });
+    }, (err) => {
+      if (!this.refPage.current) return;
+      this.setState({loadState: 'error', storage: ''});
+    });
+  };
+
+  handleSaveToCloud = (e) => {
+    e.preventDefault();
+    this.setState({saveState: 'pending'});
+    storageSet({backup: this.refData.current.value}, 'sync').then(() => {
+      if (!this.refPage.current) return;
+      this.setState({saveState: 'done', hasCloudData: true});
+      setTimeout(() => {
+        if (!this.refPage.current) return;
+        this.setState({saveState: 'idle'});
+      }, 2000);
+    }, (err) => {
+      logger.error('handleSaveToCloud error', err);
+      if (!this.refPage.current) return;
+      this.setState({saveState: 'error'});
+    });
+  };
+
+  handleLoadFromCloud = (e) => {
+    e.preventDefault();
+    storageGet({backup: ''}, 'sync').then((storage) => {
+      if (!this.refPage.current) return;
+      if (storage.backup) {
+        this.refData.current.value = storage.backup;
+      }
+    }, (err) => {
+      logger.error('handleLoadFromCloud error', err);
+    });
+  };
+
+  handleClearCloud = (e) => {
+    e.preventDefault();
+    storageRemove(['backup'], 'sync').then(() => {
+      if (!this.refPage.current) return;
+      this.setState({hasCloudData: false});
+    }, (err) => {
+      logger.error('handleClearCloud error', err);
     });
   };
 
   handleRestore = (e) => {
     e.preventDefault();
+    this.setState({restoreState: 'pending'});
     Promise.resolve().then(() => {
       const config = Object.assign({configVersion: 1}, JSON.parse(this.refData.current.value));
       if (config.configVersion !== 2) {
@@ -618,31 +592,17 @@ class RestoreOptions extends React.PureComponent {
         migrateConfig(config, config);
       }
       return storageSet(config);
+    }).then(() => {
+      if (!this.refPage.current) return;
+      this.setState({restoreState: 'done'});
+      setTimeout(() => {
+        if (!this.refPage.current) return;
+        this.setState({restoreState: 'idle'});
+      }, 2000);
     }).catch((err) => {
       logger.error('handleRestore error', err);
-    });
-  };
-
-  handleGetBackup = (e) => {
-    e.preventDefault();
-    storageGet({
-      backup: ''
-    }, 'sync').then((storage) => {
       if (!this.refPage.current) return;
-      this.refData.current.value = storage.backup;
-    }, (err) => {
-      logger.error('handleGetBackup error', err);
-    });
-  };
-
-  handleClearCloud = (e) => {
-    e.preventDefault();
-    storageRemove(['backup'], 'sync').then(() => {
-      this.setState({
-        hasCloudData: false
-      });
-    }, (err) => {
-      logger.error('handleClearCloud error', err);
+      this.setState({restoreState: 'error'});
     });
   };
 
@@ -650,19 +610,53 @@ class RestoreOptions extends React.PureComponent {
   refData = React.createRef();
 
   render() {
+    const {loadState, saveState, restoreState, hasCloudData, storage} = this.state;
+
     return (
-      <div ref={this.refPage} className="page restore">
-        <h2>{chrome.i18n.getMessage('restore')}</h2>
-        <form onSubmit={this.handleRestore}>
-          <div className="btnList">
-            <input type="submit" value={chrome.i18n.getMessage('toRestore')}/>
-            {' '}
-            <input disabled={this.state.hasCloudData === false} onClick={this.handleGetBackup} type="button" value={chrome.i18n.getMessage('optGetFromCloud')}/>
-            {' '}
-            <input disabled={this.state.hasCloudData === false} onClick={this.handleClearCloud} type="button" value={chrome.i18n.getMessage('optClearCloudStorage')}/>
+      <div ref={this.refPage} className="page backup-restore">
+        <h2>{chrome.i18n.getMessage('backupRestore')}</h2>
+
+        <div className="backup-section">
+          <h3>{chrome.i18n.getMessage('backup')}</h3>
+          <p className="section-hint">{chrome.i18n.getMessage('backupHint')}</p>
+          <div className="backup-actions">
+            <button type="button" onClick={this.handleLoadConfig} disabled={loadState === 'pending'}>
+              {loadState === 'pending' ? '...' : chrome.i18n.getMessage('loadCurrentConfig')}
+            </button>
+            <button type="button" onClick={this.handleSaveToCloud} disabled={loadState !== 'done' || saveState === 'pending'}>
+              {saveState === 'pending' ? '...' : saveState === 'done' ? '✓' : chrome.i18n.getMessage('optSaveInCloud')}
+            </button>
           </div>
-          <textarea ref={this.refData} defaultValue={this.state.data} required={true}/>
-        </form>
+        </div>
+
+        <div className="backup-section">
+          <h3>{chrome.i18n.getMessage('configData')}</h3>
+          {loadState === 'done' ? (
+            <textarea ref={this.refData} defaultValue={storage}/>
+          ) : loadState === 'pending' ? (
+            <div className="loading-inline"></div>
+          ) : loadState === 'error' ? (
+            <p className="red">{chrome.i18n.getMessage('OV_FL_ERROR')}</p>
+          ) : (
+            <p className="section-hint">{chrome.i18n.getMessage('clickLoadConfig')}</p>
+          )}
+        </div>
+
+        <div className="backup-section">
+          <h3>{chrome.i18n.getMessage('restore')}</h3>
+          <p className="section-hint">{chrome.i18n.getMessage('restoreHint')}</p>
+          <div className="backup-actions">
+            <button type="button" onClick={this.handleRestore} disabled={loadState !== 'done' || restoreState === 'pending'}>
+              {restoreState === 'pending' ? '...' : restoreState === 'done' ? '✓' : chrome.i18n.getMessage('toRestore')}
+            </button>
+            <button type="button" onClick={this.handleLoadFromCloud} disabled={!hasCloudData}>
+              {chrome.i18n.getMessage('optGetFromCloud')}
+            </button>
+            <button type="button" onClick={this.handleClearCloud} disabled={!hasCloudData}>
+              {chrome.i18n.getMessage('optClearCloudStorage')}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

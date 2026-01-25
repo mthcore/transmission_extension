@@ -84,22 +84,17 @@ class Footer extends React.PureComponent {
     }
 
     return (
-      <table className="status-panel" width="100%" border="0" cellSpacing="0" cellPadding="0">
-        <tfoot>
-        <tr>
-          <td className="status">
-            <div>{this.rootStore.client.lastErrorMessage}</div>
-          </td>
-          {spaceWatcher}
-          <SpeedContextMenu type="download">
-            <td className="speed download">{downloadSpeedStr}{downloadLimit}</td>
-          </SpeedContextMenu>
-          <SpeedContextMenu type="upload">
-            <td className="speed upload">{uploadSpeedStr}{uploadLimit}{openInTab}</td>
-          </SpeedContextMenu>
-        </tr>
-        </tfoot>
-      </table>
+      <div className="status-panel">
+        {spaceWatcher}
+        <SpeedContextMenu type="download">
+          <span className="speed download">{downloadSpeedStr}{downloadLimit}</span>
+        </SpeedContextMenu>
+        <SpeedContextMenu type="upload">
+          <span className="speed upload">{uploadSpeedStr}{uploadLimit}</span>
+        </SpeedContextMenu>
+        <span className="status">{this.rootStore.client.lastErrorMessage}</span>
+        {openInTab}
+      </div>
     );
   }
 }

@@ -29,15 +29,14 @@ div.btn.setup {
   display: inline-block;
   width: 16px;
   height: 16px;
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: pointer;
-  float: right;
-  margin-right: 4px;
   background-image: url(../img/openInTab.svg);
   background-size: 16px;
+  background-repeat: no-repeat;
   transition: opacity $transition-base;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 1;
   }
 }

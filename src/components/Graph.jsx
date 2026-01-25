@@ -85,10 +85,10 @@ class Graph extends React.PureComponent {
     uploadPath.style.transition = 'd 0.5s ease-out';
     this.uploadPath = uploadPath;
 
-    // Create download path (blue)
+    // Create download path (grey)
     const downloadPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     downloadPath.setAttribute('fill', 'none');
-    downloadPath.setAttribute('stroke', '#3687ED');
+    downloadPath.setAttribute('stroke', '#6b7280');
     downloadPath.setAttribute('stroke-width', '1.5');
     downloadPath.setAttribute('stroke-linejoin', 'round');
     downloadPath.setAttribute('stroke-linecap', 'round');

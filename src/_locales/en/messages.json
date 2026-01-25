@@ -359,6 +359,24 @@
     "restore": {
         "message": "Restore"
     },
+    "backupRestore": {
+        "message": "Backup & Restore"
+    },
+    "backupHint": {
+        "message": "Export your current settings to save or sync to cloud"
+    },
+    "restoreHint": {
+        "message": "Import settings from a previous backup or from cloud"
+    },
+    "loadCurrentConfig": {
+        "message": "Load current config"
+    },
+    "configData": {
+        "message": "Configuration data"
+    },
+    "clickLoadConfig": {
+        "message": "Click \"Load current config\" to view your settings"
+    },
     "useSSL": {
         "message": "Use SSL"
     },
@@ -412,13 +430,25 @@
         "message": "Open \"Downloading\" category when adding a torrent"
     },
     "treeViewContextMenu": {
-        "message": "Tree view context menu"
+        "message": "Group folders as tree"
+    },
+    "treeViewContextMenuHint": {
+        "message": "Organize folders hierarchically instead of flat list"
     },
     "showDefaultFolderContextMenuItem": {
-        "message": "Show default directory"
+        "message": "Show \"Default path\" option"
+    },
+    "showDefaultFolderContextMenuItemHint": {
+        "message": "Add option to download to Transmission's default directory"
     },
     "dirList": {
-        "message": "List of directories"
+        "message": "Download directories"
+    },
+    "dirListHint": {
+        "message": "Right-click a torrent link to choose destination"
+    },
+    "options": {
+        "message": "Options"
     },
     "subPath": {
         "message": "Sub-path"
@@ -499,7 +529,7 @@
         "message": "Authentication is required"
     },
     "badgeColor": {
-        "message": "Notification color"
+        "message": "Icon badge color"
     },
     "magnetUri": {
         "message": "Magnet-URI"

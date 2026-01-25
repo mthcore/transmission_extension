@@ -8,63 +8,64 @@
 .status-panel {
   border-top: 1px solid $border-color;
   background: $card-bg;
-  padding: 6px 12px;
+  padding: 4px 10px;
   font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 28px;
 
-  td {
-    &.status {
-      width: 34%;
+  .space {
+    padding-left: 18px;
+    background-repeat: no-repeat;
+    background-position: 0 center;
+    background-size: 14px;
+    color: $text-secondary;
+    cursor: pointer;
+    white-space: nowrap;
 
-      div {
-        @include text-ellipsis;
-        max-width: 250px;
-      }
+    &.disk {
+      background-image: url(../img/free_space.svg);
     }
+  }
 
-    &.space {
-      padding-left: 20px;
-      background-repeat: no-repeat;
-      background-position: 0 center;
-      width: 15%;
-      @include text-ellipsis;
-      cursor: pointer;
-      max-width: 160px;
-      color: $text-secondary;
+  .speed {
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    background-repeat: no-repeat;
+    background-position: 0 center;
+    background-size: 12px;
+    white-space: nowrap;
+  }
 
-      &.disk {
-        background-image: url(../img/free_space.svg);
-        background-size: 16px;
-      }
-    }
+  .download {
+    background-image: url(../img/arrowDown.svg);
+    color: $text-secondary;
+  }
 
-    &.speed {
-      width: 25%;
-      padding-left: 16px;
-      background-repeat: no-repeat;
-      background-position: 0 center;
-    }
+  .upload {
+    background-image: url(../img/arrowUp.svg);
+    color: $text-secondary;
+  }
 
-    &.download {
-      background-image: url(../img/arrowDown.svg);
-      background-position: left center;
-      background-size: 13px;
-      color: $progress-download;
-    }
+  .status {
+    flex: 1;
+    min-width: 0;
+    @include text-ellipsis;
+    color: $text-secondary;
+  }
 
-    &.upload {
-      background-image: url(../img/arrowUp.svg);
-      background-position: 0 center;
-      background-size: 13px;
-      color: $success-color;
-    }
+  .openInTab {
+    flex-shrink: 0;
   }
 }
 
 // Speed limit badges
 .speed .limit {
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin: 0 4px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  margin-left: 4px;
   cursor: pointer;
   color: #fff;
   font-size: $font-size-xs;

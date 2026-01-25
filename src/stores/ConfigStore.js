@@ -4,35 +4,33 @@ import storageSet from "../tools/storageSet";
 const url = require('url');
 
 const defaultTorrentListColumnList = [
-  {column: 'checkbox', display: 1, order: 0, width: 24, lang: 'selectAll'},
-  {column: 'name', display: 1, order: 1, width: 200, lang: 'OV_COL_NAME'},
+  {column: 'checkbox', display: 1, order: 0, width: 16, lang: 'selectAll'},
+  {column: 'name', display: 1, order: 1, width: 238, lang: 'OV_COL_NAME'},
   {column: 'order', display: 0, order: 1, width: 30, lang: 'OV_COL_ORDER'},
-  {column: 'size', display: 1, order: 1, width: 75, lang: 'OV_COL_SIZE'},
-  {column: 'remaining', display: 0, order: 1, width: 75, lang: 'OV_COL_REMAINING'},
-  {column: 'done', display: 1, order: 1, width: 80, lang: 'OV_COL_DONE'},
-  {column: 'status', display: 1, order: 1, width: 90, lang: 'OV_COL_STATUS'},
+  {column: 'remaining', display: 0, order: 1, width: 80, lang: 'OV_COL_REMAINING'},
+  {column: 'done', display: 1, order: 1, width: 41, lang: 'OV_COL_DONE'},
+  {column: 'status', display: 1, order: 1, width: 66, lang: 'OV_COL_STATUS'},
+  {column: 'size', display: 1, order: 1, width: 38, lang: 'OV_COL_SIZE'},
   {column: 'seeds', display: 0, order: 1, width: 40, lang: 'OV_COL_SEEDS'},
   {column: 'peers', display: 0, order: 1, width: 40, lang: 'OV_COL_PEERS'},
   {column: 'seeds_peers', display: 0, order: 1, width: 50, lang: 'OV_COL_SEEDS_PEERS'},
-  {column: 'downspd', display: 1, order: 1, width: 75, lang: 'OV_COL_DOWNSPD'},
-  {column: 'upspd', display: 0, order: 1, width: 75, lang: 'OV_COL_UPSPD'},
-  {column: 'eta', display: 0, order: 1, width: 55, lang: 'OV_COL_ETA'},
-  {column: 'upped', display: 0, order: 1, width: 75, lang: 'OV_COL_UPPED'},
-  {column: 'downloaded', display: 0, order: 1, width: 75, lang: 'OV_COL_DOWNLOADED'},
-  {column: 'shared', display: 0, order: 1, width: 60, lang: 'OV_COL_SHARED'},
-  // {column: 'avail', display: 0, order: 1, width: 60, lang: 'OV_COL_AVAIL'},
-  // {column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL'},
-  {column: 'added', display: 0, order: 1, width: 130, lang: 'OV_COL_DATE_ADDED'},
-  {column: 'completed', display: 0, order: 1, width: 130, lang: 'OV_COL_DATE_COMPLETED'},
-  {column: 'actions', display: 1, order: 0, width: 46, lang: 'Actions'}
+  {column: 'downspd', display: 0, order: 1, width: 80, lang: 'OV_COL_DOWNSPD'},
+  {column: 'upspd', display: 0, order: 1, width: 80, lang: 'OV_COL_UPSPD'},
+  {column: 'eta', display: 0, order: 1, width: 60, lang: 'OV_COL_ETA'},
+  {column: 'upped', display: 0, order: 1, width: 80, lang: 'OV_COL_UPPED'},
+  {column: 'downloaded', display: 0, order: 1, width: 80, lang: 'OV_COL_DOWNLOADED'},
+  {column: 'shared', display: 0, order: 1, width: 70, lang: 'OV_COL_SHARED'},
+  {column: 'added', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_ADDED'},
+  {column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED'},
+  {column: 'actions', display: 1, order: 0, width: 31, lang: 'Actions'}
 ];
 
 const defaultFileListColumnList = [
-  {column: 'checkbox', display: 1, order: 0, width: 24, lang: 'selectAll'},
-  {column: 'name', display: 1, order: 1, width: 380, lang: 'FI_COL_NAME'},
-  {column: 'size', display: 1, order: 1, width: 90, lang: 'FI_COL_SIZE'},
-  {column: 'downloaded', display: 1, order: 1, width: 90, lang: 'OV_COL_DOWNLOADED'},
+  {column: 'checkbox', display: 1, order: 0, width: 33, lang: 'selectAll'},
+  {column: 'size', display: 1, order: 1, width: 62, lang: 'FI_COL_SIZE'},
+  {column: 'downloaded', display: 1, order: 1, width: 101, lang: 'OV_COL_DOWNLOADED'},
   {column: 'done', display: 1, order: 1, width: 100, lang: 'OV_COL_DONE'},
+  {column: 'name', display: 1, order: 1, width: 342, lang: 'FI_COL_NAME'},
   {column: 'prio', display: 1, order: 1, width: 100, lang: 'FI_COL_PRIO'}
 ];
 
@@ -154,7 +152,7 @@ const SelectedLabelStore = types.model('SelectedLabelStore', {
  */
 const ConfigStore = types.model('ConfigStore', {
   hostname: types.optional(types.string, ''),
-  ssl: types.optional(types.boolean, false),
+  ssl: types.optional(types.boolean, true),
   port: types.optional(types.number, 9091),
   pathname: types.optional(types.string, '/transmission/rpc'),
   webPathname: types.optional(types.string, ''),
@@ -173,8 +171,8 @@ const ConfigStore = types.model('ConfigStore', {
   showSpeedGraph: types.optional(types.boolean, true),
 
   selectDownloadCategoryAfterPutTorrentFromContextMenu: types.optional(types.boolean, false),
-  treeViewContextMenu: types.optional(types.boolean, false),
-  putDefaultPathInContextMenu: types.optional(types.boolean, false),
+  treeViewContextMenu: types.optional(types.boolean, true),
+  putDefaultPathInContextMenu: types.optional(types.boolean, true),
 
   badgeColor: types.optional(types.string, '0,0,0,0.40'),
 
@@ -188,12 +186,12 @@ const ConfigStore = types.model('ConfigStore', {
   torrentsSort: types.optional(types.model({
     by: types.string,
     direction: types.optional(types.number, 1)
-  }), {by: 'name'}),
+  }), {by: 'done'}),
 
   filesSort: types.optional(types.model({
     by: types.string,
     direction: types.optional(types.number, 1)
-  }), {by: 'name'}),
+  }), {by: 'size'}),
 
   selectedLabel: types.optional(SelectedLabelStore, {label: 'ALL', custom: true}),
 

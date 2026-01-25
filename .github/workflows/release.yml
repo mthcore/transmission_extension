@@ -8,10 +8,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -46,7 +52,25 @@ jobs:
           cd dist/opera
           zip -r ../../transmission-opera-${{ github.ref_name }}.zip .
 
-      - name: Create Release
+      - name: Upload Chrome artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: transmission-chrome-${{ github.ref_name }}.zip
+
+      - name: Upload Firefox artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox-extension
+          path: transmission-firefox-${{ github.ref_name }}.zip
+
+      - name: Upload Opera artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: opera-extension
+          path: transmission-opera-${{ github.ref_name }}.zip
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -56,3 +80,66 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Deploy to Chrome Web Store
+  deploy-chrome:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_CHROME == 'true' }}
+
+    steps:
+      - name: Download Chrome artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: chrome-extension
+
+      - name: Upload to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          file-path: transmission-chrome-${{ github.ref_name }}.zip
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          publish: true
+
+  # Deploy to Firefox Add-ons (AMO)
+  deploy-firefox:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_FIREFOX == 'true' }}
+
+    steps:
+      - name: Download Firefox artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: firefox-extension
+
+      - name: Upload to Firefox Add-ons
+        uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid: ${{ secrets.FIREFOX_ADDON_GUID }}
+          xpi-path: transmission-firefox-${{ github.ref_name }}.zip
+          jwt-issuer: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_JWT_SECRET }}
+
+  # Deploy to Edge Add-ons
+  deploy-edge:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_EDGE == 'true' }}
+
+    steps:
+      - name: Download Chrome artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: chrome-extension
+
+      - name: Upload to Edge Add-ons
+        uses: aspect-labs/edge-addon-action@v1
+        with:
+          product-id: ${{ secrets.EDGE_PRODUCT_ID }}
+          client-id: ${{ secrets.EDGE_CLIENT_ID }}
+          client-secret: ${{ secrets.EDGE_CLIENT_SECRET }}
+          access-token-url: ${{ secrets.EDGE_ACCESS_TOKEN_URL }}
+          zip-path: transmission-chrome-${{ github.ref_name }}.zip

@@ -347,6 +347,24 @@
     "restore": {
         "message": "恢复"
     },
+    "backupRestore": {
+        "message": "备份与恢复"
+    },
+    "backupHint": {
+        "message": "导出当前设置以保存或同步到云端"
+    },
+    "restoreHint": {
+        "message": "从之前的备份或云端导入设置"
+    },
+    "loadCurrentConfig": {
+        "message": "加载当前配置"
+    },
+    "configData": {
+        "message": "配置数据"
+    },
+    "clickLoadConfig": {
+        "message": "点击\"加载当前配置\"查看您的设置"
+    },
     "useSSL": {
         "message": "使用 SSL"
     },
@@ -487,7 +505,7 @@
         "message": "需要进行身份验证"
     },
     "badgeColor": {
-        "message": "通知的颜色"
+        "message": "图标徽章颜色"
     },
     "magnetUri": {
         "message": "Magnet-URI"

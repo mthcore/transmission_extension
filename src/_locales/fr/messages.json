@@ -350,10 +350,28 @@
         "message": "Menu contextuel"
     },
     "backup": {
-        "message": "Backup"
+        "message": "Sauvegarde"
     },
     "restore": {
         "message": "Restauration"
+    },
+    "backupRestore": {
+        "message": "Sauvegarde & Restauration"
+    },
+    "backupHint": {
+        "message": "Exportez vos paramètres actuels pour les sauvegarder ou les synchroniser dans le cloud"
+    },
+    "restoreHint": {
+        "message": "Importez les paramètres d'une sauvegarde précédente ou depuis le cloud"
+    },
+    "loadCurrentConfig": {
+        "message": "Charger la config actuelle"
+    },
+    "configData": {
+        "message": "Données de configuration"
+    },
+    "clickLoadConfig": {
+        "message": "Cliquez sur \"Charger la config actuelle\" pour voir vos paramètres"
     },
     "useSSL": {
         "message": "Utiliser SSL"
@@ -408,13 +426,25 @@
         "message": "Ouvrir catégorie \"Téléchargement\" lors de l'ajout d'un torrent"
     },
     "treeViewContextMenu": {
-        "message": "Menu contextuel Treeview"
+        "message": "Grouper les dossiers en arborescence"
+    },
+    "treeViewContextMenuHint": {
+        "message": "Organise les dossiers hiérarchiquement au lieu d'une liste plate"
     },
     "showDefaultFolderContextMenuItem": {
-        "message": "Montrer répertoire par défaut"
+        "message": "Afficher l'option \"Chemin par défaut\""
+    },
+    "showDefaultFolderContextMenuItemHint": {
+        "message": "Ajoute une option pour télécharger dans le dossier par défaut de Transmission"
     },
     "dirList": {
-        "message": "Liste des répertoires"
+        "message": "Dossiers de destination"
+    },
+    "dirListHint": {
+        "message": "Clic droit sur un lien torrent pour choisir la destination"
+    },
+    "options": {
+        "message": "Options"
     },
     "subPath": {
         "message": "Sub-path"
@@ -495,7 +525,7 @@
         "message": "Authentification requise"
     },
     "badgeColor": {
-        "message": "Couleur de notification"
+        "message": "Couleur de la pastille"
     },
     "magnetUri": {
         "message": "Magnet-URI"

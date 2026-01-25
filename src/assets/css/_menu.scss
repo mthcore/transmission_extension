@@ -90,7 +90,7 @@
     &.active {
       background-color: rgba($primary-color, 0.15);
       border-color: $primary-color;
-      filter: invert(39%) sepia(95%) saturate(1000%) hue-rotate(200deg);
+      filter: invert(45%) sepia(5%) saturate(500%) hue-rotate(180deg);
     }
   }
 }

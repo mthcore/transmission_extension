@@ -359,6 +359,24 @@
     "restore": {
         "message": "Restaurar"
     },
+    "backupRestore": {
+        "message": "Backup e Restauração"
+    },
+    "backupHint": {
+        "message": "Exporte suas configurações atuais para salvar ou sincronizar na nuvem"
+    },
+    "restoreHint": {
+        "message": "Importe configurações de um backup anterior ou da nuvem"
+    },
+    "loadCurrentConfig": {
+        "message": "Carregar config atual"
+    },
+    "configData": {
+        "message": "Dados de configuração"
+    },
+    "clickLoadConfig": {
+        "message": "Clique em \"Carregar config atual\" para ver suas configurações"
+    },
     "useSSL": {
         "message": "Usar SSL"
     },
@@ -499,7 +517,7 @@
         "message": "Autenticação necessária"
     },
     "badgeColor": {
-        "message": "Notificação de cor"
+        "message": "Cor do emblema"
     },
     "magnetUri": {
         "message": "Magnet-URI"
