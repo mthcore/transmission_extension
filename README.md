@@ -16,6 +16,9 @@ A browser extension that adds a Transmission WebUI directly in your web browser.
 - Notifications on download completion
 - Alternative speed limits (turtle mode)
 - Cloud settings sync
+- **Dark mode** with system preference detection
+- **Search/filter** torrents by name
+- **Keyboard shortcuts** for power users
 
 ## Supported Browsers
 
@@ -76,10 +79,34 @@ The built extension will be in the `./dist` folder.
 - **Popup**: Click the extension icon to view and manage torrents
 - **Context Menu**: Right-click on any torrent/magnet link to add it
 - **Drag & Drop**: Drag torrent files onto the popup
+- **Search**: Click the magnifying glass icon to filter torrents by name
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+| -------- | ------ |
+| `R` | Refresh torrent list |
+| `Ctrl+A` | Select/deselect all torrents |
+| `Ctrl+U` | Add torrent from URL |
+| `Delete` | Remove selected torrents |
+| `Enter` | Start/stop selected torrents |
+| `Escape` | Close dialogs or file list |
 
 ---
 
 ## Changelog
+
+### Version 3.1.0
+
+New features and UX improvements.
+
+- **Dark mode**: Theme selector (System/Light/Dark) in Options
+- **Search**: Filter torrents by name with expandable search box
+- **Keyboard shortcuts**: Power user shortcuts (R, Ctrl+A, Ctrl+U, Delete, Enter, Escape)
+- **Progress bar**: Dynamic text color (white on colored bar, dark on background)
+- Bug fixes for column menu display
+
+---
 
 ### Version 3.0.0
 
@@ -113,5 +140,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-- Original project by [Feverqwe]/Anton(https://github.com/Feverqwe)
-- Fork by [mthcore](https://github.com/mthcore/transmission_extension)
+- Original project by [Feverqwe](https://github.com/Feverqwe)
+- Fork maintained by [mthcore](https://github.com/mthcore)
