@@ -33,6 +33,20 @@ const Index = React.memo(() => {
     }
   }, [rootStore]);
 
+  // Set popup mode in config for column width separation (after config loads)
+  React.useEffect(() => {
+    const dispose = reaction(
+      () => rootStore.config,
+      (config) => {
+        if (config) {
+          config.setPopupMode(rootStore.isPopup);
+        }
+      },
+      {fireImmediately: true}
+    );
+    return () => dispose();
+  }, [rootStore]);
+
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e) => {

@@ -26,7 +26,7 @@ const TorrentColumnMenuContent = observer(() => {
 
   return (
     <ContextMenu.Content className="context-menu">
-      {rootStore.config.torrentColumns.map((column) => (
+      {rootStore.config.activeTorrentColumns.map((column) => (
         <ContextMenu.Item
           key={column.column}
           className="context-menu-item"

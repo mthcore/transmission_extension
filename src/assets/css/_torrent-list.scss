@@ -7,10 +7,34 @@
 
 .torrent-list-layer {
   position: relative;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
   flex-grow: 1;
   min-height: 20px;
   background: $card-bg;
+
+  table {
+    width: max-content;
+  }
+}
+
+// Full screen mode - table fills width, scroll when needed
+body:not(.popup) .torrent-list-layer table {
+  min-width: 100%;
+
+  // Keep checkbox fixed at 28px
+  th.checkbox, td.checkbox {
+    width: 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+  }
+
+  // Keep actions fixed at 52px
+  th.actions, td.actions {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+  }
 }
 
 div.torrent-list-layer table {
@@ -111,4 +135,21 @@ div.torrent-list-layer table td.actions div.btns > a.pause {
 
 div.torrent-list-layer table td.actions div.btns > a.stop {
   background-image: url('../img/stop.svg');
+}
+
+// Sticky actions column (fixed to right edge)
+div.torrent-list-layer table th.actions,
+div.torrent-list-layer table td.actions {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background-color: var(--card-bg);
+}
+
+div.torrent-list-layer table tr:nth-child(even) td.actions {
+  background-color: var(--bg-color);
+}
+
+div.torrent-list-layer table tr.selected td.actions {
+  background-color: var(--primary-color);
 }

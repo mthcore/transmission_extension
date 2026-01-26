@@ -5,12 +5,34 @@ const url = require('url');
 
 const defaultTorrentListColumnList = [
   {column: 'checkbox', display: 1, order: 0, width: 28, lang: 'selectAll'},
-  {column: 'name', display: 1, order: 1, width: 238, lang: 'OV_COL_NAME'},
+  {column: 'name', display: 1, order: 1, width: 519, lang: 'OV_COL_NAME'},
   {column: 'order', display: 0, order: 1, width: 30, lang: 'OV_COL_ORDER'},
   {column: 'remaining', display: 0, order: 1, width: 80, lang: 'OV_COL_REMAINING'},
-  {column: 'done', display: 1, order: 1, width: 41, lang: 'OV_COL_DONE'},
-  {column: 'status', display: 1, order: 1, width: 66, lang: 'OV_COL_STATUS'},
-  {column: 'size', display: 1, order: 1, width: 38, lang: 'OV_COL_SIZE'},
+  {column: 'done', display: 1, order: 1, width: 103, lang: 'OV_COL_DONE'},
+  {column: 'status', display: 1, order: 1, width: 94, lang: 'OV_COL_STATUS'},
+  {column: 'downspd', display: 1, order: 1, width: 54, lang: 'OV_COL_DOWNSPD'},
+  {column: 'upspd', display: 1, order: 1, width: 49, lang: 'OV_COL_UPSPD'},
+  {column: 'size', display: 1, order: 1, width: 52, lang: 'OV_COL_SIZE'},
+  {column: 'seeds', display: 0, order: 1, width: 40, lang: 'OV_COL_SEEDS'},
+  {column: 'peers', display: 0, order: 1, width: 40, lang: 'OV_COL_PEERS'},
+  {column: 'seeds_peers', display: 1, order: 1, width: 51, lang: 'OV_COL_SEEDS_PEERS'},
+  {column: 'eta', display: 1, order: 1, width: 26, lang: 'OV_COL_ETA'},
+  {column: 'upped', display: 1, order: 1, width: 80, lang: 'OV_COL_UPPED'},
+  {column: 'downloaded', display: 0, order: 1, width: 80, lang: 'OV_COL_DOWNLOADED'},
+  {column: 'shared', display: 1, order: 1, width: 91, lang: 'OV_COL_SHARED'},
+  {column: 'added', display: 1, order: 1, width: 94, lang: 'OV_COL_DATE_ADDED'},
+  {column: 'completed', display: 1, order: 1, width: 110, lang: 'OV_COL_DATE_COMPLETED'},
+  {column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions'}
+];
+
+const defaultTorrentListColumnListPopup = [
+  {column: 'checkbox', display: 1, order: 0, width: 28, lang: 'selectAll'},
+  {column: 'name', display: 1, order: 1, width: 423, lang: 'OV_COL_NAME'},
+  {column: 'order', display: 0, order: 1, width: 30, lang: 'OV_COL_ORDER'},
+  {column: 'remaining', display: 0, order: 1, width: 80, lang: 'OV_COL_REMAINING'},
+  {column: 'done', display: 1, order: 1, width: 93, lang: 'OV_COL_DONE'},
+  {column: 'status', display: 1, order: 1, width: 112, lang: 'OV_COL_STATUS'},
+  {column: 'size', display: 1, order: 1, width: 77, lang: 'OV_COL_SIZE'},
   {column: 'seeds', display: 0, order: 1, width: 40, lang: 'OV_COL_SEEDS'},
   {column: 'peers', display: 0, order: 1, width: 40, lang: 'OV_COL_PEERS'},
   {column: 'seeds_peers', display: 0, order: 1, width: 50, lang: 'OV_COL_SEEDS_PEERS'},
@@ -22,7 +44,7 @@ const defaultTorrentListColumnList = [
   {column: 'shared', display: 0, order: 1, width: 70, lang: 'OV_COL_SHARED'},
   {column: 'added', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_ADDED'},
   {column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED'},
-  {column: 'actions', display: 1, order: 0, width: 45, lang: 'Actions'}
+  {column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions'}
 ];
 
 const defaultFileListColumnList = [
@@ -183,7 +205,10 @@ const ConfigStore = types.model('ConfigStore', {
 
   folders: types.array(FolderStore),
 
+  isPopupMode: types.optional(types.boolean, false),
+
   torrentColumns: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnList),
+  torrentColumnsPopup: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnListPopup),
   filesColumns: types.optional(types.array(FilesColumnStore), defaultFileListColumnList),
 
   torrentsSort: types.optional(types.model({
@@ -204,6 +229,9 @@ const ConfigStore = types.model('ConfigStore', {
     setKeyValue(keyValue) {
       Object.assign(self, keyValue);
     },
+    setPopupMode(isPopup) {
+      self.isPopupMode = isPopup;
+    },
     addFolder(path, name = '') {
       self.folders.push({path, name});
       return storageSet({
@@ -214,20 +242,36 @@ const ConfigStore = types.model('ConfigStore', {
       return self.folders.some(folder => folder.path === path);
     },
     moveTorrentsColumn(from, to) {
-      const column = resolveIdentifier(TorrentsColumnStore, self, from);
-      const columnTarget = resolveIdentifier(TorrentsColumnStore, self, to);
+      const sourceColumns = self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
+      const column = sourceColumns.find(c => c.column === from);
+      const columnTarget = sourceColumns.find(c => c.column === to);
 
-      const columns = moveColumn(self.torrentColumns.slice(0), column, columnTarget);
+      if (!column || !columnTarget) return;
 
-      self.torrentColumns = columns;
-      return storageSet({
-        torrentColumns: columns
-      });
+      const columns = moveColumn(sourceColumns.slice(0), column, columnTarget);
+
+      if (self.isPopupMode) {
+        self.torrentColumnsPopup = columns;
+        return storageSet({
+          torrentColumnsPopup: columns
+        });
+      } else {
+        self.torrentColumns = columns;
+        return storageSet({
+          torrentColumns: columns
+        });
+      }
     },
     saveTorrentsColumns() {
-      return storageSet({
-        torrentColumns: self.torrentColumns,
-      });
+      if (self.isPopupMode) {
+        return storageSet({
+          torrentColumnsPopup: self.torrentColumnsPopup,
+        });
+      } else {
+        return storageSet({
+          torrentColumns: self.torrentColumns,
+        });
+      }
     },
     moveFilesColumn(from, to) {
       const column = resolveIdentifier(FilesColumnStore, self, from);
@@ -321,8 +365,11 @@ const ConfigStore = types.model('ConfigStore', {
       }
       return url.format(urlObject);
     },
+    get activeTorrentColumns() {
+      return self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
+    },
     get visibleTorrentColumns() {
-      return self.torrentColumns.filter(column => column.display);
+      return self.activeTorrentColumns.filter(column => column.display);
     },
     get visibleFileColumns() {
       return self.filesColumns.filter(column => column.display);
