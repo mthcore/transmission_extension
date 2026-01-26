@@ -3,16 +3,6 @@ import PropTypes from "prop-types";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
 class TableHeadColumn extends React.Component {
-  static propTypes = {
-    column: PropTypes.object.isRequired,
-    isSorted: PropTypes.bool.isRequired,
-    sortDirection: PropTypes.number.isRequired,
-    onMoveColumn: PropTypes.func.isRequired,
-    onSort: PropTypes.func.isRequired,
-    onSaveColumns: PropTypes.func.isRequired,
-    withStyle: PropTypes.bool,
-  };
-
   static contextType = RootStoreCtx;
 
   /**@return {RootStore}*/
@@ -116,5 +106,15 @@ class TableHeadColumn extends React.Component {
     this.props.onSort(this.props.column.column, direction);
   };
 }
+
+TableHeadColumn.propTypes = {
+  column: PropTypes.object.isRequired,
+  isSorted: PropTypes.bool.isRequired,
+  sortDirection: PropTypes.number.isRequired,
+  onMoveColumn: PropTypes.func.isRequired,
+  onSort: PropTypes.func.isRequired,
+  onSaveColumns: PropTypes.func.isRequired,
+  withStyle: PropTypes.bool,
+};
 
 export default TableHeadColumn;

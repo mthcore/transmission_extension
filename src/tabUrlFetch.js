@@ -2,7 +2,6 @@ import "whatwg-fetch";
 import arrayBufferToBase64 from "./tools/arrayBufferToBase64";
 import getLogger from "./tools/getLogger";
 import ErrorWithCode from "./tools/errorWithCode";
-import promiseFinally from "./tools/promiseFinally";
 import {serializeError} from 'serialize-error';
 
 const logger = getLogger('tabUrlFetch');
@@ -58,10 +57,10 @@ const logger = getLogger('tabUrlFetch');
   function closeLockWrap(promise) {
     lockCount++;
     window.onbeforeunload = () => true;
-    return promise.then(...promiseFinally(() => {
+    return promise.finally(() => {
       if (--lockCount === 0) {
         window.onbeforeunload = null;
       }
-    }));
+    });
   }
 })();

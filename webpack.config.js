@@ -67,7 +67,8 @@ const config = {
             plugins: [
               ['@babel/plugin-proposal-decorators', {'legacy': true}],
               '@babel/plugin-syntax-dynamic-import',
-              '@babel/plugin-proposal-class-properties'
+              '@babel/plugin-proposal-class-properties',
+              ...(mode === 'production' ? [['transform-react-remove-prop-types', {removeImport: true}]] : [])
             ],
             presets: [
               '@babel/preset-react',

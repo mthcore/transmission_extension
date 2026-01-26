@@ -17,6 +17,7 @@ const Interval = React.memo(({interval, onFire}) => {
   }, [interval]);
   return null;
 });
+
 Interval.propTypes = {
   interval: PropTypes.number.isRequired,
   onFire: PropTypes.func.isRequired,

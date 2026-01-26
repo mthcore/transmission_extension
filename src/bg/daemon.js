@@ -1,5 +1,4 @@
 import getLogger from "../tools/getLogger";
-import promiseFinally from "../tools/promiseFinally";
 
 const logger = getLogger('Daemon');
 
@@ -33,9 +32,9 @@ class Daemon {
         logger.warn('Daemon stopped, cause', err);
         this.stop();
       }
-    }).then(...promiseFinally(() => {
+    }).finally(() => {
       this.inProgress = false;
-    }));
+    });
   }
 
   start() {

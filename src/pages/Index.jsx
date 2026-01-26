@@ -1,10 +1,10 @@
 import "rc-select/assets/index.css";
 import "../assets/css/stylesheet.scss";
 import React from "react";
+import PropTypes from "prop-types";
 import Menu from "../components/Menu";
 import {useObserver} from "mobx-react";
 import {reaction} from "mobx";
-import PropTypes from "prop-types";
 import {createRoot} from "react-dom/client";
 import RootStore from "../stores/RootStore";
 import TorrentListTable from "../components/TorrentListTable";
@@ -248,6 +248,7 @@ const GoInOptions = React.memo(({isPopup}) => {
 
   return null;
 });
+
 GoInOptions.propTypes = {
   isPopup: PropTypes.bool.isRequired,
 };

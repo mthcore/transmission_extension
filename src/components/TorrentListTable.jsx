@@ -33,11 +33,10 @@ const TorrentListTable = observer(() => {
 
 @observer
 class TorrentListTableHead extends React.PureComponent {
+  static contextType = RootStoreCtx;
   static propTypes = {
     withStyle: PropTypes.bool,
   };
-
-  static contextType = RootStoreCtx;
 
   /**@return {RootStore}*/
   get rootStore() {

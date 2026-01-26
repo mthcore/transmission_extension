@@ -1,7 +1,7 @@
 import React, {useContext, useRef, useEffect, useCallback, useMemo} from "react";
 import {observer} from "mobx-react";
-import TableHeadColumn from "./TableHeadColumn";
 import PropTypes from "prop-types";
+import TableHeadColumn from "./TableHeadColumn";
 import FileListTableItem from "./FileListTableItem";
 import FileColumnContextMenu from "./FileColumnMenu";
 import Interval from "./Interval";
@@ -101,17 +101,17 @@ const DoCloseFileList = React.memo(({onClose}) => {
   }, []);
   return null;
 });
+
 DoCloseFileList.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
 @observer
 class FileListTableHead extends React.PureComponent {
+  static contextType = RootStoreCtx;
   static propTypes = {
     withStyle: PropTypes.bool,
   };
-
-  static contextType = RootStoreCtx;
 
   /**@return {RootStore}*/
   get rootStore() {
