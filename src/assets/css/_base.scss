@@ -11,33 +11,18 @@
 
 html {
   height: 100%;
-
-  &:has(body.popup) {
-    width: 800px;
-    min-height: 600px;
-  }
 }
 
 body {
   margin: 0;
   font-family: $font-family;
   font-size: $font-size-base;
-  min-width: 750px;
   @include no-select;
   height: 100%;
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.4;
   transition: background-color $transition-base, color $transition-base;
-
-  &.popup {
-    width: 800px;
-    min-height: 600px;
-  }
-
-  &.loading {
-    visibility: hidden;
-  }
 }
 
 #root {

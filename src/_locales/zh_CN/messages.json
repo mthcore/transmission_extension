@@ -536,5 +536,14 @@
     },
     "themeDark": {
         "message": "深色"
+    },
+    "configureClient": {
+        "message": "配置 Transmission"
+    },
+    "configureClientHint": {
+        "message": "请配置您的 Transmission 服务器连接以开始使用。"
+    },
+    "openOptions": {
+        "message": "打开设置"
     }
 }

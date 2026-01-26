@@ -561,5 +561,14 @@
     },
     "themeDark": {
         "message": "Тёмная"
+    },
+    "configureClient": {
+        "message": "Настроить Transmission"
+    },
+    "configureClientHint": {
+        "message": "Пожалуйста, настройте подключение к серверу Transmission для начала работы."
+    },
+    "openOptions": {
+        "message": "Открыть настройки"
     }
 }

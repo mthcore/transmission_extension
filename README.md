@@ -96,33 +96,30 @@ The built extension will be in the `./dist` folder.
 
 ## Changelog
 
-### Version 3.1.0
+> See [RELEASE_NOTES.md](RELEASE_NOTES.md) for detailed release notes.
 
-New features and UX improvements.
+### Version 3.1.0 (January 2026)
 
-- **Dark mode**: Theme selector (System/Light/Dark) in Options
-- **Search**: Filter torrents by name with expandable search box
-- **Keyboard shortcuts**: Power user shortcuts (R, Ctrl+A, Ctrl+U, Delete, Enter, Escape)
-- **Progress bar**: Dynamic text color (white on colored bar, dark on background)
-- Bug fixes for column menu display
-
----
+- **Dark mode** with system preference detection
+- **Search bar** to filter torrents by name
+- **Keyboard shortcuts** for power users
+- Progress bar with dynamic text color
+- Bug fixes
 
 ### Version 3.0.0
 
-Major update with Manifest V3 migration and improvements.
+Major modernization since fork:
 
-- Migrated from Manifest V2 to Manifest V3
-- Context menus migrated to Radix UI
-- Combobox migrated to rc-select
-- Translation improvements across all languages
-- Dependencies updated (React 19, MobX 6, Webpack 5)
-
----
+- Manifest V3 migration
+- React 19, MobX 6, Webpack 5
+- Radix UI context menus
+- SCSS architecture (replaced LESS)
+- SVG icons (replaced PNG)
+- GitHub Actions CI/CD
 
 ### Version 2.2.2 (Original)
 
-Last version from the original Feverqwe/Transmission repository.
+Last version from [Feverqwe/Transmission](https://github.com/Feverqwe/Transmission).
 
 ---
 

@@ -127,7 +127,9 @@ const Index = React.memo(() => {
   return useObserver(() => {
     if (['idle', 'pending'].includes(rootStore.state)) {
       return (
-        <div className="loading"/>
+        <div className="loading-container">
+          <div className="loading"/>
+        </div>
       );
     }
 
@@ -220,13 +222,32 @@ const Dialogs = React.memo(() => {
 });
 
 const GoInOptions = React.memo(({isPopup}) => {
+  const handleOpenOptions = React.useCallback(() => {
+    chrome.runtime.openOptionsPage();
+  }, []);
+
   React.useEffect(() => {
-    if (isPopup) {
-      location.href = '/options.html#/#redirectPopup'
-    } else {
-      location.href = '/options.html#/#redirect'
+    // Only redirect if not in popup (e.g., opened in a tab)
+    if (!isPopup) {
+      location.href = '/options.html#/#redirect';
     }
   }, [isPopup]);
+
+  // In popup mode, show a message instead of redirecting
+  if (isPopup) {
+    return (
+      <div className="go-in-options">
+        <div className="go-in-options-content">
+          <h2>{chrome.i18n.getMessage('configureClient')}</h2>
+          <p>{chrome.i18n.getMessage('configureClientHint')}</p>
+          <button onClick={handleOpenOptions}>
+            {chrome.i18n.getMessage('openOptions')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 });
 GoInOptions.propTypes = {

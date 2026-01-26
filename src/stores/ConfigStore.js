@@ -4,7 +4,7 @@ import storageSet from "../tools/storageSet";
 const url = require('url');
 
 const defaultTorrentListColumnList = [
-  {column: 'checkbox', display: 1, order: 0, width: 16, lang: 'selectAll'},
+  {column: 'checkbox', display: 1, order: 0, width: 28, lang: 'selectAll'},
   {column: 'name', display: 1, order: 1, width: 238, lang: 'OV_COL_NAME'},
   {column: 'order', display: 0, order: 1, width: 30, lang: 'OV_COL_ORDER'},
   {column: 'remaining', display: 0, order: 1, width: 80, lang: 'OV_COL_REMAINING'},
@@ -22,7 +22,7 @@ const defaultTorrentListColumnList = [
   {column: 'shared', display: 0, order: 1, width: 70, lang: 'OV_COL_SHARED'},
   {column: 'added', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_ADDED'},
   {column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED'},
-  {column: 'actions', display: 1, order: 0, width: 31, lang: 'Actions'}
+  {column: 'actions', display: 1, order: 0, width: 45, lang: 'Actions'}
 ];
 
 const defaultFileListColumnList = [

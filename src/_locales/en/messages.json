@@ -560,5 +560,14 @@
     },
     "themeDark": {
         "message": "Dark"
+    },
+    "configureClient": {
+        "message": "Configure Transmission"
+    },
+    "configureClientHint": {
+        "message": "Please configure your Transmission server connection to get started."
+    },
+    "openOptions": {
+        "message": "Open Settings"
     }
 }
