@@ -1,70 +1,54 @@
 import {observer} from "mobx-react";
-import React from "react";
+import React, {useContext, useEffect, useCallback} from "react";
 import Interval from "./Interval";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
-@observer
-class SpaceWatcher extends React.PureComponent {
-  static contextType = RootStoreCtx;
+const SpaceWatcher = observer(() => {
+  const rootStore = useContext(RootStoreCtx);
+  const spaceWatcherStore = rootStore.spaceWatcher;
 
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
+  useEffect(() => {
+    rootStore.createSpaceWatcher();
+    return () => rootStore.destroySpaceWatcher();
+  }, [rootStore]);
 
-  /**@return {SpaceWatcherStore}*/
-  get spaceWatcherStore() {
-    return this.rootStore.spaceWatcher;
-  }
+  const onIntervalFire = useCallback(() => {
+    spaceWatcherStore?.fetchDownloadDirs();
+  }, [spaceWatcherStore]);
 
-  componentDidMount() {
-    this.rootStore.createSpaceWatcher();
-  }
-
-  componentWillUnmount() {
-    this.rootStore.destroySpaceWatcher();
-  }
-
-  handleUpdate = (e) => {
+  const handleUpdate = useCallback((e) => {
     e.preventDefault();
-    this.onIntervalFire();
-  };
+    onIntervalFire();
+  }, [onIntervalFire]);
 
-  onIntervalFire = () => {
-    this.spaceWatcherStore.fetchDownloadDirs();
-  };
+  if (!spaceWatcherStore) return null;
 
-  render() {
-    if (!this.spaceWatcherStore) return null;
+  let title = null;
+  let body = null;
 
-    let title = null;
-    let body = null;
-    if (this.spaceWatcherStore.state === 'pending') {
-      title = 'Loading...';
-      body = '...';
-    } else
-    if (this.spaceWatcherStore.state === 'error') {
-      title = this.spaceWatcherStore.errorMessage;
-      body = '-';
-    } else
-    if (this.spaceWatcherStore.state === 'done') {
-      const status = [`${chrome.i18n.getMessage('freeSpace')}:`];
-      body = this.spaceWatcherStore.downloadDirs.map((directory) => {
-        status.push(`${directory.availableStr} (${directory.path})`);
-        return (
-          <span key={directory.path}>{directory.availableStr} </span>
-        );
-      });
-      title = status.join('\n');
-    }
-
-    return (
-      <>
-        <span className="space disk" onClick={this.handleUpdate} title={title}>{body}</span>
-        <Interval interval={60 * 1000} onFire={this.onIntervalFire}/>
-      </>
-    );
+  if (spaceWatcherStore.state === 'pending') {
+    title = 'Loading...';
+    body = '...';
+  } else if (spaceWatcherStore.state === 'error') {
+    title = spaceWatcherStore.errorMessage;
+    body = '-';
+  } else if (spaceWatcherStore.state === 'done') {
+    const status = [`${chrome.i18n.getMessage('freeSpace')}:`];
+    body = spaceWatcherStore.downloadDirs.map((directory) => {
+      status.push(`${directory.availableStr} (${directory.path})`);
+      return (
+        <span key={directory.path}>{directory.availableStr} </span>
+      );
+    });
+    title = status.join('\n');
   }
-}
+
+  return (
+    <>
+      <span className="space disk" onClick={handleUpdate} title={title}>{body}</span>
+      <Interval interval={60 * 1000} onFire={onIntervalFire}/>
+    </>
+  );
+});
 
 export default SpaceWatcher;

@@ -1,206 +1,171 @@
 import {observer} from "mobx-react";
-import React from "react";
+import React, {useContext, useCallback} from "react";
 import PropTypes from "prop-types";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import FileContextMenu from "./FileContextMenu";
 
-@observer
-class FileListTableItem extends React.PureComponent {
-  static propTypes = {
-    file: PropTypes.object.isRequired,
-  };
+const FileListTableItem = observer(({file}) => {
+  const rootStore = useContext(RootStoreCtx);
+  const fileListStore = rootStore.fileList;
 
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {FileListStore}*/
-  get fileListStore() {
-    return this.rootStore.fileList;
-  }
-
-  /**@return {FileStore}*/
-  get fileStore() {
-    return this.props.file;
-  }
-
-  handleSelect = (e) => {
-    if (!this.fileStore.selected) {
+  const handleSelect = useCallback((e) => {
+    if (!file.selected) {
       if (e.nativeEvent.shiftKey) {
-        this.fileListStore.addMultipleSelectedId(this.fileStore.name);
+        fileListStore.addMultipleSelectedId(file.name);
       } else {
-        this.fileListStore.addSelectedId(this.fileStore.name);
+        fileListStore.addSelectedId(file.name);
       }
     } else {
-      this.fileListStore.removeSelectedId(this.fileStore.name);
+      fileListStore.removeSelectedId(file.name);
     }
-  };
+  }, [file, fileListStore]);
 
-  render() {
-    const fileStore = this.fileStore;
-    const visibleFileColumns = this.rootStore.config.visibleFileColumns;
+  const visibleFileColumns = rootStore.config.visibleFileColumns;
 
-    const columns = [];
-    visibleFileColumns.forEach(({column: name}) => {
-      switch (name) {
-        case 'checkbox': {
-          columns.push(
-            <td key={name} className={name}>
-              <input checked={fileStore.selected} onChange={this.handleSelect} type="checkbox"/>
-            </td>
-          );
-          break;
-        }
-        case 'name': {
-          columns.push(
-            <td key={name} className={name}>
-              <FileName fileListStore={this.fileListStore} fileStore={fileStore}/>
-            </td>
-          );
-          break;
-        }
-        case 'size': {
-          columns.push(
-            <td key={name} className={name}>
-              <div>{fileStore.sizeStr}</div>
-            </td>
-          );
-          break;
-        }
-        case 'downloaded': {
-          columns.push(
-            <td key={name} className={name}>
-              <div>{fileStore.downloadedStr}</div>
-            </td>
-          );
-          break;
-        }
-        case 'done': {
-          const isComplete = fileStore.size === fileStore.downloaded && fileStore.priority !== 0;
-          const progressClass = isComplete ? 'complete' : 'downloading';
-          const width = fileStore.progressStr;
-          const progressNum = parseFloat(width) || 0;
-          // Calculate inverse width so .val-light spans full parent width
-          const lightWidth = progressNum > 0 ? `${10000 / progressNum}%` : '100%';
-
-          columns.push(
-            <td key={name} className={name}>
-              <div className="progress_b">
-                <div className="val">{fileStore.progressStr}</div>
-                <div className={`progress_b_i ${progressClass}`} style={{width}}>
-                  <div className="val-light" style={{width: lightWidth}}>{fileStore.progressStr}</div>
-                </div>
-              </div>
-            </td>
-          );
-          break;
-        }
-        case 'prio': {
-          columns.push(
-            <td key={name} className={name}>
-              <div>{fileStore.priorityStr}</div>
-            </td>
-          );
-          break;
-        }
+  const columns = [];
+  visibleFileColumns.forEach(({column: name}) => {
+    switch (name) {
+      case 'checkbox': {
+        columns.push(
+          <td key={name} className={name}>
+            <input checked={file.selected} onChange={handleSelect} type="checkbox"/>
+          </td>
+        );
+        break;
       }
-    });
+      case 'name': {
+        columns.push(
+          <td key={name} className={name}>
+            <FileName fileListStore={fileListStore} fileStore={file}/>
+          </td>
+        );
+        break;
+      }
+      case 'size': {
+        columns.push(
+          <td key={name} className={name}>
+            <div>{file.sizeStr}</div>
+          </td>
+        );
+        break;
+      }
+      case 'downloaded': {
+        columns.push(
+          <td key={name} className={name}>
+            <div>{file.downloadedStr}</div>
+          </td>
+        );
+        break;
+      }
+      case 'done': {
+        const isComplete = file.size === file.downloaded && file.priority !== 0;
+        const progressClass = isComplete ? 'complete' : 'downloading';
+        const progressWidth = file.progressStr;
+        const progressNum = parseFloat(progressWidth) || 0;
+        const lightWidth = progressNum > 0 ? `${10000 / progressNum}%` : '100%';
 
-    const classList = [];
-    if (fileStore.selected) {
-      classList.push('selected');
+        columns.push(
+          <td key={name} className={name}>
+            <div className="progress_b">
+              <div className="val">{file.progressStr}</div>
+              <div className={`progress_b_i ${progressClass}`} style={{width: progressWidth}}>
+                <div className="val-light" style={{width: lightWidth}}>{file.progressStr}</div>
+              </div>
+            </div>
+          </td>
+        );
+        break;
+      }
+      case 'prio': {
+        columns.push(
+          <td key={name} className={name}>
+            <div>{file.priorityStr}</div>
+          </td>
+        );
+        break;
+      }
     }
+  });
 
+  const classList = [];
+  if (file.selected) {
+    classList.push('selected');
+  }
+
+  return (
+    <FileContextMenu fileId={file.name}>
+      <tr className={classList.join(' ')}>
+        {columns}
+      </tr>
+    </FileContextMenu>
+  );
+});
+
+FileListTableItem.propTypes = {
+  file: PropTypes.object.isRequired,
+};
+
+const FileName = observer(({fileStore, fileListStore}) => {
+  const handleSetFilter = useCallback((level) => {
+    let targetLevel = level;
+    if (targetLevel === fileListStore.filterLevel) {
+      targetLevel--;
+    }
+    const filter = fileStore.nameParts.slice(0, targetLevel).join('/');
+    fileListStore.setFilter(filter);
+  }, [fileStore, fileListStore]);
+
+  const parts = [];
+  const nameParts = fileStore.nameParts;
+  const filterLevel = fileListStore.filterLevel;
+
+  for (let i = filterLevel; i < nameParts.length; i++) {
+    parts.push(nameParts[i]);
+  }
+
+  const filename = parts.pop();
+  const links = parts.map((name, index) => {
     return (
-      <FileContextMenu fileId={fileStore.name}>
-        <tr className={classList.join(' ')}>
-          {columns}
-        </tr>
-      </FileContextMenu>
+      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel + index + 1} name={name}/>
+    );
+  });
+
+  if (filterLevel > 0) {
+    const name = '←';
+    links.unshift(
+      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel} name={name}/>
     );
   }
-}
 
-@observer
-class FileName extends React.PureComponent {
-  static propTypes = {
-    fileStore: PropTypes.object.isRequired,
-    fileListStore: PropTypes.object.isRequired,
-  };
+  return (
+    <div title={fileStore.shortName}>
+      <span>{links}{filename}</span>
+    </div>
+  );
+});
 
-  /**@return {FileListStore}*/
-  get fileListStore() {
-    return this.props.fileListStore;
-  }
+FileName.propTypes = {
+  fileStore: PropTypes.object.isRequired,
+  fileListStore: PropTypes.object.isRequired,
+};
 
-  /**@return {FileStore}*/
-  get fileStore() {
-    return this.props.fileStore;
-  }
-
-  handleSetFilter = (level) => {
-    if (level === this.fileListStore.filterLevel) {
-      level--;
-    }
-
-    const filter = this.fileStore.nameParts.slice(0, level).join('/');
-
-    this.fileListStore.setFilter(filter);
-  };
-
-  render() {
-    const parts = [];
-
-    const nameParts = this.fileStore.nameParts;
-    const filterLevel = this.fileListStore.filterLevel;
-    for (let i = filterLevel; i < nameParts.length; i++) {
-      parts.push(nameParts[i]);
-    }
-
-    const filename = parts.pop();
-    const links = parts.map((name, index) => {
-      return (
-        <FileNamePart key={name} onSetFilter={this.handleSetFilter} level={filterLevel + index + 1} name={name}/>
-      );
-    });
-
-    if (filterLevel > 0) {
-      const name = '←';
-      links.unshift(
-        <FileNamePart key={name} onSetFilter={this.handleSetFilter} level={filterLevel} name={name}/>
-      );
-    }
-
-    return (
-      <div title={this.fileStore.shortName}>
-        <span>{links}{filename}</span>
-      </div>
-    );
-  }
-}
-
-class FileNamePart extends React.PureComponent {
-  static propTypes = {
-    level: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    onSetFilter: PropTypes.func.isRequired,
-  };
-
-  handleClick = (e) => {
+const FileNamePart = React.memo(({level, name, onSetFilter}) => {
+  const handleClick = useCallback((e) => {
     e.preventDefault();
-    this.props.onSetFilter(this.props.level);
-  };
+    onSetFilter(level);
+  }, [level, onSetFilter]);
 
-  render() {
-    const classList = ['folder', `c${this.props.level - 1}`];
+  const classList = ['folder', `c${level - 1}`];
 
-    return (
-      <a onClick={this.handleClick} className={classList.join(' ')} href="#">{this.props.name}</a>
-    );
-  }
-}
+  return (
+    <a onClick={handleClick} className={classList.join(' ')} href="#">{name}</a>
+  );
+});
+
+FileNamePart.propTypes = {
+  level: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  onSetFilter: PropTypes.func.isRequired,
+};
 
 export default FileListTableItem;

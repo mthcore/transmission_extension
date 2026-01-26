@@ -1,28 +1,14 @@
-import React from "react";
+import React, {useContext, useCallback} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import showError from "../tools/showError";
 
-@observer
-class PutUrlDialog extends React.PureComponent {
-  static propTypes = {
-    dialogStore: PropTypes.object.isRequired,
-  };
+const PutUrlDialog = observer(({dialogStore}) => {
+  const rootStore = useContext(RootStoreCtx);
 
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {PutUrlDialogStore}*/
-  get dialogStore() {
-    return this.props.dialogStore;
-  }
-
-  handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
@@ -35,57 +21,61 @@ class PutUrlDialog extends React.PureComponent {
     if (form.elements.directory) {
       const directoryIndex = parseInt(form.elements.directory.value, 10);
       if (directoryIndex > -1) {
-        directory = this.rootStore.config.folders[directoryIndex];
+        directory = rootStore.config.folders[directoryIndex];
       }
     }
 
-    this.rootStore.client.sendFiles(urls, directory);
+    rootStore.client.sendFiles(urls, directory).catch((err) => {
+      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to add torrent', err);
+    });
 
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [rootStore, dialogStore]);
 
-  handleClose = (e) => {
+  const handleClose = useCallback((e) => {
     e && e.preventDefault();
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [dialogStore]);
 
-  render() {
-    let directorySelect = null;
-    const folders = this.rootStore.config.folders;
-    if (folders.length) {
-      directorySelect = (
-        <div className="nf-subItem">
-          <label>{chrome.i18n.getMessage('path')}</label>
-          <select name="directory">
-            <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-            {folders.map((folder, index) => {
-              return (
-                <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-              );
-            })}
-          </select>
-        </div>
-      );
-    }
-
-    return (
-      <Dialog onClose={this.handleClose}>
-        <div className="nf-notifi">
-          <form onSubmit={this.handleSubmit}>
-            <div className="nf-subItem">
-              <label>{chrome.i18n.getMessage('Paste_a_torrent_URL')}</label>
-              <input type="text" name="url" autoFocus={true} required={true}/>
-            </div>
-            {directorySelect}
-            <div className="nf-subItem">
-              <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}/>
-              <input onClick={this.handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
-            </div>
-          </form>
-        </div>
-      </Dialog>
+  let directorySelect = null;
+  const folders = rootStore.config.folders;
+  if (folders.length) {
+    directorySelect = (
+      <div className="nf-subItem">
+        <label>{chrome.i18n.getMessage('path')}</label>
+        <select name="directory">
+          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
+          {folders.map((folder, index) => {
+            return (
+              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
+            );
+          })}
+        </select>
+      </div>
     );
   }
-}
+
+  return (
+    <Dialog onClose={handleClose}>
+      <div className="nf-notifi">
+        <form onSubmit={handleSubmit}>
+          <div className="nf-subItem">
+            <label>{chrome.i18n.getMessage('Paste_a_torrent_URL')}</label>
+            <input type="text" name="url" autoFocus={true} required={true}/>
+          </div>
+          {directorySelect}
+          <div className="nf-subItem">
+            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}/>
+            <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+  );
+});
+
+PutUrlDialog.propTypes = {
+  dialogStore: PropTypes.object.isRequired,
+};
 
 export default PutUrlDialog;

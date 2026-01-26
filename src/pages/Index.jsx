@@ -19,6 +19,7 @@ import RenameDialog from "../components/RenameDialog";
 import CopyMagnetUrlDialog from "../components/CopyMagnetUrlDialog";
 import MoveDialog from "../components/MoveDialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useTheme} from "../hooks/useTheme";
 
 const logger = getLogger('Index');
 
@@ -108,24 +109,7 @@ const Index = React.memo(() => {
   }, [rootStore]);
 
   // Theme application
-  React.useEffect(() => {
-    const applyTheme = (theme) => {
-      if (!theme || theme === 'system') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', theme);
-      }
-    };
-
-    // React to theme changes (fireImmediately applies initial theme when config loads)
-    const dispose = reaction(
-      () => rootStore.config?.theme,
-      (theme) => applyTheme(theme),
-      {fireImmediately: true}
-    );
-
-    return () => dispose();
-  }, [rootStore]);
+  useTheme(rootStore.config);
 
   const onIntervalFire = React.useCallback((isInit) => {
     if (isInit) {

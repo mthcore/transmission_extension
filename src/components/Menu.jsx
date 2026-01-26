@@ -1,333 +1,178 @@
-import React from "react";
+import React, {useContext, useCallback, useState, useRef, useEffect} from "react";
 import {observer} from "mobx-react";
-import Select, {Option} from "rc-select";
 import ComponentLoader from "./ComponentLoader";
-import getLogger from "../tools/getLogger";
+import showError from "../tools/showError";
 import VisiblePage from "./VisiblePage";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import SearchBox from "./SearchBox";
+import LabelSelect from "./LabelSelect";
 
-const logger = getLogger('Menu');
+const Menu = observer(() => {
+  const rootStore = useContext(RootStoreCtx);
+  const [showDropLayer, setShowDropLayer] = useState(false);
+  const [isDropped, setIsDropped] = useState(false);
+  const refFileInput = useRef(null);
+  const dropTimerRef = useRef(null);
 
-@observer
-class Menu extends React.PureComponent {
-  state = {
-    showDropLayer: false,
-    isDropped: false
-  };
-
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  componentDidMount() {
-    document.body.addEventListener('dragover', this.handleDropOver);
-    document.body.addEventListener('drop', this.handleDrop);
-  }
-
-  componentWillUnmount() {
-    document.body.removeEventListener('dragover', this.handleDropOver);
-    document.body.removeEventListener('drop', this.handleDrop);
-  }
-
-
-  dropTimerId = null;
-
-  handleDropOver = (e) => {
-    if (e.dataTransfer.types.length === 2) return;
-    e.preventDefault();
-
-    if (!this.state.showDropLayer) {
-      this.setState({
-        showDropLayer: true
-      });
-    }
-
-    clearTimeout(this.dropTimerId);
-    this.dropTimerId = setTimeout(() => {
-      if (!this.refFileInput.current) return;
-      this.setState({
-        showDropLayer: false,
-        isDropped: false
-      });
-    }, 300);
-  };
-
-  handleDrop = (e) => {
-    e.preventDefault();
-    this.setState({
-      isDropped: true
-    });
-    this.onPutFiles(e.dataTransfer.files);
-  };
-
-  handleRefresh = (e) => {
-    e.preventDefault();
-    this.rootStore.client.updateTorrentList(true).catch((err) => {
-      logger.error('handleRefresh, updateTorrentList error', err);
-    });
-    this.rootStore.client.updateSettings().catch((err) => {
-      logger.error('handleRefresh, updateSettings error', err);
-    });
-  };
-
-  handleAddFile = (e) => {
-    e.preventDefault();
-    this.refFileInput.current.dispatchEvent(new MouseEvent('click'));
-  };
-
-  handleAddUrl = (e) => {
-    e.preventDefault();
-    this.rootStore.createDialog({
-      type: 'putUrl'
-    });
-  };
-
-  handleStartAll = (e) => {
-    e.preventDefault();
-    const ids = this.rootStore.client.torrentIds;
-    this.rootStore.client.torrentsStart(ids);
-  };
-
-  handleStopAll = (e) => {
-    e.preventDefault();
-    const ids = this.rootStore.client.torrentIds;
-    this.rootStore.client.torrentsStop(ids);
-  };
-
-  handleToggleAltSpeed = (e) => {
-    e.preventDefault();
-    this.rootStore.client.setAltSpeedEnabled(!this.rootStore.client.settings.altSpeedEnabled);
-  };
-
-  refFileInput = React.createRef();
-
-  onPutFiles(files) {
+  const onPutFiles = useCallback((files) => {
     if (!files.length) return;
 
-    const dialog = this.rootStore.createDialog({
+    const dialog = rootStore.createDialog({
       type: 'putFiles'
     });
 
     dialog.files = Array.from(files);
-
     dialog.setReady(true);
-  }
+  }, [rootStore]);
 
-  handleFileChange = (e) => {
-    this.onPutFiles(this.refFileInput.current.files);
+  const handleDropOver = useCallback((e) => {
+    if (e.dataTransfer.types.length === 2) return;
+    e.preventDefault();
+
+    setShowDropLayer(true);
+
+    clearTimeout(dropTimerRef.current);
+    dropTimerRef.current = setTimeout(() => {
+      if (!refFileInput.current) return;
+      setShowDropLayer(false);
+      setIsDropped(false);
+    }, 300);
+  }, []);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    setIsDropped(true);
+    onPutFiles(e.dataTransfer.files);
+  }, [onPutFiles]);
+
+  useEffect(() => {
+    document.body.addEventListener('dragover', handleDropOver);
+    document.body.addEventListener('drop', handleDrop);
+
+    return () => {
+      document.body.removeEventListener('dragover', handleDropOver);
+      document.body.removeEventListener('drop', handleDrop);
+      clearTimeout(dropTimerRef.current);
+    };
+  }, [handleDropOver, handleDrop]);
+
+  const handleRefresh = useCallback((e) => {
+    e.preventDefault();
+    rootStore.client.updateTorrentList(true).catch((err) => {
+      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to refresh', err);
+    });
+    rootStore.client.updateSettings().catch((err) => {
+      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to update settings', err);
+    });
+  }, [rootStore]);
+
+  const handleAddFile = useCallback((e) => {
+    e.preventDefault();
+    refFileInput.current.dispatchEvent(new MouseEvent('click'));
+  }, []);
+
+  const handleAddUrl = useCallback((e) => {
+    e.preventDefault();
+    rootStore.createDialog({
+      type: 'putUrl'
+    });
+  }, [rootStore]);
+
+  const handleStartAll = useCallback((e) => {
+    e.preventDefault();
+    const ids = rootStore.client.torrentIds;
+    rootStore.client.torrentsStart(ids);
+  }, [rootStore]);
+
+  const handleStopAll = useCallback((e) => {
+    e.preventDefault();
+    const ids = rootStore.client.torrentIds;
+    rootStore.client.torrentsStop(ids);
+  }, [rootStore]);
+
+  const handleToggleAltSpeed = useCallback((e) => {
+    e.preventDefault();
+    rootStore.client.setAltSpeedEnabled(!rootStore.client.settings.altSpeedEnabled);
+  }, [rootStore]);
+
+  const handleFileChange = useCallback((e) => {
+    onPutFiles(refFileInput.current.files);
     e.currentTarget.value = '';
-  };
+  }, [onPutFiles]);
 
-  render() {
-    let dropLayer = null;
-    if (this.state.showDropLayer) {
-      const classList = ['drop_layer'];
-      if (this.state.isDropped) {
-        classList.push('dropped');
-      }
-      dropLayer = (
-        <div className={classList.join(' ')}/>
-      );
+  let dropLayer = null;
+  if (showDropLayer) {
+    const classList = ['drop_layer'];
+    if (isDropped) {
+      classList.push('dropped');
     }
-
-    let graph = null;
-    if (this.rootStore.config.showSpeedGraph && this.rootStore.client) {
-      graph = (
-        <VisiblePage>
-          <ComponentLoader load-page={'graph'}/>
-        </VisiblePage>
-      );
-    }
-
-    const altSpeedClassList = ['btn alt_speed'];
-    if (this.rootStore.client && this.rootStore.client.settings) {
-      if (this.rootStore.client.settings.altSpeedEnabled) {
-        altSpeedClassList.push('active');
-      }
-    }
-
-    return (
-      <>
-        <ul className="menu">
-          <li>
-            <a onClick={this.handleRefresh} title={chrome.i18n.getMessage('refresh')} className="btn refresh"
-               target="_blank" href="#refresh"/>
-          </li>
-          <li>
-            <a href={this.rootStore.config.webUiUrl} target="_blank" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
-               className="btn wui"/>
-          </li>
-          <li className="separate"/>
-          <li>
-            <a onClick={this.handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
-               href="#add_file"/>
-            <input ref={this.refFileInput} onChange={this.handleFileChange} type="file"
-                   accept="application/x-bittorrent" multiple={true} style={{display: 'none'}}/>
-          </li>
-          <li>
-            <a onClick={this.handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
-               className="btn add_magnet" href="#add_magnet"/>
-          </li>
-          <li className="separate"/>
-          <li>
-            <a onClick={this.handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
-               className={altSpeedClassList.join(' ')} href="#alt_speed"/>
-          </li>
-          <li className="separate"/>
-          <li>
-            <a onClick={this.handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
-               className="btn start_all" href="#start_all"/>
-          </li>
-          <li>
-            <a onClick={this.handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
-               className="btn pause_all" href="#stop_all"/>
-          </li>
-          <li className="graph">
-            {graph}
-          </li>
-          <SearchBox/>
-          <LabelSelect/>
-        </ul>
-
-        {dropLayer}
-      </>
+    dropLayer = (
+      <div className={classList.join(' ')}/>
     );
   }
-}
 
-@observer
-class SearchBox extends React.PureComponent {
-  static contextType = RootStoreCtx;
-
-  state = {expanded: false};
-  inputRef = React.createRef();
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
+  let graph = null;
+  if (rootStore.config.showSpeedGraph && rootStore.client) {
+    graph = (
+      <VisiblePage>
+        <ComponentLoader load-page={'graph'}/>
+      </VisiblePage>
+    );
   }
 
-  handleToggle = (e) => {
-    e.preventDefault();
-    this.setState({expanded: !this.state.expanded}, () => {
-      if (this.state.expanded) {
-        this.inputRef.current?.focus();
-      }
-    });
-  };
-
-  handleChange = (e) => {
-    this.rootStore.config.setSearchQuery(e.target.value);
-  };
-
-  handleClear = (e) => {
-    e.preventDefault();
-    this.rootStore.config.setSearchQuery('');
-    this.inputRef.current?.focus();
-  };
-
-  handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation();
-      this.rootStore.config.setSearchQuery('');
-      this.setState({expanded: false});
+  const altSpeedClassList = ['btn alt_speed'];
+  if (rootStore.client && rootStore.client.settings) {
+    if (rootStore.client.settings.altSpeedEnabled) {
+      altSpeedClassList.push('active');
     }
-  };
-
-  render() {
-    const {expanded} = this.state;
-    const query = this.rootStore.config.searchQuery;
-
-    return (
-      <li className={`search ${expanded ? 'expanded' : ''}`}>
-        {expanded && (
-          <input
-            ref={this.inputRef}
-            type="text"
-            value={query}
-            onChange={this.handleChange}
-            onKeyDown={this.handleKeyDown}
-            placeholder={chrome.i18n.getMessage('search')}
-          />
-        )}
-        <a onClick={this.handleToggle} title={chrome.i18n.getMessage('search')} className="btn search-icon" href="#search"/>
-        {expanded && query && (
-          <a onClick={this.handleClear} className="btn clear-icon" href="#clear"/>
-        )}
-      </li>
-    );
-  }
-}
-
-@observer
-class LabelSelect extends React.PureComponent {
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
   }
 
-  handleChange = (value) => {
-    const selectedLabel = JSON.parse(value);
-    this.rootStore.config.setSelectedLabel(selectedLabel.label, selectedLabel.custom);
-  };
+  return (
+    <>
+      <ul className="menu">
+        <li>
+          <a onClick={handleRefresh} title={chrome.i18n.getMessage('refresh')} className="btn refresh"
+             target="_blank" href="#refresh"/>
+        </li>
+        <li>
+          <a href={rootStore.config.webUiUrl} target="_blank" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
+             className="btn wui"/>
+        </li>
+        <li className="separate"/>
+        <li>
+          <a onClick={handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
+             href="#add_file"/>
+          <input ref={refFileInput} onChange={handleFileChange} type="file"
+                 accept="application/x-bittorrent" multiple={true} style={{display: 'none'}}/>
+        </li>
+        <li>
+          <a onClick={handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
+             className="btn add_magnet" href="#add_magnet"/>
+        </li>
+        <li className="separate"/>
+        <li>
+          <a onClick={handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
+             className={altSpeedClassList.join(' ')} href="#alt_speed"/>
+        </li>
+        <li className="separate"/>
+        <li>
+          <a onClick={handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
+             className="btn start_all" href="#start_all"/>
+        </li>
+        <li>
+          <a onClick={handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
+             className="btn pause_all" href="#stop_all"/>
+        </li>
+        <li className="graph">
+          {graph}
+        </li>
+        <SearchBox/>
+        <LabelSelect/>
+      </ul>
 
-  render() {
-    const selectedLabel = this.rootStore.config.selectedLabel;
-
-    let defaultValue = null;
-    const options = this.rootStore.torrentList.filters.map(({label, custom: isCustom}) => {
-      const id = JSON.stringify({label, custom: isCustom});
-
-      let text = null;
-      if (isCustom) {
-        if (label === 'SEEDING') {
-          text = chrome.i18n.getMessage('OV_FL_' + label);
-        } else {
-          text = chrome.i18n.getMessage('OV_CAT_' + label);
-        }
-      } else {
-        text = label;
-      }
-
-      let dataImage = null;
-      let image = null;
-      if (isCustom) {
-        dataImage = label;
-        image = (
-          <span className="image" data-image={dataImage}/>
-        );
-      }
-
-      if (selectedLabel.id === id) {
-        defaultValue = id;
-      }
-
-      return (
-        <Option key={id} value={id}>
-          {image}
-          <span title={text}>{text}</span>
-        </Option>
-      );
-    });
-
-    return (
-      <li className="select">
-        <Select defaultValue={defaultValue} onChange={this.handleChange}
-                showSearch={false}
-                optionLabelProp="children"
-                virtual={false}
-                listHeight={500}
-        >
-          {options}
-        </Select>
-      </li>
-    );
-  }
-}
+      {dropLayer}
+    </>
+  );
+});
 
 export default Menu;

@@ -1,31 +1,16 @@
-import React from "react";
+import React, {useContext, useCallback, useEffect} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
-import getLogger from "../tools/getLogger";
+import showError from "../tools/showError";
 
-const logger = getLogger('PutFilesDialog');
+const PutFilesDialog = observer(({dialogStore}) => {
+  const rootStore = useContext(RootStoreCtx);
+  const folders = rootStore.config.folders;
+  const hasDirectorySelect = folders.length > 0;
 
-@observer
-class PutFilesDialog extends React.PureComponent {
-  static propTypes = {
-    dialogStore: PropTypes.object.isRequired,
-  };
-
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {SpaceWatcher}*/
-  get dialogStore() {
-    return this.props.dialogStore;
-  }
-
-  handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     let directory = undefined;
     if (e) {
       e.preventDefault();
@@ -34,81 +19,68 @@ class PutFilesDialog extends React.PureComponent {
       if (form.elements.directory) {
         const directoryIndex = parseInt(form.elements.directory.value, 10);
         if (directoryIndex > -1) {
-          directory = this.rootStore.config.folders[directoryIndex];
+          directory = rootStore.config.folders[directoryIndex];
         }
       }
     }
 
-    const files = this.dialogStore.files;
-
+    const files = dialogStore.files;
     const urls = files.map(file => URL.createObjectURL(file));
 
-    this.rootStore.client.sendFiles(urls, directory).catch((err) => {
-      logger.error('sendFiles error', err);
-    }).finally(() => {
-      urls.forEach(url => URL.revokeObjectURL(url));
+    rootStore.client.sendFiles(urls, directory).catch((err) => {
+      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to send files', err);
     });
 
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [rootStore, dialogStore]);
 
-  handleClose = (e) => {
+  const handleClose = useCallback((e) => {
     e && e.preventDefault();
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [dialogStore]);
 
-  render() {
-    let directorySelect = null;
-    const folders = this.rootStore.config.folders;
-    if (folders.length) {
-      directorySelect = (
-        <div className="nf-subItem">
-          <label>{chrome.i18n.getMessage('path')}</label>
-          <select name="directory">
-            <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-            {folders.map((folder, index) => {
-              return (
-                <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-              );
-            })}
-          </select>
-        </div>
-      );
+  // Auto-submit when no directory selection is needed
+  useEffect(() => {
+    if (!hasDirectorySelect) {
+      handleSubmit();
     }
+  }, []);
 
-    let submit = null;
-    if (!directorySelect) {
-      submit = (
-        <DoSubmit onSubmit={this.handleSubmit}/>
-      );
-    }
-
-    return (
-      <Dialog onClose={this.handleClose}>
-        <div className="nf-notifi">
-          <form onSubmit={this.handleSubmit}>
-            {directorySelect}
-            {submit}
-            <div className="nf-subItem">
-              <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}
-                     autoFocus={true}/>
-              <input onClick={this.handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
-            </div>
-          </form>
-        </div>
-      </Dialog>
+  let directorySelect = null;
+  if (hasDirectorySelect) {
+    directorySelect = (
+      <div className="nf-subItem">
+        <label>{chrome.i18n.getMessage('path')}</label>
+        <select name="directory">
+          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
+          {folders.map((folder, index) => {
+            return (
+              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
+            );
+          })}
+        </select>
+      </div>
     );
   }
-}
 
-const DoSubmit = React.memo(({onSubmit}) => {
-  React.useEffect(() => {
-    onSubmit();
-  }, []);
-  return null;
+  return (
+    <Dialog onClose={handleClose}>
+      <div className="nf-notifi">
+        <form onSubmit={handleSubmit}>
+          {directorySelect}
+          <div className="nf-subItem">
+            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}
+                   autoFocus={true}/>
+            <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+  );
 });
-DoSubmit.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+
+PutFilesDialog.propTypes = {
+  dialogStore: PropTypes.object.isRequired,
 };
 
 export default PutFilesDialog;

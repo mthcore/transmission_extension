@@ -16,9 +16,6 @@ async function downloadFileFromUrl(url) {
 
     return response.blob();
   }).then((blob) => {
-    if (/^blob:/.test(url)) {
-      URL.revokeObjectURL(url);
-    }
     return {blob};
   });
 }

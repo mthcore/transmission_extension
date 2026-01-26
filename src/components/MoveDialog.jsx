@@ -1,32 +1,15 @@
-import React from "react";
+import React, {useContext, useCallback, useState} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import showError from "../tools/showError";
 
-@observer
-class MoveDialog extends React.PureComponent {
-  static propTypes = {
-    dialogStore: PropTypes.object.isRequired,
-  };
+const MoveDialog = observer(({dialogStore}) => {
+  const rootStore = useContext(RootStoreCtx);
+  const [showCustomLocation, setShowCustomLocation] = useState(true);
 
-  static contextType = RootStoreCtx;
-
-  state = {
-    showCustomLocation: true
-  };
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {MoveDialogStore}*/
-  get dialogStore() {
-    return this.props.dialogStore;
-  }
-
-  handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
@@ -36,9 +19,9 @@ class MoveDialog extends React.PureComponent {
       const directoryIndex = parseInt(form.elements.directory.value, 10);
       if (directoryIndex > -2) {
         if (directoryIndex === -1) {
-          location = this.rootStore.client.settings.downloadDir;
+          location = rootStore.client.settings.downloadDir;
         } else {
-          location = this.rootStore.config.folders[directoryIndex].path;
+          location = rootStore.config.folders[directoryIndex].path;
         }
       }
     }
@@ -47,68 +30,70 @@ class MoveDialog extends React.PureComponent {
       location = form.elements.location.value.trim();
     }
 
-    this.rootStore.client.torrentSetLocation(this.dialogStore.torrentIds, location);
-
-    this.dialogStore.close();
-  };
-
-  handleClose = (e) => {
-    e && e.preventDefault();
-    this.dialogStore.close();
-  };
-
-  handleChange = (e) => {
-    const directoryIndex = parseInt(e.currentTarget.value, 10);
-    this.setState({
-      showCustomLocation: directoryIndex === -2
+    rootStore.client.torrentSetLocation(dialogStore.torrentIds, location).catch((err) => {
+      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to move torrent', err);
     });
-  };
 
-  render() {
-    let directorySelect = null;
-    const folders = this.rootStore.config.folders;
-    if (folders.length) {
-      directorySelect = (
-        <div className="nf-subItem">
-          <label>{chrome.i18n.getMessage('path')}</label>
-          <select onChange={this.handleChange} name="directory" defaultValue={-2}>
-            <option value={-2}/>
-            <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-            {folders.map((folder, index) => {
-              return (
-                <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-              );
-            })}
-          </select>
-        </div>
-      );
-    }
+    dialogStore.close();
+  }, [rootStore, dialogStore]);
 
-    let customLocation = null;
-    if (this.state.showCustomLocation) {
-      customLocation = (
-        <div className="nf-subItem">
-          <label>{chrome.i18n.getMessage('moveNewPath')}</label>
-          <input type="text" name="location" defaultValue={this.dialogStore.directory} autoFocus={true}/>
-        </div>
-      );
-    }
+  const handleClose = useCallback((e) => {
+    e && e.preventDefault();
+    dialogStore.close();
+  }, [dialogStore]);
 
-    return (
-      <Dialog onClose={this.handleClose}>
-        <div className="nf-notifi">
-          <form onSubmit={this.handleSubmit}>
-            {customLocation}
-            {directorySelect}
-            <div className="nf-subItem">
-              <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')}/>
-              <input onClick={this.handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
-            </div>
-          </form>
-        </div>
-      </Dialog>
+  const handleChange = useCallback((e) => {
+    const directoryIndex = parseInt(e.currentTarget.value, 10);
+    setShowCustomLocation(directoryIndex === -2);
+  }, []);
+
+  let directorySelect = null;
+  const folders = rootStore.config.folders;
+  if (folders.length) {
+    directorySelect = (
+      <div className="nf-subItem">
+        <label>{chrome.i18n.getMessage('path')}</label>
+        <select onChange={handleChange} name="directory" defaultValue={-2}>
+          <option value={-2}/>
+          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
+          {folders.map((folder, index) => {
+            return (
+              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
+            );
+          })}
+        </select>
+      </div>
     );
   }
-}
+
+  let customLocation = null;
+  if (showCustomLocation) {
+    customLocation = (
+      <div className="nf-subItem">
+        <label>{chrome.i18n.getMessage('moveNewPath')}</label>
+        <input type="text" name="location" defaultValue={dialogStore.directory} autoFocus={true}/>
+      </div>
+    );
+  }
+
+  return (
+    <Dialog onClose={handleClose}>
+      <div className="nf-notifi">
+        <form onSubmit={handleSubmit}>
+          {customLocation}
+          {directorySelect}
+          <div className="nf-subItem">
+            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')}/>
+            <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+  );
+});
+
+MoveDialog.propTypes = {
+  dialogStore: PropTypes.object.isRequired,
+};
 
 export default MoveDialog;

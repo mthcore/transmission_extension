@@ -1,28 +1,10 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
-import RootStoreCtx from "../tools/RootStoreCtx";
 
-@observer
-class CopyMagnetUrlDialog extends React.PureComponent {
-  static propTypes = {
-    dialogStore: PropTypes.object.isRequired,
-  };
-
-  static contextType = RootStoreCtx;
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {CopyMagnetUrlDialogStore}*/
-  get dialogStore() {
-    return this.props.dialogStore;
-  }
-
-  handleSubmit = (e) => {
+const CopyMagnetUrlDialog = observer(({dialogStore}) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
@@ -30,32 +12,34 @@ class CopyMagnetUrlDialog extends React.PureComponent {
     input.select();
     document.execCommand('copy');
 
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [dialogStore]);
 
-  handleClose = (e) => {
+  const handleClose = useCallback((e) => {
     e && e.preventDefault();
-    this.dialogStore.close();
-  };
+    dialogStore.close();
+  }, [dialogStore]);
 
-  render() {
-    return (
-      <Dialog onClose={this.handleClose}>
-        <div className="nf-notifi">
-          <form onSubmit={this.handleSubmit}>
-            <div className="nf-subItem">
-              <label>{chrome.i18n.getMessage('magnetUri')}</label>
-              <input type="text" name="magnetLink" defaultValue={this.dialogStore.magnetLink}/>
-            </div>
-            <div className="nf-subItem">
-              <input type="submit" value={chrome.i18n.getMessage('copy')} autoFocus={true}/>
-              <input onClick={this.handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
-            </div>
-          </form>
-        </div>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog onClose={handleClose}>
+      <div className="nf-notifi">
+        <form onSubmit={handleSubmit}>
+          <div className="nf-subItem">
+            <label>{chrome.i18n.getMessage('magnetUri')}</label>
+            <input type="text" name="magnetLink" defaultValue={dialogStore.magnetLink}/>
+          </div>
+          <div className="nf-subItem">
+            <input type="submit" value={chrome.i18n.getMessage('copy')} autoFocus={true}/>
+            <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+  );
+});
+
+CopyMagnetUrlDialog.propTypes = {
+  dialogStore: PropTypes.object.isRequired,
+};
 
 export default CopyMagnetUrlDialog;

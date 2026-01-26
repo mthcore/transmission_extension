@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext, useRef, useEffect, useCallback, useMemo} from "react";
 import {observer} from "mobx-react";
 import TableHeadColumn from "./TableHeadColumn";
 import PropTypes from "prop-types";
@@ -7,131 +7,93 @@ import FileColumnContextMenu from "./FileColumnMenu";
 import Interval from "./Interval";
 import getLogger from "../tools/getLogger";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useScrollSync} from "../hooks/useScrollSync";
 
 const logger = getLogger('FileListTable');
 
-@observer
-class FileListTable extends React.PureComponent {
-  static contextType = RootStoreCtx;
+const FileListTable = observer(() => {
+  const rootStore = useContext(RootStoreCtx);
+  const fileListStore = rootStore.fileList;
+  const refFixedHead = useRef(null);
+  const scrollSyncOptions = useMemo(() => ({withWidthCheck: true}), []);
+  const handleScroll = useScrollSync(refFixedHead, scrollSyncOptions);
 
-  componentDidMount() {
-    if (!this.rootStore.torrentList.isSelectedId(this.fileListStore.id)) {
-      this.fileListStore.setRemoveSelectOnHide(true);
+  useEffect(() => {
+    if (!rootStore.torrentList.isSelectedId(fileListStore.id)) {
+      fileListStore.setRemoveSelectOnHide(true);
     }
-    this.rootStore.torrentList.addSelectedId(this.fileListStore.id, true);
-  }
+    rootStore.torrentList.addSelectedId(fileListStore.id, true);
+  }, [rootStore, fileListStore]);
 
-  componentWillUnmount() {
-    if (this.scrollRafId) {
-      cancelAnimationFrame(this.scrollRafId);
-    }
-  }
-
-  scrollRafId = null;
-
-  handleScroll = (e) => {
-    const scrollLeft = e.currentTarget.scrollLeft;
-    const scrollWidth = e.currentTarget.scrollWidth;
-    if (this.scrollRafId) return;
-    this.scrollRafId = requestAnimationFrame(() => {
-      this.scrollRafId = null;
-      const fixedHead = this.refFixedHead.current;
-      if (!fixedHead) return;
-
-      // required for ff only
-      const isWide = scrollWidth >= document.body.clientWidth;
-
-      if (isWide && scrollLeft > 0) {
-        fixedHead.style.left = `${scrollLeft * -1}px`;
-      } else if (fixedHead.style.left) {
-        fixedHead.style.left = '';
-      }
-    });
-  };
-
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
-
-  /**@return {FileListStore}*/
-  get fileListStore() {
-    return this.rootStore.fileList;
-  }
-
-  refFixedHead = React.createRef();
-
-  handleClose = (e) => {
+  const handleClose = useCallback((e) => {
     e && e.preventDefault();
-    this.rootStore.destroyFileList();
-  };
+    rootStore.destroyFileList();
+  }, [rootStore]);
 
-  handleUpdate = (e) => {
+  const handleUpdate = useCallback((e) => {
     e.preventDefault();
-    this.fileListStore.fetchFiles();
-  };
+    fileListStore.fetchFiles();
+  }, [fileListStore]);
 
-  onIntervalFire = () => {
-    this.fileListStore.fetchFiles().catch((err) => {
+  const onIntervalFire = useCallback(() => {
+    fileListStore.fetchFiles().catch((err) => {
       logger.error('onIntervalFire fetchFiles error', err);
     });
-  };
+  }, [fileListStore]);
 
-  render() {
-    const torrent = this.fileListStore.torrent;
+  const torrent = fileListStore.torrent;
 
-    if (!torrent) {
-      return (
-        <DoCloseFileList onClose={this.handleClose}/>
-      );
-    }
-
-    let spinner = null;
-    if (this.fileListStore.isLoading) {
-      spinner = (
-        <div className="loading"/>
-      );
-    }
-
-    let directory = null;
-    if (this.fileListStore.joinedDirectory) {
-      directory = (
-        <input type="text" value={this.fileListStore.joinedDirectory} readOnly/>
-      );
-    }
-
-    const uiUpdateInterval = this.rootStore.config.uiUpdateInterval;
-
+  if (!torrent) {
     return (
-      <>
-        <div className="file-list-warpper">
-          <div className="file-list">
-            <Interval interval={uiUpdateInterval} onFire={this.onIntervalFire}/>
-            <div onScroll={this.handleScroll} className="fl-layer">
-              {spinner}
-              <FileColumnContextMenu>
-                <table ref={this.refFixedHead} className="fl-table-head" border="0" cellSpacing="0" cellPadding="0">
-                  <FileListTableHead withStyle={true}/>
-                </table>
-              </FileColumnContextMenu>
-              <table className="fl-table-body" border="0" cellSpacing="0" cellPadding="0">
-                <FileListTableHead/>
-                <FileListTableFiles/>
-              </table>
-            </div>
-            <div className="bottom-menu">
-              {directory}
-              <div className="space"/>
-              <a onClick={this.handleUpdate} className="update" title={chrome.i18n.getMessage('refresh')}/>
-              <a onClick={this.handleClose} className="close" title={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
-            </div>
-          </div>
-        </div>
-        <div onClick={this.handleClose} className="file-list-layer-temp"/>
-      </>
+      <DoCloseFileList onClose={handleClose}/>
     );
   }
-}
+
+  let spinner = null;
+  if (fileListStore.isLoading) {
+    spinner = (
+      <div className="loading"/>
+    );
+  }
+
+  let directory = null;
+  if (fileListStore.joinedDirectory) {
+    directory = (
+      <input type="text" value={fileListStore.joinedDirectory} readOnly/>
+    );
+  }
+
+  const uiUpdateInterval = rootStore.config.uiUpdateInterval;
+
+  return (
+    <>
+      <div className="file-list-warpper">
+        <div className="file-list">
+          <Interval interval={uiUpdateInterval} onFire={onIntervalFire}/>
+          <div onScroll={handleScroll} className="fl-layer">
+            {spinner}
+            <FileColumnContextMenu>
+              <table ref={refFixedHead} className="fl-table-head" border="0" cellSpacing="0" cellPadding="0">
+                <FileListTableHead withStyle={true}/>
+              </table>
+            </FileColumnContextMenu>
+            <table className="fl-table-body" border="0" cellSpacing="0" cellPadding="0">
+              <FileListTableHead/>
+              <FileListTableFiles/>
+            </table>
+          </div>
+          <div className="bottom-menu">
+            {directory}
+            <div className="space"/>
+            <a onClick={handleUpdate} className="update" title={chrome.i18n.getMessage('refresh')}/>
+            <a onClick={handleClose} className="close" title={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
+          </div>
+        </div>
+      </div>
+      <div onClick={handleClose} className="file-list-layer-temp"/>
+    </>
+  );
+});
 
 const DoCloseFileList = React.memo(({onClose}) => {
   React.useEffect(() => {

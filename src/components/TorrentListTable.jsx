@@ -1,61 +1,35 @@
-import React from "react";
+import React, {useContext, useRef, useEffect} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import TableHeadColumn from "./TableHeadColumn";
 import TorrentListTableItem from "./TorrentListTableItem";
 import TorrentColumnContextMenu from "./TorrentColumnMenu";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useScrollSync} from "../hooks/useScrollSync";
 
-@observer
-class TorrentListTable extends React.PureComponent {
-  static contextType = RootStoreCtx;
+const TorrentListTable = observer(() => {
+  const rootStore = useContext(RootStoreCtx);
+  const refFixedHead = useRef(null);
+  const handleScroll = useScrollSync(refFixedHead);
 
-  /**@return {RootStore}*/
-  get rootStore() {
-    return this.context;
-  }
+  useEffect(() => {
+    rootStore.flushTorrentList();
+  }, [rootStore]);
 
-  componentDidMount() {
-    this.rootStore.flushTorrentList();
-  }
-
-  scrollRafId = null;
-
-  handleScroll = (e) => {
-    const scrollLeft = e.currentTarget.scrollLeft;
-    if (this.scrollRafId) return;
-    this.scrollRafId = requestAnimationFrame(() => {
-      this.scrollRafId = null;
-      if (this.refFixedHead.current) {
-        this.refFixedHead.current.style.left = `${scrollLeft * -1}px`;
-      }
-    });
-  };
-
-  componentWillUnmount() {
-    if (this.scrollRafId) {
-      cancelAnimationFrame(this.scrollRafId);
-    }
-  }
-
-  refFixedHead = React.createRef();
-
-  render() {
-    return (
-      <div onScroll={this.handleScroll} className="torrent-list-layer">
-        <TorrentColumnContextMenu>
-          <table ref={this.refFixedHead} className="torrent-table-head" border="0" cellSpacing="0" cellPadding="0">
-            <TorrentListTableHead withStyle={true}/>
-          </table>
-        </TorrentColumnContextMenu>
-        <table className="torrent-table-body" border="0" cellSpacing="0" cellPadding="0">
-          <TorrentListTableHead/>
-          <TorrentListTableTorrents/>
+  return (
+    <div onScroll={handleScroll} className="torrent-list-layer">
+      <TorrentColumnContextMenu>
+        <table ref={refFixedHead} className="torrent-table-head" border="0" cellSpacing="0" cellPadding="0">
+          <TorrentListTableHead withStyle={true}/>
         </table>
-      </div>
-    );
-  }
-}
+      </TorrentColumnContextMenu>
+      <table className="torrent-table-body" border="0" cellSpacing="0" cellPadding="0">
+        <TorrentListTableHead/>
+        <TorrentListTableTorrents/>
+      </table>
+    </div>
+  );
+});
 
 @observer
 class TorrentListTableHead extends React.PureComponent {

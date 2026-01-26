@@ -7,30 +7,24 @@ const idComponent = {
   graph: Graph,
 };
 
-class ComponentLoader extends React.PureComponent {
-  static propTypes = {
-    'load-page': PropTypes.string.isRequired,
-  };
-
-  render() {
-    if (window.PRERENDER) {
-      return (
-        <Spinner/>
-      );
-    }
-
-    const {'load-page': componentId} = this.props;
-
-    const Component = idComponent[componentId];
-
-    return (
-      <React.Suspense fallback={<Spinner/>}>
-        <Component/>
-      </React.Suspense>
-    );
-  }
-}
-
 const Spinner = () => null;
+
+const ComponentLoader = ({'load-page': componentId}) => {
+  if (window.PRERENDER) {
+    return <Spinner/>;
+  }
+
+  const Component = idComponent[componentId];
+
+  return (
+    <React.Suspense fallback={<Spinner/>}>
+      <Component/>
+    </React.Suspense>
+  );
+};
+
+ComponentLoader.propTypes = {
+  'load-page': PropTypes.string.isRequired,
+};
 
 export default ComponentLoader;
