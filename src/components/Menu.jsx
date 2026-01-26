@@ -188,11 +188,76 @@ class Menu extends React.PureComponent {
           <li className="graph">
             {graph}
           </li>
+          <SearchBox/>
           <LabelSelect/>
         </ul>
 
         {dropLayer}
       </>
+    );
+  }
+}
+
+@observer
+class SearchBox extends React.PureComponent {
+  static contextType = RootStoreCtx;
+
+  state = {expanded: false};
+  inputRef = React.createRef();
+
+  /**@return {RootStore}*/
+  get rootStore() {
+    return this.context;
+  }
+
+  handleToggle = (e) => {
+    e.preventDefault();
+    this.setState({expanded: !this.state.expanded}, () => {
+      if (this.state.expanded) {
+        this.inputRef.current?.focus();
+      }
+    });
+  };
+
+  handleChange = (e) => {
+    this.rootStore.config.setSearchQuery(e.target.value);
+  };
+
+  handleClear = (e) => {
+    e.preventDefault();
+    this.rootStore.config.setSearchQuery('');
+    this.inputRef.current?.focus();
+  };
+
+  handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      this.rootStore.config.setSearchQuery('');
+      this.setState({expanded: false});
+    }
+  };
+
+  render() {
+    const {expanded} = this.state;
+    const query = this.rootStore.config.searchQuery;
+
+    return (
+      <li className={`search ${expanded ? 'expanded' : ''}`}>
+        {expanded && (
+          <input
+            ref={this.inputRef}
+            type="text"
+            value={query}
+            onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
+            placeholder={chrome.i18n.getMessage('search')}
+          />
+        )}
+        <a onClick={this.handleToggle} title={chrome.i18n.getMessage('search')} className="btn search-icon" href="#search"/>
+        {expanded && query && (
+          <a onClick={this.handleClear} className="btn clear-icon" href="#clear"/>
+        )}
+      </li>
     );
   }
 }

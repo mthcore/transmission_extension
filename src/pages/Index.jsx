@@ -3,6 +3,7 @@ import "../assets/css/stylesheet.scss";
 import React from "react";
 import Menu from "../components/Menu";
 import {useObserver} from "mobx-react";
+import {reaction} from "mobx";
 import PropTypes from "prop-types";
 import {createRoot} from "react-dom/client";
 import RootStore from "../stores/RootStore";
@@ -30,6 +31,86 @@ const Index = React.memo(() => {
     if (rootStore.isPopup) {
       document.body.classList.add('popup');
     }
+  }, [rootStore]);
+
+  // Keyboard shortcuts
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Skip if focus in input/textarea
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      // Escape - close dialogs/filelist
+      if (e.key === 'Escape') {
+        if (rootStore.dialogs.length) {
+          rootStore.destroyDialog(rootStore.dialogs[rootStore.dialogs.length - 1]);
+        } else if (rootStore.fileList) {
+          rootStore.setFileList(null);
+        }
+        return;
+      }
+
+      // R - Refresh
+      if (e.key === 'r' && !e.ctrlKey && !e.metaKey) {
+        rootStore.client.updateTorrentList(true);
+        rootStore.client.updateSettings();
+        return;
+      }
+
+      // Ctrl+A - Toggle select all
+      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+        e.preventDefault();
+        rootStore.torrentList.toggleSelectAll();
+        return;
+      }
+
+      // Ctrl+U - Add URL
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        rootStore.createDialog({type: 'putUrl'});
+        return;
+      }
+
+      // Delete - Remove selected
+      if (e.key === 'Delete' && rootStore.torrentList.selectedIds.length) {
+        rootStore.createDialog({type: 'removeConfirm'});
+        return;
+      }
+
+      // Enter - Start/Stop selected
+      if (e.key === 'Enter' && rootStore.torrentList.selectedIds.length) {
+        const ids = rootStore.torrentList.selectedIds;
+        const firstTorrent = rootStore.client.torrents.get(ids[0]);
+        if (firstTorrent?.isActive) {
+          rootStore.client.torrentsStop(ids);
+        } else {
+          rootStore.client.torrentsStart(ids);
+        }
+        return;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [rootStore]);
+
+  // Theme application
+  React.useEffect(() => {
+    const applyTheme = (theme) => {
+      if (!theme || theme === 'system') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+    };
+
+    // React to theme changes (fireImmediately applies initial theme when config loads)
+    const dispose = reaction(
+      () => rootStore.config?.theme,
+      (theme) => applyTheme(theme),
+      {fireImmediately: true}
+    );
+
+    return () => dispose();
   }, [rootStore]);
 
   const onIntervalFire = React.useCallback((isInit) => {

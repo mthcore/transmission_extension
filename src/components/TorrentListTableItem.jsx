@@ -109,12 +109,17 @@ class TorrentListTableItem extends React.PureComponent {
         case 'done': {
           const progressClass = torrent.isSeeding ? 'seeding' : 'downloading';
           const width = torrent.progressStr;
+          const progressNum = parseFloat(width) || 0;
+          // Calculate inverse width so .val-light spans full parent width
+          const lightWidth = progressNum > 0 ? `${10000 / progressNum}%` : '100%';
 
           columns.push(
             <td key={name} className={name}>
               <div className="progress_b">
                 <div className="val">{torrent.progressStr}</div>
-                <div style={{width}} className={`progress_b_i ${progressClass}`}/>
+                <div style={{width}} className={`progress_b_i ${progressClass}`}>
+                  <div className="val-light" style={{width: lightWidth}}>{torrent.progressStr}</div>
+                </div>
               </div>
             </td>
           );

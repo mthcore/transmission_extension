@@ -78,9 +78,11 @@ const TorrentListStore = types.compose('TorrentListStore', ListSelectStore, type
         }
       }
 
-      const {hideSeedingTorrents, hideFinishedTorrents} = rootStore.config;
+      const {hideSeedingTorrents, hideFinishedTorrents, searchQuery} = rootStore.config;
+      let filtered = result;
+
       if (hideSeedingTorrents || hideFinishedTorrents) {
-        return result.filter((torrent) => {
+        filtered = filtered.filter((torrent) => {
           if (hideSeedingTorrents && torrent.isSeeding) {
             return false;
           }
@@ -89,9 +91,16 @@ const TorrentListStore = types.compose('TorrentListStore', ListSelectStore, type
           }
           return true;
         });
-      } else {
-        return result;
       }
+
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter((torrent) =>
+          torrent.name.toLowerCase().includes(query)
+        );
+      }
+
+      return filtered;
     },
     get sortedTorrents() {
       /**@type RootStore*/const rootStore = getRoot(self);

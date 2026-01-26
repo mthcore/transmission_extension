@@ -82,12 +82,17 @@ class FileListTableItem extends React.PureComponent {
           const isComplete = fileStore.size === fileStore.downloaded && fileStore.priority !== 0;
           const progressClass = isComplete ? 'complete' : 'downloading';
           const width = fileStore.progressStr;
+          const progressNum = parseFloat(width) || 0;
+          // Calculate inverse width so .val-light spans full parent width
+          const lightWidth = progressNum > 0 ? `${10000 / progressNum}%` : '100%';
 
           columns.push(
             <td key={name} className={name}>
               <div className="progress_b">
                 <div className="val">{fileStore.progressStr}</div>
-                <div className={`progress_b_i ${progressClass}`} style={{width}}/>
+                <div className={`progress_b_i ${progressClass}`} style={{width}}>
+                  <div className="val-light" style={{width: lightWidth}}>{fileStore.progressStr}</div>
+                </div>
               </div>
             </td>
           );

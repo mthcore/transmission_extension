@@ -178,6 +178,9 @@ const ConfigStore = types.model('ConfigStore', {
 
   showFreeSpace: types.optional(types.boolean, true),
 
+  searchQuery: types.optional(types.string, ''),
+  theme: types.optional(types.enumeration(['light', 'dark', 'system']), 'system'),
+
   folders: types.array(FolderStore),
 
   torrentColumns: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnList),
@@ -275,6 +278,13 @@ const ConfigStore = types.model('ConfigStore', {
       return storageSet({
         folders: self.folders
       });
+    },
+    setSearchQuery(query) {
+      self.searchQuery = query;
+    },
+    setTheme(theme) {
+      self.theme = theme;
+      return storageSet({theme});
     },
   };
 }).views((self) => {

@@ -14,9 +14,9 @@
   z-index: 10;
   width: 400px;
   max-width: 90%;
-  background-color: $card-bg;
-  box-shadow: $shadow-md;
-  border: 1px solid $border-color;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
   border-radius: 0 0 $radius $radius;
   padding: 16px;
   border-top-width: 0;
@@ -27,7 +27,7 @@
 
     label {
       display: block;
-      color: $text-secondary;
+      color: var(--text-secondary);
       margin-bottom: 6px;
       text-align: left;
       font-weight: 500;
@@ -37,10 +37,11 @@
     select {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid $border-color;
+      border: 1px solid var(--border-color);
       border-radius: $radius-sm;
       font-size: $font-size-base;
-      background-color: $input-bg;
+      background-color: var(--input-bg);
+      color: var(--text-color);
 
       &:focus {
         @include input-focus;
@@ -53,7 +54,7 @@
       width: auto;
       min-width: 100px;
       padding: 8px 16px;
-      background-color: $primary-color;
+      background-color: var(--primary-color);
       color: #fff;
       border: none;
       border-radius: $radius-sm;
@@ -62,7 +63,7 @@
       transition: background-color $transition-base;
 
       &:hover {
-        background-color: $primary-hover;
+        background-color: var(--primary-hover);
       }
     }
 
@@ -80,7 +81,7 @@
 
     .fileName {
       word-wrap: break-word;
-      color: $text-color;
+      color: var(--text-color);
       font-weight: 500;
     }
   }
@@ -118,8 +119,8 @@ div.loading {
   top: 50%;
   margin-left: -15px;
   margin-top: -15px;
-  border: 3px solid $border-color;
-  border-top-color: $primary-color;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

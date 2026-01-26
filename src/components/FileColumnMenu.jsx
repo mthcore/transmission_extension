@@ -32,7 +32,7 @@ const FileColumnMenuContent = observer(() => {
           className="context-menu-item"
           onSelect={() => handleToggleColumn(column)}
         >
-          {column.display && <span className="context-menu-check">●</span>}
+          {column.display ? <span className="context-menu-check">●</span> : null}
           {chrome.i18n.getMessage(column.lang)}
         </ContextMenu.Item>
       ))}

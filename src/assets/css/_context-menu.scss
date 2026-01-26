@@ -5,14 +5,14 @@
 @use "variables" as *;
 
 .context-menu {
-  background: $card-bg;
-  box-shadow: $shadow-md;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-md);
   border-radius: $radius;
   font-size: $font-size-base;
   z-index: 1000;
   padding: 4px 0;
   min-width: 180px;
-  border: 1px solid $border-color;
+  border: 1px solid var(--border-color);
   animation: contextMenuFadeIn 0.15s ease;
 }
 
@@ -33,7 +33,7 @@
   position: relative;
   padding: 6px 16px 6px 24px;
   cursor: pointer;
-  color: $text-color;
+  color: var(--text-color);
   background-color: transparent;
   border: none;
   width: 100%;
@@ -45,7 +45,7 @@
   &:hover,
   &:focus,
   &[data-highlighted] {
-    background-color: $primary-color;
+    background-color: var(--primary-color);
     color: #fff;
     outline: none;
   }
@@ -61,7 +61,7 @@
   justify-content: space-between;
 
   &[data-state="open"] {
-    background-color: $primary-color;
+    background-color: var(--primary-color);
     color: #fff;
   }
 }
@@ -73,7 +73,7 @@
 
 .context-menu-separator {
   height: 1px;
-  background-color: $border-color;
+  background-color: var(--border-color);
   margin: 4px 0;
 }
 

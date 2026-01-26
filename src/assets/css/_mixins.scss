@@ -27,8 +27,8 @@
   border: 1px solid transparent;
 
   &:hover {
-    background-color: $input-bg;
-    border-color: $border-color;
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
   }
 
   &:active {
@@ -39,8 +39,8 @@
 // Input focus
 @mixin input-focus {
   outline: none;
-  border-color: $primary-color;
-  box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.15);
 }
 
 // Text ellipsis

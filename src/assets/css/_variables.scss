@@ -60,3 +60,66 @@ $folder-colors: (
   5: #fca5a5,
   6: #d1d5db
 );
+
+// ===========================================
+// CSS Custom Properties (for theming)
+// ===========================================
+
+:root {
+  // Light theme (default)
+  --bg-color: #{$bg-color};
+  --card-bg: #{$card-bg};
+  --input-bg: #{$input-bg};
+  --input-focus-bg: #{$input-focus-bg};
+  --text-color: #{$text-color};
+  --text-secondary: #{$text-secondary};
+  --border-color: #{$border-color};
+  --primary-color: #{$primary-color};
+  --primary-hover: #{$primary-hover};
+  --primary-light: #{$primary-light};
+  --success-color: #{$success-color};
+  --error-color: #{$error-color};
+  --progress-bg: #{$progress-bg};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+}
+
+// Dark theme
+[data-theme="dark"] {
+  --bg-color: #1a1b1e;
+  --card-bg: #25262b;
+  --input-bg: #2c2e33;
+  --input-focus-bg: #373a40;
+  --text-color: #c1c2c5;
+  --text-secondary: #909296;
+  --border-color: #373a40;
+  --primary-color: #909296;
+  --primary-hover: #adb5bd;
+  --primary-light: #2c2e33;
+  --success-color: #51cf66;
+  --error-color: #ff6b6b;
+  --progress-bg: #373a40;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+// System preference (when theme is 'system')
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-color: #1a1b1e;
+    --card-bg: #25262b;
+    --input-bg: #2c2e33;
+    --input-focus-bg: #373a40;
+    --text-color: #c1c2c5;
+    --text-secondary: #909296;
+    --border-color: #373a40;
+    --primary-color: #909296;
+    --primary-hover: #adb5bd;
+    --primary-light: #2c2e33;
+    --success-color: #51cf66;
+    --error-color: #ff6b6b;
+    --progress-bg: #373a40;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  }
+}

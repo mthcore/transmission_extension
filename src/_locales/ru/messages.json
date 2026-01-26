@@ -546,5 +546,20 @@
     },
     "portIncorrect": {
         "message": "Порт указан неверно"
+    },
+    "search": {
+        "message": "Поиск"
+    },
+    "theme": {
+        "message": "Тема"
+    },
+    "themeSystem": {
+        "message": "Системная"
+    },
+    "themeLight": {
+        "message": "Светлая"
+    },
+    "themeDark": {
+        "message": "Тёмная"
     }
 }

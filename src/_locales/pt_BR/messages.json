@@ -533,5 +533,20 @@
     },
     "portIncorrect": {
         "message": "A porta está incorreta"
+    },
+    "search": {
+        "message": "Pesquisar"
+    },
+    "theme": {
+        "message": "Tema"
+    },
+    "themeSystem": {
+        "message": "Sistema"
+    },
+    "themeLight": {
+        "message": "Claro"
+    },
+    "themeDark": {
+        "message": "Escuro"
     }
 }

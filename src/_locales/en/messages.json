@@ -545,5 +545,20 @@
     },
     "portIncorrect": {
         "message": "Port is incorrect"
+    },
+    "search": {
+        "message": "Search"
+    },
+    "theme": {
+        "message": "Theme"
+    },
+    "themeSystem": {
+        "message": "System"
+    },
+    "themeLight": {
+        "message": "Light"
+    },
+    "themeDark": {
+        "message": "Dark"
     }
 }

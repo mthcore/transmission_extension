@@ -521,5 +521,20 @@
     },
     "portIncorrect": {
         "message": "端口不正确"
+    },
+    "search": {
+        "message": "搜索"
+    },
+    "theme": {
+        "message": "主题"
+    },
+    "themeSystem": {
+        "message": "跟随系统"
+    },
+    "themeLight": {
+        "message": "浅色"
+    },
+    "themeDark": {
+        "message": "深色"
     }
 }

@@ -20,7 +20,7 @@ table {
       border: none;
       background-color: $progress-bg;
       border-radius: 2px;
-      color: $text-color;
+      color: var(--text-color);
       height: 16px;
       overflow: hidden;
 
@@ -39,8 +39,24 @@ table {
         left: 0;
         height: 100%;
         border-radius: 2px;
-        z-index: 0;
+        z-index: 2;
+        overflow: hidden;
         transition: width 0.3s ease, background-color 0.3s ease;
+
+        // White text overlay - appears on top of colored bar
+        // Width is set via inline style to match parent .progress_b width
+        .val-light {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          text-align: center;
+          font-size: $font-size-xs;
+          font-weight: 600;
+          line-height: 16px;
+          color: #fff;
+          white-space: nowrap;
+        }
 
         // Progress bar colors
         &.downloading {

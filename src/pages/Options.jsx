@@ -3,6 +3,7 @@ import React from "react";
 import RootStore from "../stores/RootStore";
 import {createRoot} from "react-dom/client";
 import {observer} from "mobx-react";
+import {reaction} from "mobx";
 import {HashRouter, NavLink, Navigate, Route, Routes, useLocation} from "react-router-dom";
 import PropTypes from "prop-types";
 import {SketchPicker} from "react-color";
@@ -30,6 +31,27 @@ class Options extends React.PureComponent {
 
     if (this.rootStore.isPopup) {
       document.body.classList.add('popup');
+    }
+
+    // Apply theme
+    const applyTheme = (theme) => {
+      if (!theme || theme === 'system') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+    };
+
+    this.disposeThemeReaction = reaction(
+      () => this.rootStore.config?.theme,
+      (theme) => applyTheme(theme),
+      {fireImmediately: true}
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.disposeThemeReaction) {
+      this.disposeThemeReaction();
     }
   }
 
@@ -280,10 +302,22 @@ class OptionsPage extends React.Component {
 
 @observer
 class UiOptions extends OptionsPage {
+  handleThemeChange = (e) => {
+    this.configStore.setTheme(e.target.value);
+  };
+
   render() {
     return (
       <div className="page main">
         <h2>{chrome.i18n.getMessage('optMain')}</h2>
+        <label>
+          <span>{chrome.i18n.getMessage('theme')}</span>
+          <select value={this.configStore.theme} onChange={this.handleThemeChange}>
+            <option value="system">{chrome.i18n.getMessage('themeSystem')}</option>
+            <option value="light">{chrome.i18n.getMessage('themeLight')}</option>
+            <option value="dark">{chrome.i18n.getMessage('themeDark')}</option>
+          </select>
+        </label>
         <label>
           <span>{chrome.i18n.getMessage('showFreeSpace')}</span>
           <span className="toggle-switch">

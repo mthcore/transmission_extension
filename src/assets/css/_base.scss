@@ -25,9 +25,10 @@ body {
   min-width: 750px;
   @include no-select;
   height: 100%;
-  background-color: $bg-color;
-  color: $text-color;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.4;
+  transition: background-color $transition-base, color $transition-base;
 
   &.popup {
     width: 800px;
@@ -53,12 +54,12 @@ ul {
 }
 
 a {
-  color: $primary-color;
+  color: var(--primary-color);
   text-decoration: none;
   transition: color $transition-slow;
 
   &:hover {
-    color: $primary-hover;
+    color: var(--primary-hover);
   }
 }
 
