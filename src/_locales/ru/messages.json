@@ -570,5 +570,8 @@
     },
     "openOptions": {
         "message": "Открыть настройки"
+    },
+    "properties": {
+        "message": "Свойства"
     }
 }

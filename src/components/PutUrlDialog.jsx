@@ -2,6 +2,7 @@ import React, {useContext, useCallback} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
+import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
 
@@ -37,23 +38,7 @@ const PutUrlDialog = observer(({dialogStore}) => {
     dialogStore.close();
   }, [dialogStore]);
 
-  let directorySelect = null;
   const folders = rootStore.config.folders;
-  if (folders.length) {
-    directorySelect = (
-      <div className="nf-subItem">
-        <label>{chrome.i18n.getMessage('path')}</label>
-        <select name="directory">
-          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-          {folders.map((folder, index) => {
-            return (
-              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-            );
-          })}
-        </select>
-      </div>
-    );
-  }
 
   return (
     <Dialog onClose={handleClose}>
@@ -63,7 +48,7 @@ const PutUrlDialog = observer(({dialogStore}) => {
             <label>{chrome.i18n.getMessage('Paste_a_torrent_URL')}</label>
             <input type="text" name="url" autoFocus={true} required={true}/>
           </div>
-          {directorySelect}
+          <DirectorySelect folders={folders} />
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}/>
             <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>

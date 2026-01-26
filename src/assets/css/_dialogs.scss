@@ -140,6 +140,67 @@ div.loading {
   z-index: 3;
 }
 
+// Torrent details dialog
+.torrent-details-dialog {
+  .nf-notifi {
+    width: 500px;
+    max-width: 95%;
+  }
+
+  .torrent-details-header {
+    word-break: break-word;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+
+    strong {
+      font-size: $font-size-base;
+      color: var(--text-color);
+    }
+  }
+
+  .torrent-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    text-align: left;
+    margin-bottom: 16px;
+
+    .nf-subItem {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      label {
+        margin-bottom: 0;
+        font-size: 0.75rem;
+      }
+
+      span {
+        font-size: $font-size-base;
+        color: var(--text-color);
+      }
+    }
+
+    .torrent-details-full-width {
+      grid-column: 1 / -1;
+    }
+
+    .torrent-details-path {
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .torrent-details-error {
+      span {
+        color: var(--error-color);
+      }
+    }
+  }
+}
+
 // Go to options overlay (shown when not configured)
 .go-in-options {
   position: fixed;

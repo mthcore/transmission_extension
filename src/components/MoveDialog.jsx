@@ -2,6 +2,7 @@ import React, {useContext, useCallback, useState} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
+import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
 
@@ -47,24 +48,7 @@ const MoveDialog = observer(({dialogStore}) => {
     setShowCustomLocation(directoryIndex === -2);
   }, []);
 
-  let directorySelect = null;
   const folders = rootStore.config.folders;
-  if (folders.length) {
-    directorySelect = (
-      <div className="nf-subItem">
-        <label>{chrome.i18n.getMessage('path')}</label>
-        <select onChange={handleChange} name="directory" defaultValue={-2}>
-          <option value={-2}/>
-          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-          {folders.map((folder, index) => {
-            return (
-              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-            );
-          })}
-        </select>
-      </div>
-    );
-  }
 
   let customLocation = null;
   if (showCustomLocation) {
@@ -81,7 +65,12 @@ const MoveDialog = observer(({dialogStore}) => {
       <div className="nf-notifi">
         <form onSubmit={handleSubmit}>
           {customLocation}
-          {directorySelect}
+          <DirectorySelect
+            folders={folders}
+            showCustomOption={true}
+            defaultValue={-2}
+            onChange={handleChange}
+          />
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')}/>
             <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>

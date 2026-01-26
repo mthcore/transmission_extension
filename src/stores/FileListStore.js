@@ -3,15 +3,13 @@ import getLogger from "../tools/getLogger";
 import ListSelectStore from "./ListSelectStore";
 import FileStore from "./FileStore";
 import TorrentStore from "./TorrentStore";
+import {createColumnSorter, fileColumnMap} from "../tools/sortByColumn";
 
 const qs = require('querystring');
 
 const logger = getLogger('FileListStore');
 
-const byColumnMap = {
-  done: 'progress',
-  prio: 'priority'
-};
+const sortFiles = createColumnSorter(fileColumnMap);
 
 /**
  * @typedef {ListSelectStore} FileListStore
@@ -105,30 +103,7 @@ const FileListStore = types.compose('FileListStore', ListSelectStore, types.mode
     get sortedFiles() {
       /**@type RootStore*/const rootStore = getRoot(self);
       const {by, direction} = rootStore.config.filesSort;
-      const files = self.filteredFiles.slice(0);
-
-      const byColumn = byColumnMap[by] || by;
-
-      const upDown = [-1, 1];
-      if (direction === 1) {
-        upDown.reverse();
-      }
-
-      files.sort((aa, bb) => {
-        const a = aa[byColumn];
-        const b = bb[byColumn];
-        const [up, down] = upDown;
-
-        if (a === b) {
-          return 0;
-        }
-        if (a > b) {
-          return up;
-        }
-        return down;
-      });
-
-      return files;
+      return sortFiles(self.filteredFiles, by, direction);
     },
     get _sortedIds() {
       return self.sortedFiles.map(file => file.name);

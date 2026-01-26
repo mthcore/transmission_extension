@@ -545,5 +545,8 @@
     },
     "openOptions": {
         "message": "打开设置"
+    },
+    "properties": {
+        "message": "属性"
     }
 }

@@ -171,6 +171,12 @@ const ClientStore = types.model('ClientStore', {
     return self.syncClient().then(() => result);
   };
 
+  // Factory for torrent bulk actions
+  const createTorrentAction = (action, sync = true) => (ids) => {
+    const promise = callApi({action, ids}).then(...exceptionLog());
+    return sync ? promise.then(thenSyncClient) : promise;
+  };
+
   return {
     get torrentIds() {
       const result = [];
@@ -210,36 +216,16 @@ const ClientStore = types.model('ClientStore', {
         uploadSpeedStr: uploadSpeed === 0 ? '-' : speedToStr(uploadSpeed),
       };
     },
-    torrentsStart(ids) {
-      return callApi({action: 'start', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsForceStart(ids) {
-      return callApi({action: 'forcestart', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsStop(ids) {
-      return callApi({action: 'stop', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsRecheck(ids) {
-      return callApi({action: 'recheck', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsRemoveTorrent(ids) {
-      return callApi({action: 'removetorrent', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsRemoveTorrentFiles(ids) {
-      return callApi({action: 'removedatatorrent', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsQueueTop(ids) {
-      return callApi({action: 'queueTop', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsQueueUp(ids) {
-      return callApi({action: 'queueUp', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsQueueDown(ids) {
-      return callApi({action: 'queueDown', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
-    torrentsQueueBottom(ids) {
-      return callApi({action: 'queueBottom', ids: ids}).then(...exceptionLog()).then(thenSyncClient);
-    },
+    torrentsStart: createTorrentAction('start'),
+    torrentsForceStart: createTorrentAction('forcestart'),
+    torrentsStop: createTorrentAction('stop'),
+    torrentsRecheck: createTorrentAction('recheck'),
+    torrentsRemoveTorrent: createTorrentAction('removetorrent'),
+    torrentsRemoveTorrentFiles: createTorrentAction('removedatatorrent'),
+    torrentsQueueTop: createTorrentAction('queueTop'),
+    torrentsQueueUp: createTorrentAction('queueUp'),
+    torrentsQueueDown: createTorrentAction('queueDown'),
+    torrentsQueueBottom: createTorrentAction('queueBottom'),
     filesSetPriority(id, fileIdxs, level) {
       return callApi({action: 'setPriority', level, id: id, fileIdxs}).then(...exceptionLog());
     },

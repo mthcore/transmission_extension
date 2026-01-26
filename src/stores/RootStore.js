@@ -12,6 +12,7 @@ import SpaceWatcherStore from "./SpaceWatcherStore";
 import RenameDialogStore from "./RenameDialogStore";
 import CopyMagnetUrlDialogStore from "./CopyMagnetUrlDialogStore";
 import MoveDialogStore from "./MoveDialogStore";
+import TorrentDetailsDialogStore from "./TorrentDetailsDialogStore";
 import mobxApplyPatchLine from "../tools/mobxApplyPatchLine";
 
 const promiseLimit = require('promise-limit');
@@ -50,7 +51,8 @@ const RootStore = types.model('RootStore', {
   spaceWatcher: types.maybe(SpaceWatcherStore),
   dialogs: types.map(types.union(
     PutFilesDialogStore, PutUrlDialogStore, RemoveConfirmDialogStore,
-    RenameDialogStore, CopyMagnetUrlDialogStore, MoveDialogStore
+    RenameDialogStore, CopyMagnetUrlDialogStore, MoveDialogStore,
+    TorrentDetailsDialogStore
   )),
 }).actions((self) => {
   const bgStoreSession = {

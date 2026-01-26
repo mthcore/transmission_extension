@@ -2,6 +2,7 @@ import React, {useContext, useCallback, useEffect} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
+import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
 
@@ -46,22 +47,9 @@ const PutFilesDialog = observer(({dialogStore}) => {
     }
   }, []);
 
-  let directorySelect = null;
-  if (hasDirectorySelect) {
-    directorySelect = (
-      <div className="nf-subItem">
-        <label>{chrome.i18n.getMessage('path')}</label>
-        <select name="directory">
-          <option value={-1}>{chrome.i18n.getMessage('defaultPath')}</option>
-          {folders.map((folder, index) => {
-            return (
-              <option key={`option-${index}`} value={index}>{folder.name || folder.path}</option>
-            );
-          })}
-        </select>
-      </div>
-    );
-  }
+  const directorySelect = hasDirectorySelect ? (
+    <DirectorySelect folders={folders} />
+  ) : null;
 
   return (
     <Dialog onClose={handleClose}>

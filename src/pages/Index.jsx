@@ -18,6 +18,7 @@ import getLogger from "../tools/getLogger";
 import RenameDialog from "../components/RenameDialog";
 import CopyMagnetUrlDialog from "../components/CopyMagnetUrlDialog";
 import MoveDialog from "../components/MoveDialog";
+import TorrentDetailsDialog from "../components/TorrentDetailsDialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import {useTheme} from "../hooks/useTheme";
 
@@ -207,6 +208,12 @@ const Dialogs = React.memo(() => {
         case 'move': {
           dialogs.push(
             <MoveDialog key={dialog.id} dialogStore={dialog}/>
+          );
+          break;
+        }
+        case 'torrentDetails': {
+          dialogs.push(
+            <TorrentDetailsDialog key={dialog.id} dialogStore={dialog}/>
           );
           break;
         }

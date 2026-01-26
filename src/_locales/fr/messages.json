@@ -565,5 +565,8 @@
     },
     "openOptions": {
         "message": "Ouvrir les paramètres"
+    },
+    "properties": {
+        "message": "Propriétés"
     }
 }

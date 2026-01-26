@@ -1,17 +1,10 @@
 import {getRoot, types} from "mobx-state-tree";
 import ListSelectStore from "./ListSelectStore";
+import {createColumnSorter, torrentColumnMap, torrentSpecialHandlers} from "../tools/sortByColumn";
 
 const customLabels = ['ALL', 'DL', 'SEEDING', 'COMPL', 'ACTIVE', 'INACTIVE'];
 
-const byColumnMap = {
-  done: 'progress',
-  downspd: 'downloadSpeed',
-  upspd: 'uploadSpeed',
-  upped: 'uploaded',
-  added: 'addedTime',
-  completed: 'completedTime',
-  status: 'statusCode',
-};
+const sortTorrents = createColumnSorter(torrentColumnMap, torrentSpecialHandlers);
 
 /**
  * @typedef {ListSelectStore} TorrentListStore
@@ -105,48 +98,7 @@ const TorrentListStore = types.compose('TorrentListStore', ListSelectStore, type
     get sortedTorrents() {
       /**@type RootStore*/const rootStore = getRoot(self);
       const {by, direction} = rootStore.config.torrentsSort;
-      const torrents = self.filteredTorrents.slice(0);
-
-      const byColumn = byColumnMap[by] || by;
-
-      const upDown = [-1, 1];
-      if (direction === 1) {
-        upDown.reverse();
-      }
-
-      torrents.sort((aa, bb) => {
-        let a = aa[byColumn];
-        let b = bb[byColumn];
-        const [up, down] = upDown;
-
-        if (byColumn === 'eta') {
-          if (a === -1) {
-            a = Infinity;
-          }
-          if (b === -1) {
-            b = Infinity;
-          }
-        }
-
-        if (byColumn === 'added' || byColumn === 'completed') {
-          if (!a) {
-            a = Infinity;
-          }
-          if (!b) {
-            b = Infinity;
-          }
-        }
-
-        if (a === b) {
-          return 0;
-        }
-        if (a > b) {
-          return up;
-        }
-        return down;
-      });
-
-      return torrents;
+      return sortTorrents(self.filteredTorrents, by, direction);
     },
     get sortedTorrentIds() {
       return self.sortedTorrents.map(torrent => torrent.id);

@@ -136,6 +136,15 @@ const TorrentMenuContent = observer(() => {
     }
   };
 
+  const handleShowProperties = () => {
+    if (selectedIds.length) {
+      rootStore.createDialog({
+        type: 'torrentDetails',
+        torrentId: selectedIds[0]
+      });
+    }
+  };
+
   return (
     <ContextMenu.Content className="context-menu">
       {actions.includes('start') && (
@@ -240,6 +249,9 @@ const TorrentMenuContent = observer(() => {
           <ContextMenu.Separator className="context-menu-separator" />
           <ContextMenu.Item className="context-menu-item" onSelect={handleShowFiles}>
             {chrome.i18n.getMessage('showFileList')}
+          </ContextMenu.Item>
+          <ContextMenu.Item className="context-menu-item" onSelect={handleShowProperties}>
+            {chrome.i18n.getMessage('properties')}
           </ContextMenu.Item>
         </>
       )}

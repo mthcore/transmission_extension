@@ -44,7 +44,7 @@ const ListSelectStore = types.model('ListSelectStore', {
     },
     addMultipleSelectedId(toId) {
       if (!self.selectedIds.length) {
-        return self.selectedIds(toId);
+        return self.addSelectedId(toId);
       }
 
       const fromId = self.selectedIds.slice(-1)[0];

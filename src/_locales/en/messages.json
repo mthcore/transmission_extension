@@ -569,5 +569,8 @@
     },
     "openOptions": {
         "message": "Open Settings"
+    },
+    "properties": {
+        "message": "Properties"
     }
 }

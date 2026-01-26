@@ -557,5 +557,8 @@
     },
     "openOptions": {
         "message": "Abrir configurações"
+    },
+    "properties": {
+        "message": "Propriedades"
     }
 }
