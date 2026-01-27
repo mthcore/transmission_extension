@@ -4,9 +4,11 @@ import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const RenameDialog = observer(({dialogStore}) => {
   const rootStore = useContext(RootStoreCtx);
+  const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -21,18 +23,13 @@ const RenameDialog = observer(({dialogStore}) => {
     dialogStore.close();
   }, [rootStore, dialogStore]);
 
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
-    dialogStore.close();
-  }, [dialogStore]);
-
   return (
     <Dialog onClose={handleClose}>
       <div className="nf-notifi">
         <form onSubmit={handleSubmit}>
           <div className="nf-subItem">
             <label>{chrome.i18n.getMessage('renameText')}</label>
-            <input type="text" name="name" defaultValue={dialogStore.name} autoFocus={true}/>
+            <input type="text" name="name" defaultValue={dialogStore.name} autoFocus/>
           </div>
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')}/>

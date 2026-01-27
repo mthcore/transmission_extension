@@ -582,5 +582,11 @@
     },
     "sessionTotals": {
         "message": "Итого за сессию"
+    },
+    "responseEmpty": {
+        "message": "Ответ пуст"
+    },
+    "clearSearch": {
+        "message": "Очистить поиск"
     }
 }

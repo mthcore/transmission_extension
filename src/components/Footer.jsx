@@ -30,8 +30,8 @@ const Footer = observer(() => {
     chrome.tabs.create({url: `${location.origin}${location.pathname}`});
   }, []);
 
-  const {downloadSpeedStr, uploadSpeedStr} = rootStore.client.currentSpeedStr;
-  const {downloadedStr, uploadedStr} = rootStore.client.sessionTotalsStr;
+  const {downloadSpeedStr, uploadSpeedStr} = rootStore.client.currentSpeedStr ?? {downloadSpeedStr: '', uploadSpeedStr: ''};
+  const {downloadedStr, uploadedStr} = rootStore.client.sessionTotalsStr ?? {downloadedStr: '', uploadedStr: ''};
 
   let downloadLimit = null;
   let uploadLimit = null;

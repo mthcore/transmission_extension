@@ -5,10 +5,12 @@ import Dialog from "./Dialog";
 import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const MoveDialog = observer(({dialogStore}) => {
   const rootStore = useContext(RootStoreCtx);
   const [showCustomLocation, setShowCustomLocation] = useState(true);
+  const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -20,9 +22,9 @@ const MoveDialog = observer(({dialogStore}) => {
       const directoryIndex = parseInt(form.elements.directory.value, 10);
       if (directoryIndex > -2) {
         if (directoryIndex === -1) {
-          location = rootStore.client.settings.downloadDir;
+          location = rootStore.client.settings?.downloadDir ?? null;
         } else {
-          location = rootStore.config.folders[directoryIndex].path;
+          location = rootStore.config.folders[directoryIndex]?.path ?? null;
         }
       }
     }
@@ -38,11 +40,6 @@ const MoveDialog = observer(({dialogStore}) => {
     dialogStore.close();
   }, [rootStore, dialogStore]);
 
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
-    dialogStore.close();
-  }, [dialogStore]);
-
   const handleChange = useCallback((e) => {
     const directoryIndex = parseInt(e.currentTarget.value, 10);
     setShowCustomLocation(directoryIndex === -2);
@@ -55,7 +52,7 @@ const MoveDialog = observer(({dialogStore}) => {
     customLocation = (
       <div className="nf-subItem">
         <label>{chrome.i18n.getMessage('moveNewPath')}</label>
-        <input type="text" name="location" defaultValue={dialogStore.directory} autoFocus={true}/>
+        <input type="text" name="location" defaultValue={dialogStore.directory} autoFocus/>
       </div>
     );
   }

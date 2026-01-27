@@ -1,20 +1,13 @@
-import React from "react";
+import React, {useContext} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useContextMenuSelection} from "../hooks/useContextMenuSelection";
 
 const FileContextMenu = observer(({children, fileId}) => {
-  const rootStore = React.useContext(RootStoreCtx);
+  const rootStore = useContext(RootStoreCtx);
   const fileListStore = rootStore.fileList;
-
-  const handleOpenChange = (open) => {
-    if (open && !fileListStore.selectedIds.includes(fileId)) {
-      // Right-click on unselected item: select only this one
-      fileListStore.resetSelectedIds();
-      fileListStore.addSelectedId(fileId);
-    }
-    // If already selected: keep current selection for bulk actions
-  };
+  const handleOpenChange = useContextMenuSelection(fileListStore, fileId);
 
   return (
     <ContextMenu.Root onOpenChange={handleOpenChange}>

@@ -2,21 +2,18 @@ import React, {useCallback} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const CopyMagnetUrlDialog = observer(({dialogStore}) => {
+  const handleClose = useDialogClose(dialogStore);
+
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
-    const input = form.elements.magnetLink;
-    input.select();
-    document.execCommand('copy');
+    const magnetLink = form.elements.magnetLink.value;
+    navigator.clipboard.writeText(magnetLink);
 
-    dialogStore.close();
-  }, [dialogStore]);
-
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
     dialogStore.close();
   }, [dialogStore]);
 
@@ -29,7 +26,7 @@ const CopyMagnetUrlDialog = observer(({dialogStore}) => {
             <input type="text" name="magnetLink" defaultValue={dialogStore.magnetLink}/>
           </div>
           <div className="nf-subItem">
-            <input type="submit" value={chrome.i18n.getMessage('copy')} autoFocus={true}/>
+            <input type="submit" value={chrome.i18n.getMessage('copy')} autoFocus/>
             <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
           </div>
         </form>

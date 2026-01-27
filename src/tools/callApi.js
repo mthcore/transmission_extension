@@ -9,7 +9,7 @@ const callApi = (message) => {
     });
   }).then((response) => {
     if (!response) {
-      throw new Error('Response is empty');
+      throw new Error(chrome.i18n.getMessage('responseEmpty') || 'Response is empty');
     }
     if (response.error) {
       const err = new Error(response.error.message || 'Unknown error');

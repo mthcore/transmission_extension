@@ -57,7 +57,7 @@ const CtxOptionsDirs = observer(({configStore, handleChange}) => {
       <p className="section-hint">{chrome.i18n.getMessage('dirListHint')}</p>
       <form onSubmit={handleSubmit} autoComplete="off" className="dir-form">
         <div className="dir-form-row">
-          <input name="path" type="text" required={true} placeholder={chrome.i18n.getMessage('subPath')}/>
+          <input name="path" type="text" required placeholder={chrome.i18n.getMessage('subPath')}/>
           <input name="name" type="text" placeholder={chrome.i18n.getMessage('shortName')}/>
           <button type="submit">{chrome.i18n.getMessage('add')}</button>
         </div>

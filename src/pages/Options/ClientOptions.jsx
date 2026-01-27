@@ -95,11 +95,11 @@ const ClientOptions = observer(() => {
         </label>
         <label>
           <span>{chrome.i18n.getMessage('PRS_COL_IP')}</span>
-          <input name="hostname" type="text" defaultValue={configStore.hostname} placeholder="127.0.0.1" required={true}/>
+          <input name="hostname" type="text" defaultValue={configStore.hostname} placeholder="127.0.0.1" required/>
         </label>
         <label>
           <span>{chrome.i18n.getMessage('PRS_COL_PORT')}</span>
-          <input name="port" type="number" defaultValue={configStore.port} required={true}/>
+          <input name="port" type="number" defaultValue={configStore.port} required/>
         </label>
         <h3>{chrome.i18n.getMessage('ST_CAPT_ADVANCED')}</h3>
         <label>

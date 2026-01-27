@@ -85,8 +85,8 @@ const FileListTable = observer(() => {
           <div className="bottom-menu">
             {directory}
             <div className="space"/>
-            <a onClick={handleUpdate} className="update" title={chrome.i18n.getMessage('refresh')}/>
-            <a onClick={handleClose} className="close" title={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
+            <a onClick={handleUpdate} className="update" title={chrome.i18n.getMessage('refresh')} aria-label={chrome.i18n.getMessage('refresh')}/>
+            <a onClick={handleClose} className="close" title={chrome.i18n.getMessage('DLG_BTN_CLOSE')} aria-label={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
           </div>
         </div>
       </div>

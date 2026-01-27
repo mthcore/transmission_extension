@@ -116,7 +116,7 @@ const FileListStore = types.compose('FileListStore', ListSelectStore, types.mode
       return !filter ? 0 : filter.split(/[\\/]/).length;
     },
     get joinedDirectory() {
-      const directory = self.torrent.directory;
+      const directory = self.torrent?.directory;
       if (directory) {
         if (self.directory) {
           const sep = /\//.test(directory) ? '/' : '\\';

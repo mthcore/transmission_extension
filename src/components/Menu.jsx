@@ -132,36 +132,36 @@ const Menu = observer(() => {
       <ul className="menu">
         <li>
           <a onClick={handleRefresh} title={chrome.i18n.getMessage('refresh')} className="btn refresh"
-             target="_blank" href="#refresh"/>
+             aria-label={chrome.i18n.getMessage('refresh')} href="#refresh"/>
         </li>
         <li>
           <a href={rootStore.config.webUiUrl} target="_blank" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
-             className="btn wui"/>
+             aria-label={chrome.i18n.getMessage('ST_CAPT_WEBUI')} className="btn wui"/>
         </li>
         <li className="separate"/>
         <li>
           <a onClick={handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
-             href="#add_file"/>
+             aria-label={chrome.i18n.getMessage('Open_file')} href="#add_file"/>
           <input ref={refFileInput} onChange={handleFileChange} type="file"
                  accept="application/x-bittorrent" multiple={true} style={{display: 'none'}}/>
         </li>
         <li>
           <a onClick={handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
-             className="btn add_magnet" href="#add_magnet"/>
+             aria-label={chrome.i18n.getMessage('MM_FILE_ADD_URL')} className="btn add_magnet" href="#add_magnet"/>
         </li>
         <li className="separate"/>
         <li>
           <a onClick={handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
-             className={altSpeedClassList.join(' ')} href="#alt_speed"/>
+             aria-label={chrome.i18n.getMessage('altSpeedEnable')} className={altSpeedClassList.join(' ')} href="#alt_speed"/>
         </li>
         <li className="separate"/>
         <li>
           <a onClick={handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
-             className="btn start_all" href="#start_all"/>
+             aria-label={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')} className="btn start_all" href="#start_all"/>
         </li>
         <li>
           <a onClick={handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
-             className="btn pause_all" href="#stop_all"/>
+             aria-label={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')} className="btn pause_all" href="#stop_all"/>
         </li>
         <li className="graph">
           {graph}

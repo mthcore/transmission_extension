@@ -211,8 +211,8 @@ const TorrentListTableItem = observer(({torrent}) => {
         columns.push(
           <td key={name} className={name}>
             <div className="btns">
-              <a onClick={handleStart} title={chrome.i18n.getMessage('ML_START')} className="start" href="#start"/>
-              <a onClick={handleStop} title={chrome.i18n.getMessage('ML_STOP')} className="stop" href="#stop"/>
+              <a onClick={handleStart} title={chrome.i18n.getMessage('ML_START')} aria-label={chrome.i18n.getMessage('ML_START')} className="start" href="#start"/>
+              <a onClick={handleStop} title={chrome.i18n.getMessage('ML_STOP')} aria-label={chrome.i18n.getMessage('ML_STOP')} className="stop" href="#stop"/>
             </div>
           </td>
         );

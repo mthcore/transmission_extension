@@ -1,20 +1,13 @@
-import React from "react";
+import React, {useContext} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useContextMenuSelection} from "../hooks/useContextMenuSelection";
 
 const TorrentContextMenu = observer(({children, torrentId}) => {
-  const rootStore = React.useContext(RootStoreCtx);
+  const rootStore = useContext(RootStoreCtx);
   const torrentListStore = rootStore.torrentList;
-
-  const handleOpenChange = (open) => {
-    if (open && !torrentListStore.selectedIds.includes(torrentId)) {
-      // Right-click on unselected item: select only this one
-      torrentListStore.resetSelectedIds();
-      torrentListStore.addSelectedId(torrentId);
-    }
-    // If already selected: keep current selection for bulk actions
-  };
+  const handleOpenChange = useContextMenuSelection(torrentListStore, torrentId);
 
   return (
     <ContextMenu.Root onOpenChange={handleOpenChange}>

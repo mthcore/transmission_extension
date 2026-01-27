@@ -5,9 +5,11 @@ import Dialog from "./Dialog";
 import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const PutUrlDialog = observer(({dialogStore}) => {
   const rootStore = useContext(RootStoreCtx);
+  const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -33,11 +35,6 @@ const PutUrlDialog = observer(({dialogStore}) => {
     dialogStore.close();
   }, [rootStore, dialogStore]);
 
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
-    dialogStore.close();
-  }, [dialogStore]);
-
   const folders = rootStore.config.folders;
 
   return (
@@ -46,7 +43,7 @@ const PutUrlDialog = observer(({dialogStore}) => {
         <form onSubmit={handleSubmit}>
           <div className="nf-subItem">
             <label>{chrome.i18n.getMessage('Paste_a_torrent_URL')}</label>
-            <input type="text" name="url" autoFocus={true} required={true}/>
+            <input type="text" name="url" autoFocus required/>
           </div>
           <DirectorySelect folders={folders} />
           <div className="nf-subItem">

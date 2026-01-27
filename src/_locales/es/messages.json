@@ -569,5 +569,11 @@
     },
     "sessionTotals": {
         "message": "Totales de sesión"
+    },
+    "responseEmpty": {
+        "message": "La respuesta está vacía"
+    },
+    "clearSearch": {
+        "message": "Borrar búsqueda"
     }
 }

@@ -47,11 +47,12 @@ const SearchBox = observer(() => {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={chrome.i18n.getMessage('search')}
+          aria-label={chrome.i18n.getMessage('search')}
         />
       )}
-      <a onClick={handleToggle} title={chrome.i18n.getMessage('search')} className="btn search-icon" href="#search"/>
+      <a onClick={handleToggle} title={chrome.i18n.getMessage('search')} aria-label={chrome.i18n.getMessage('search')} className="btn search-icon" href="#search"/>
       {expanded && query && (
-        <a onClick={handleClear} className="btn clear-icon" href="#clear"/>
+        <a onClick={handleClear} className="btn clear-icon" aria-label={chrome.i18n.getMessage('clearSearch')} href="#clear"/>
       )}
     </li>
   );

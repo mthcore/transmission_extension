@@ -3,7 +3,7 @@ import "../assets/css/stylesheet.scss";
 import React from "react";
 import PropTypes from "prop-types";
 import Menu from "../components/Menu";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {reaction} from "mobx";
 import {createRoot} from "react-dom/client";
 import RootStore from "../stores/RootStore";
@@ -24,7 +24,7 @@ import {useTheme} from "../hooks/useTheme";
 
 const logger = getLogger('Index');
 
-const Index = React.memo(() => {
+const Index = observer(() => {
   const rootStore = React.useContext(RootStoreCtx);
 
   React.useEffect(() => {
@@ -123,107 +123,101 @@ const Index = React.memo(() => {
     });
   }, [rootStore]);
 
-  return useObserver(() => {
-    if (['idle', 'pending'].includes(rootStore.state)) {
-      return (
-        <div className="loading-container">
-          <div className="loading"/>
-        </div>
-      );
-    }
-
-    if (rootStore.state !== 'done') {
-      return `Loading: ${rootStore.state}`;
-    }
-
-    let fileList = null;
-    if (rootStore.fileList) {
-      fileList = (
-        <FileListTable key={rootStore.fileList.id}/>
-      );
-    }
-
-    const uiUpdateInterval = rootStore.config.uiUpdateInterval;
-
-    let goInOptions = null;
-    if (rootStore.config.hostname === '') {
-      goInOptions = (
-        <GoInOptions isPopup={rootStore.isPopup}/>
-      );
-    }
-
+  if (['idle', 'pending'].includes(rootStore.state)) {
     return (
-      <>
-        <Interval onFire={onIntervalFire} interval={uiUpdateInterval}/>
-        <Menu/>
-        <TorrentListTable/>
-        <Footer/>
-        {fileList}
-        <Dialogs/>
-        {goInOptions}
-      </>
+      <div className="loading-container">
+        <div className="loading"/>
+      </div>
     );
-  });
+  }
+
+  if (rootStore.state !== 'done') {
+    return `Loading: ${rootStore.state}`;
+  }
+
+  let fileList = null;
+  if (rootStore.fileList) {
+    fileList = (
+      <FileListTable key={rootStore.fileList.id}/>
+    );
+  }
+
+  const uiUpdateInterval = rootStore.config.uiUpdateInterval;
+
+  let goInOptions = null;
+  if (rootStore.config.hostname === '') {
+    goInOptions = (
+      <GoInOptions isPopup={rootStore.isPopup}/>
+    );
+  }
+
+  return (
+    <>
+      <Interval onFire={onIntervalFire} interval={uiUpdateInterval}/>
+      <Menu/>
+      <TorrentListTable/>
+      <Footer/>
+      {fileList}
+      <Dialogs/>
+      {goInOptions}
+    </>
+  );
 });
 
-const Dialogs = React.memo(() => {
+const Dialogs = observer(() => {
   const rootStore = React.useContext(RootStoreCtx);
 
-  return useObserver(() => {
-    const dialogs = [];
-    rootStore.dialogs.forEach((dialog) => {
-      switch (dialog.type) {
-        case 'putFiles': {
-          if (dialog.isReady) {
-            dialogs.push(
-              <PutFilesDialog key={dialog.id} dialogStore={dialog}/>
-            );
-          }
-          break;
-        }
-        case 'putUrl': {
+  const dialogs = [];
+  rootStore.dialogs.forEach((dialog) => {
+    switch (dialog.type) {
+      case 'putFiles': {
+        if (dialog.isReady) {
           dialogs.push(
-            <PutUrlDialog key={dialog.id} dialogStore={dialog}/>
+            <PutFilesDialog key={dialog.id} dialogStore={dialog}/>
           );
-          break;
         }
-        case 'removeConfirm': {
-          dialogs.push(
-            <RemoveConfirmDialog key={dialog.id} dialogStore={dialog}/>
-          );
-          break;
-        }
-        case 'rename': {
-          dialogs.push(
-            <RenameDialog key={dialog.id} dialogStore={dialog}/>
-          );
-          break;
-        }
-        case 'copyMagnetUrl': {
-          dialogs.push(
-            <CopyMagnetUrlDialog key={dialog.id} dialogStore={dialog}/>
-          );
-          break;
-        }
-        case 'move': {
-          dialogs.push(
-            <MoveDialog key={dialog.id} dialogStore={dialog}/>
-          );
-          break;
-        }
-        case 'torrentDetails': {
-          dialogs.push(
-            <TorrentDetailsDialog key={dialog.id} dialogStore={dialog}/>
-          );
-          break;
-        }
+        break;
       }
-    });
-
-    return (
-      dialogs
-    );
+      case 'putUrl': {
+        dialogs.push(
+          <PutUrlDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+      case 'removeConfirm': {
+        dialogs.push(
+          <RemoveConfirmDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+      case 'rename': {
+        dialogs.push(
+          <RenameDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+      case 'copyMagnetUrl': {
+        dialogs.push(
+          <CopyMagnetUrlDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+      case 'move': {
+        dialogs.push(
+          <MoveDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+      case 'torrentDetails': {
+        dialogs.push(
+          <TorrentDetailsDialog key={dialog.id} dialogStore={dialog}/>
+        );
+        break;
+      }
+    }
   });
+
+  return dialogs;
 });
 
 const GoInOptions = React.memo(({isPopup}) => {

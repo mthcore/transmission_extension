@@ -577,5 +577,11 @@
     },
     "sessionTotals": {
         "message": "Totaux de la session"
+    },
+    "responseEmpty": {
+        "message": "La réponse est vide"
+    },
+    "clearSearch": {
+        "message": "Effacer la recherche"
     }
 }

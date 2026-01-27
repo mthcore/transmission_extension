@@ -557,5 +557,11 @@
     },
     "sessionTotals": {
         "message": "会话统计"
+    },
+    "responseEmpty": {
+        "message": "响应为空"
+    },
+    "clearSearch": {
+        "message": "清除搜索"
     }
 }

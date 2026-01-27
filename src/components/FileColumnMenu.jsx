@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useContext, useCallback} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import {useColumnToggle} from "../hooks/useColumnToggle";
 
 const FileColumnContextMenu = observer(({children}) => {
   return (
@@ -17,12 +18,9 @@ const FileColumnContextMenu = observer(({children}) => {
 });
 
 const FileColumnMenuContent = observer(() => {
-  const rootStore = React.useContext(RootStoreCtx);
-
-  const handleToggleColumn = (column) => {
-    column.toggleDisplay();
-    rootStore.config.saveFilesColumns();
-  };
+  const rootStore = useContext(RootStoreCtx);
+  const saveColumns = useCallback(() => rootStore.config.saveFilesColumns(), [rootStore]);
+  const handleToggleColumn = useColumnToggle(saveColumns);
 
   return (
     <ContextMenu.Content className="context-menu">

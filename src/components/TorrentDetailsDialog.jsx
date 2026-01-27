@@ -1,15 +1,12 @@
-import React, {useCallback} from "react";
+import React from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const TorrentDetailsDialog = observer(({dialogStore}) => {
   const torrent = dialogStore.torrent;
-
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
-    dialogStore.close();
-  }, [dialogStore]);
+  const handleClose = useDialogClose(dialogStore);
 
   if (!torrent) {
     return null;

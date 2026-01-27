@@ -1,15 +1,18 @@
-import React, {useContext, useCallback, useEffect} from "react";
+import React, {useContext, useCallback, useEffect, useRef} from "react";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import Dialog from "./Dialog";
 import DirectorySelect from "./DirectorySelect";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import showError from "../tools/showError";
+import {useDialogClose} from "../hooks/useDialogClose";
 
 const PutFilesDialog = observer(({dialogStore}) => {
   const rootStore = useContext(RootStoreCtx);
   const folders = rootStore.config.folders;
   const hasDirectorySelect = folders.length > 0;
+  const autoSubmittedRef = useRef(false);
+  const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback((e) => {
     let directory = undefined;
@@ -35,17 +38,13 @@ const PutFilesDialog = observer(({dialogStore}) => {
     dialogStore.close();
   }, [rootStore, dialogStore]);
 
-  const handleClose = useCallback((e) => {
-    e && e.preventDefault();
-    dialogStore.close();
-  }, [dialogStore]);
-
   // Auto-submit when no directory selection is needed
   useEffect(() => {
-    if (!hasDirectorySelect) {
+    if (!hasDirectorySelect && !autoSubmittedRef.current) {
+      autoSubmittedRef.current = true;
       handleSubmit();
     }
-  }, []);
+  }, [hasDirectorySelect, handleSubmit]);
 
   const directorySelect = hasDirectorySelect ? (
     <DirectorySelect folders={folders} />
@@ -58,7 +57,7 @@ const PutFilesDialog = observer(({dialogStore}) => {
           {directorySelect}
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')}
-                   autoFocus={true}/>
+                   autoFocus/>
             <input onClick={handleClose} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
           </div>
         </form>
