@@ -29,6 +29,31 @@
     }
   }
 
+  .session-totals {
+    display: flex;
+    gap: 12px;
+    color: var(--text-muted);
+    border-right: 1px solid var(--border-color);
+    padding-right: 16px;
+
+    .total-dl,
+    .total-up {
+      white-space: nowrap;
+      padding-left: 16px;
+      background-repeat: no-repeat;
+      background-position: 0 center;
+      background-size: 12px;
+    }
+
+    .total-dl {
+      background-image: url(../img/arrowDown.svg);
+    }
+
+    .total-up {
+      background-image: url(../img/arrowUp.svg);
+    }
+  }
+
   .speed {
     display: flex;
     align-items: center;

@@ -1,6 +1,7 @@
 import {getRoot, types} from "mobx-state-tree";
 import SpeedRollStore from "./SpeedRollStore";
 import speedToStr from "../tools/speedToStr";
+import formatBytes from "../tools/formatBytes";
 import TorrentStore from "./TorrentStore";
 import callApi from "../tools/callApi";
 import getLogger from "../tools/getLogger";
@@ -214,6 +215,22 @@ const ClientStore = types.model('ClientStore', {
       return {
         downloadSpeedStr: downloadSpeed === 0 ? '-' : speedToStr(downloadSpeed),
         uploadSpeedStr: uploadSpeed === 0 ? '-' : speedToStr(uploadSpeed),
+      };
+    },
+    get sessionTotals() {
+      let downloaded = 0;
+      let uploaded = 0;
+      for (const torrent of self.torrents.values()) {
+        downloaded += torrent.downloaded;
+        uploaded += torrent.uploaded;
+      }
+      return {downloaded, uploaded};
+    },
+    get sessionTotalsStr() {
+      const {downloaded, uploaded} = self.sessionTotals;
+      return {
+        downloadedStr: formatBytes(downloaded),
+        uploadedStr: formatBytes(uploaded),
       };
     },
     torrentsStart: createTorrentAction('start'),

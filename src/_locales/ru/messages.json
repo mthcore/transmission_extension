@@ -573,5 +573,14 @@
     },
     "properties": {
         "message": "Свойства"
+    },
+    "copyName": {
+        "message": "Копировать имя"
+    },
+    "copyHash": {
+        "message": "Копировать хеш"
+    },
+    "sessionTotals": {
+        "message": "Итого за сессию"
     }
 }

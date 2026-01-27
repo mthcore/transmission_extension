@@ -251,6 +251,11 @@ const TorrentStore = types.model('TorrentStore', {
     },
     get isActive() {
       return !!(self.downloadSpeed || self.uploadSpeed);
+    },
+    get hash() {
+      if (!self.magnetLink) return null;
+      const match = self.magnetLink.match(/urn:btih:([a-fA-F0-9]{40}|[a-zA-Z2-7]{32})/i);
+      return match ? match[1].toUpperCase() : null;
     }
   };
 });

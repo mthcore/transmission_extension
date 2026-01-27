@@ -560,5 +560,14 @@
     },
     "properties": {
         "message": "Propriedades"
+    },
+    "copyName": {
+        "message": "Copiar nome"
+    },
+    "copyHash": {
+        "message": "Copiar hash"
+    },
+    "sessionTotals": {
+        "message": "Totais da sessão"
     }
 }

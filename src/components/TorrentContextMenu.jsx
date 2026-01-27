@@ -101,6 +101,16 @@ const TorrentMenuContent = observer(() => {
     });
   };
 
+  const handleCopyName = () => {
+    if (!firstTorrent) return;
+    navigator.clipboard.writeText(firstTorrent.name);
+  };
+
+  const handleCopyHash = () => {
+    if (!firstTorrent || !firstTorrent.hash) return;
+    navigator.clipboard.writeText(firstTorrent.hash);
+  };
+
   const handleMove = () => {
     if (!firstTorrent) return;
     rootStore.createDialog({
@@ -206,6 +216,14 @@ const TorrentMenuContent = observer(() => {
                 <ContextMenu.Item className="context-menu-item" onSelect={handleRename}>
                   {chrome.i18n.getMessage('rename')}
                 </ContextMenu.Item>
+                <ContextMenu.Item className="context-menu-item" onSelect={handleCopyName}>
+                  {chrome.i18n.getMessage('copyName')}
+                </ContextMenu.Item>
+                {firstTorrent?.hash && (
+                  <ContextMenu.Item className="context-menu-item" onSelect={handleCopyHash}>
+                    {chrome.i18n.getMessage('copyHash')}
+                  </ContextMenu.Item>
+                )}
                 <ContextMenu.Item className="context-menu-item" onSelect={handleCopyMagnetUrl}>
                   {chrome.i18n.getMessage('magnetUri')}
                 </ContextMenu.Item>

@@ -31,6 +31,7 @@ const Footer = observer(() => {
   }, []);
 
   const {downloadSpeedStr, uploadSpeedStr} = rootStore.client.currentSpeedStr;
+  const {downloadedStr, uploadedStr} = rootStore.client.sessionTotalsStr;
 
   let downloadLimit = null;
   let uploadLimit = null;
@@ -72,6 +73,10 @@ const Footer = observer(() => {
   return (
     <div className="status-panel">
       {spaceWatcher}
+      <span className="session-totals" title={chrome.i18n.getMessage('sessionTotals')}>
+        <span className="total-dl">{downloadedStr}</span>
+        <span className="total-up">{uploadedStr}</span>
+      </span>
       <SpeedContextMenu type="download">
         <span className="speed download">{downloadSpeedStr}{downloadLimit}</span>
       </SpeedContextMenu>

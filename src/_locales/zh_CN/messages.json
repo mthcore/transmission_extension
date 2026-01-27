@@ -548,5 +548,14 @@
     },
     "properties": {
         "message": "属性"
+    },
+    "copyName": {
+        "message": "复制名称"
+    },
+    "copyHash": {
+        "message": "复制哈希"
+    },
+    "sessionTotals": {
+        "message": "会话统计"
     }
 }
