@@ -1,0 +1,172 @@
+/**
+ * MobX-State-Tree Store Types
+ */
+
+import type { Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
+
+// Torrent store snapshot (data format)
+export interface TorrentSnapshot {
+  id: number;
+  statusCode: number;
+  errorCode: number;
+  errorString: string;
+  name: string;
+  size: number;
+  percentDone: number;
+  recheckProgress: number;
+  downloaded: number;
+  uploaded: number;
+  shared: number;
+  uploadSpeed: number;
+  downloadSpeed: number;
+  eta: number;
+  activePeers: number;
+  peers: number;
+  activeSeeds: number;
+  seeds: number;
+  order?: number;
+  addedTime: number;
+  completedTime: number;
+  directory?: string;
+  magnetLink?: string;
+}
+
+// Torrent store views (computed properties)
+export interface TorrentViews {
+  start(): Promise<void>;
+  stop(): Promise<void>;
+  readonly remaining: number;
+  readonly remainingStr: string;
+  readonly isCompleted: boolean;
+  readonly sizeStr: string;
+  readonly progress: number;
+  readonly progressStr: string;
+  readonly recheckProgressStr: string;
+  readonly uploadSpeedStr: string;
+  readonly downloadSpeedStr: string;
+  readonly etaStr: string;
+  readonly uploadedStr: string;
+  readonly downloadedStr: string;
+  readonly addedTimeStr: string;
+  readonly completedTimeStr: string;
+  readonly stateText: string;
+  readonly errorMessage: string;
+  readonly selected: boolean;
+  readonly isStopped: boolean;
+  readonly isQueuedToCheckFiles: boolean;
+  readonly isChecking: boolean;
+  readonly isQueuedToDownload: boolean;
+  readonly isDownloading: boolean;
+  readonly isQueuedToSeed: boolean;
+  readonly isSeeding: boolean;
+  readonly actions: string[];
+  readonly isFinished: boolean;
+  readonly isActive: boolean;
+  readonly hash: string | null;
+}
+
+// Combined Torrent type (snapshot + views)
+export type Torrent = TorrentSnapshot & TorrentViews;
+
+// File store snapshot
+export interface FileSnapshot {
+  name: string;
+  shortName: string;
+  size: number;
+  downloaded: number;
+  priority: number;
+}
+
+// File store views
+export interface FileViews {
+  readonly progress: number;
+  readonly progressStr: string;
+  readonly sizeStr: string;
+  readonly downloadedStr: string;
+  readonly priorityStr: string;
+  readonly selected: boolean;
+  readonly nameParts: string[];
+  readonly normalizedName: string;
+}
+
+// Combined File type
+export type File = FileSnapshot & FileViews;
+
+// Settings store snapshot (normalized from Transmission)
+export interface SettingsSnapshot {
+  downloadDir: string;
+  downloadDirFreeSpace: number;
+  downloadSpeedLimit: number;
+  downloadSpeedLimitEnabled: boolean;
+  uploadSpeedLimit: number;
+  uploadSpeedLimitEnabled: boolean;
+  altSpeedEnabled: boolean;
+  altSpeedDown: number;
+  altSpeedUp: number;
+}
+
+// Dialog types
+export type DialogType =
+  | 'putFiles'
+  | 'putUrl'
+  | 'rename'
+  | 'move'
+  | 'remove'
+  | 'copyMagnetUrl'
+  | 'torrentDetails';
+
+// Dialog store interface
+export interface DialogState<T = unknown> {
+  type: DialogType | null;
+  props: T;
+  open(type: DialogType, props?: T): void;
+  close(): void;
+}
+
+// Speed data point for graph
+export interface SpeedPoint {
+  download: number;
+  upload: number;
+}
+
+// Config store types
+export interface ExtensionConfig {
+  url: string;
+  login: string;
+  password: string;
+  showSpeedGraph: boolean;
+  showFreeSpace: boolean;
+  popupHeight: number;
+  showNotificationOnDownloadComplete: boolean;
+  showDownloadCompleteNotifications: boolean;
+  folders: string[];
+  labels: string[];
+  badgeColor: string;
+  hideSeedingTorrents: boolean;
+  showContextMenu: boolean;
+  ctxMenuType: 'folder' | 'label';
+  selectDownloadCategoryAfterPutTorrentFromContextMenu: boolean;
+  treeViewRecvFiles: boolean;
+  uiUpdateInterval: number;
+  bgUpdateInterval: number;
+  checkFreeSpace: boolean;
+  fixedWidthPopup: boolean;
+  theme: 'light' | 'dark' | 'system';
+}
+
+// Column configuration
+export interface ColumnConfig {
+  column: string;
+  display: number; // 1 = visible, 0 = hidden
+  order: number;
+  width: number;
+}
+
+// Sort configuration
+export interface SortConfig {
+  by: string;
+  direction: 1 | -1;
+}
+
+// Category filter types
+export type CategoryFilter = 'ALL' | 'DL' | 'SEEDING' | 'COMPL' | 'ACTIVE' | 'INACTIVE';

@@ -16,7 +16,7 @@ const browser = BUILD_ENV.browser;
 const config = {
   entry: {
     bg: './src/bg/bg',
-    index: './src/pages/Index',
+    index: './src/pages/index',
     options: './src/pages/Options',
     tabUrlFetch: './src/tabUrlFetch',
   },
@@ -59,7 +59,7 @@ const config = {
         },
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(jsx?|tsx?)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -72,7 +72,8 @@ const config = {
             ],
             presets: [
               '@babel/preset-react',
-              ['@babel/preset-env', babelEnvOptions]
+              ['@babel/preset-env', babelEnvOptions],
+              ['@babel/preset-typescript', {isTSX: true, allExtensions: true}]
             ]
           }
         }
@@ -97,7 +98,7 @@ const config = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
     fallback: {
       "path": require.resolve("path-browserify"),
       "url": require.resolve("url/"),
