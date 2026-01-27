@@ -12,7 +12,7 @@ const Dialog = ({onClose, className, children, ...props}) => {
   }
 
   const dialog = (
-    <div {...props} ref={refDialog} className={classList.join(' ')}>
+    <div {...props} ref={refDialog} className={classList.join(' ')} role="dialog" aria-modal="true">
       {children}
     </div>
   );

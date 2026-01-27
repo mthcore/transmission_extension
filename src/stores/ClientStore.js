@@ -110,7 +110,6 @@ const SettingsStore = types.model('SettingsStore', {
  */
 const ClientStore = types.model('ClientStore', {
   torrents: types.map(TorrentStore),
-  // files: types.map(types.array(FileStore)),
   settings: types.maybe(SettingsStore),
   speedRoll: types.optional(SpeedRollStore, {}),
   lastErrorMessage: types.maybe(types.string),
@@ -119,7 +118,6 @@ const ClientStore = types.model('ClientStore', {
     removeTorrentByIds(ids) {
       ids.forEach(id => {
         self.torrents.delete(id);
-        // self.files.delete(id);
       });
     },
     sync(torrents) {

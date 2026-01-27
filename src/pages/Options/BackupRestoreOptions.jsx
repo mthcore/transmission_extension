@@ -77,6 +77,8 @@ const BackupRestoreOptions = () => {
 
   const handleClearCloud = useCallback((e) => {
     e.preventDefault();
+    const confirmMessage = chrome.i18n.getMessage('confirmClearCloud') || 'Are you sure you want to clear the cloud backup?';
+    if (!window.confirm(confirmMessage)) return;
     storageRemove(['backup'], 'sync').then(() => {
       if (!refPage.current) return;
       setHasCloudData(false);
@@ -87,6 +89,8 @@ const BackupRestoreOptions = () => {
 
   const handleRestore = useCallback((e) => {
     e.preventDefault();
+    const confirmMessage = chrome.i18n.getMessage('confirmRestore') || 'Are you sure you want to restore this configuration? This will overwrite all current settings.';
+    if (!window.confirm(confirmMessage)) return;
     setRestoreState('pending');
     Promise.resolve().then(() => {
       const config = Object.assign({configVersion: 1}, JSON.parse(refData.current.value));

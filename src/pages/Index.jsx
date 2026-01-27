@@ -88,7 +88,10 @@ const Index = observer(() => {
 
       // Delete - Remove selected
       if (e.key === 'Delete' && rootStore.torrentList.selectedIds.length) {
-        rootStore.createDialog({type: 'removeConfirm'});
+        rootStore.createDialog({
+          type: 'removeConfirm',
+          torrentIds: rootStore.torrentList.selectedIds.slice(0)
+        });
         return;
       }
 
@@ -101,6 +104,69 @@ const Index = observer(() => {
         } else {
           rootStore.client.torrentsStart(ids);
         }
+        return;
+      }
+
+      // Ctrl+O - Add torrent file
+      if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+        e.preventDefault();
+        rootStore.createDialog({type: 'putFiles'});
+        return;
+      }
+
+      // F2 - Rename selected torrent
+      if (e.key === 'F2' && rootStore.torrentList.selectedIds.length === 1) {
+        e.preventDefault();
+        const id = rootStore.torrentList.selectedIds[0];
+        const torrent = rootStore.client.torrents.get(id);
+        if (torrent) {
+          rootStore.createDialog({
+            type: 'rename',
+            path: torrent.name,
+            torrentIds: [id]
+          });
+        }
+        return;
+      }
+
+      // Ctrl+M - Move selected torrent
+      if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+        e.preventDefault();
+        if (rootStore.torrentList.selectedIds.length) {
+          const id = rootStore.torrentList.selectedIds[0];
+          const torrent = rootStore.client.torrents.get(id);
+          rootStore.createDialog({
+            type: 'move',
+            directory: torrent?.directory,
+            torrentIds: rootStore.torrentList.selectedIds.slice(0)
+          });
+        }
+        return;
+      }
+
+      // Ctrl+I - Show properties
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        if (rootStore.torrentList.selectedIds.length === 1) {
+          rootStore.createDialog({
+            type: 'torrentDetails',
+            torrentId: rootStore.torrentList.selectedIds[0]
+          });
+        }
+        return;
+      }
+
+      // Ctrl+Shift+S - Stop all
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        rootStore.client.torrentsStop(rootStore.client.torrentIds);
+        return;
+      }
+
+      // Ctrl+Shift+R - Start all
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        rootStore.client.torrentsStart(rootStore.client.torrentIds);
         return;
       }
     };

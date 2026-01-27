@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import {useContextMenuSelection} from "../hooks/useContextMenuSelection";
 
@@ -69,11 +70,19 @@ const TorrentMenuContent = observer(() => {
   };
 
   const handleRemoveTorrent = () => {
-    rootStore.client.torrentsRemoveTorrent(selectedIds);
+    rootStore.createDialog({
+      type: 'removeConfirm',
+      torrentIds: selectedIds.slice(0),
+      deleteData: false
+    });
   };
 
   const handleRemoveTorrentFiles = () => {
-    rootStore.client.torrentsRemoveTorrentFiles(selectedIds);
+    rootStore.createDialog({
+      type: 'removeConfirm',
+      torrentIds: selectedIds.slice(0),
+      deleteData: true
+    });
   };
 
   const handleRename = () => {
@@ -269,5 +278,10 @@ const TorrentMenuContent = observer(() => {
     </ContextMenu.Content>
   );
 });
+
+TorrentContextMenu.propTypes = {
+  children: PropTypes.node.isRequired,
+  torrentId: PropTypes.number.isRequired,
+};
 
 export default TorrentContextMenu;

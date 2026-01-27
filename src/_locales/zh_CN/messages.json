@@ -217,6 +217,12 @@
     "OV_CONFIRM_DELETE_MULTIPLE": {
         "message": "您确定要移除选定的 %d 个 Torrent 吗？"
     },
+    "OV_CONFIRM_DELETE_DATA_ONE": {
+        "message": "您确定要移除选定的 Torrent 并删除所有已下载的数据吗？"
+    },
+    "OV_CONFIRM_DELETE_DATA_MULTIPLE": {
+        "message": "您确定要移除选定的 %d 个 Torrent 并删除所有已下载的数据吗？"
+    },
     "DLG_BTN_YES": {
         "message": "是"
     },
@@ -443,6 +449,12 @@
     },
     "optClearCloudStorage": {
         "message": "删除云中的所有设置"
+    },
+    "confirmRestore": {
+        "message": "您确定要恢复此配置吗？这将覆盖所有当前设置。"
+    },
+    "confirmClearCloud": {
+        "message": "您确定要清除云备份吗？"
     },
     "showFileList": {
         "message": "文件列表"

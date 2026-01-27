@@ -229,6 +229,12 @@
     "OV_CONFIRM_DELETE_MULTIPLE": {
         "message": "Are you sure you want to remove the %d selected torrents?"
     },
+    "OV_CONFIRM_DELETE_DATA_ONE": {
+        "message": "Are you sure you want to remove the selected torrent AND delete all downloaded data?"
+    },
+    "OV_CONFIRM_DELETE_DATA_MULTIPLE": {
+        "message": "Are you sure you want to remove the %d selected torrents AND delete all downloaded data?"
+    },
     "DLG_BTN_YES": {
         "message": "Yes"
     },
@@ -467,6 +473,12 @@
     },
     "optClearCloudStorage": {
         "message": "Remove all settings in cloud"
+    },
+    "confirmRestore": {
+        "message": "Are you sure you want to restore this configuration? This will overwrite all current settings."
+    },
+    "confirmClearCloud": {
+        "message": "Are you sure you want to clear the cloud backup?"
     },
     "showFileList": {
         "message": "List of files"

@@ -13,7 +13,11 @@ const RemoveConfirmDialog = observer(({dialogStore}) => {
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
 
-    rootStore.client.torrentsRemoveTorrent(dialogStore.torrentIds).catch((err) => {
+    const removeMethod = dialogStore.deleteData
+      ? rootStore.client.torrentsRemoveTorrentFiles
+      : rootStore.client.torrentsRemoveTorrent;
+
+    removeMethod(dialogStore.torrentIds).catch((err) => {
       showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to remove torrent', err);
     });
 
@@ -24,6 +28,8 @@ const RemoveConfirmDialog = observer(({dialogStore}) => {
   let filename = null;
 
   const count = dialogStore.torrentIds.length;
+  const deleteData = dialogStore.deleteData;
+
   if (count === 1) {
     const id = dialogStore.torrentIds[0];
     const torrent = rootStore.client.torrents.get(id);
@@ -33,12 +39,14 @@ const RemoveConfirmDialog = observer(({dialogStore}) => {
       );
     }
 
+    const messageKey = deleteData ? 'OV_CONFIRM_DELETE_DATA_ONE' : 'OV_CONFIRM_DELETE_ONE';
     label = (
-      <label>{chrome.i18n.getMessage('OV_CONFIRM_DELETE_ONE')}</label>
+      <label>{chrome.i18n.getMessage(messageKey)}</label>
     );
   } else {
+    const messageKey = deleteData ? 'OV_CONFIRM_DELETE_DATA_MULTIPLE' : 'OV_CONFIRM_DELETE_MULTIPLE';
     label = (
-      <label>{chrome.i18n.getMessage('OV_CONFIRM_DELETE_MULTIPLE').replace('%d', count)}</label>
+      <label>{chrome.i18n.getMessage(messageKey).replace('%d', count)}</label>
     );
   }
 

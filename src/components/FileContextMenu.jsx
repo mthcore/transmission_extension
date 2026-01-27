@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import {useContextMenuSelection} from "../hooks/useContextMenuSelection";
 
@@ -124,6 +125,17 @@ const PriorityItem = ({level, selected, onSelect}) => {
       {name}
     </ContextMenu.Item>
   );
+};
+
+FileContextMenu.propTypes = {
+  children: PropTypes.node.isRequired,
+  fileId: PropTypes.string.isRequired,
+};
+
+PriorityItem.propTypes = {
+  level: PropTypes.number.isRequired,
+  selected: PropTypes.bool,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default FileContextMenu;

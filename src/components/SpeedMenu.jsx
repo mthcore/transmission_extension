@@ -1,6 +1,7 @@
 import React from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import speedToStr from "../tools/speedToStr";
 import RootStoreCtx from "../tools/RootStoreCtx";
 
@@ -116,6 +117,15 @@ const SpeedMenuContent = observer(({type}) => {
     </ContextMenu.Content>
   );
 });
+
+SpeedContextMenu.propTypes = {
+  children: PropTypes.node.isRequired,
+  type: PropTypes.oneOf(['download', 'upload']).isRequired,
+};
+
+SpeedMenuContent.propTypes = {
+  type: PropTypes.oneOf(['download', 'upload']).isRequired,
+};
 
 function getSpeedArray(currentLimit, count, maybeZero) {
   if (!maybeZero && !currentLimit) {

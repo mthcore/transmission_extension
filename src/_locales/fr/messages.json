@@ -225,6 +225,12 @@
     "OV_CONFIRM_DELETE_MULTIPLE": {
         "message": "Souhaitez-vous vraiment annuler les %d torrents sélectionnés ?"
     },
+    "OV_CONFIRM_DELETE_DATA_ONE": {
+        "message": "Souhaitez-vous vraiment supprimer le torrent sélectionné ET effacer toutes les données téléchargées ?"
+    },
+    "OV_CONFIRM_DELETE_DATA_MULTIPLE": {
+        "message": "Souhaitez-vous vraiment supprimer les %d torrents sélectionnés ET effacer toutes les données téléchargées ?"
+    },
     "DLG_BTN_YES": {
         "message": "Oui"
     },
@@ -463,6 +469,12 @@
     },
     "optClearCloudStorage": {
         "message": "Retirez tous les paramètres dans le cloud"
+    },
+    "confirmRestore": {
+        "message": "Êtes-vous sûr de vouloir restaurer cette configuration ? Cela écrasera tous les paramètres actuels."
+    },
+    "confirmClearCloud": {
+        "message": "Êtes-vous sûr de vouloir supprimer la sauvegarde cloud ?"
     },
     "showFileList": {
         "message": "Liste des fichiers"

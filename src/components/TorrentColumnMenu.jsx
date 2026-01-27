@@ -1,6 +1,7 @@
 import React, {useContext, useCallback} from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
 import RootStoreCtx from "../tools/RootStoreCtx";
 import {useColumnToggle} from "../hooks/useColumnToggle";
 
@@ -37,5 +38,9 @@ const TorrentColumnMenuContent = observer(() => {
     </ContextMenu.Content>
   );
 });
+
+TorrentColumnContextMenu.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default TorrentColumnContextMenu;
