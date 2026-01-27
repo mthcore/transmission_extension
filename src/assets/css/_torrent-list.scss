@@ -11,7 +11,7 @@
   overflow-y: auto;
   flex-grow: 1;
   min-height: 20px;
-  background: $card-bg;
+  background: var(--card-bg);
 
   table {
     width: max-content;
@@ -81,7 +81,7 @@ div.torrent-list-layer table {
 }
 
 div.torrent-list-layer tr:nth-child(even) {
-  background-color: $bg-color;
+  background-color: var(--bg-color);
 }
 
 table.torrent-table-head {
@@ -108,6 +108,7 @@ div.torrent-list-layer table td.actions div.btns {
     vertical-align: middle;
     border-radius: $radius-sm;
     transition: opacity $transition-base, background-color $transition-base;
+    filter: var(--icon-filter);
 
     &:hover {
       opacity: 1;

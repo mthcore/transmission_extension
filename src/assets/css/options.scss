@@ -15,8 +15,8 @@ body {
   font-size: 14px;
   margin: 0;
   padding: 0;
-  background-color: $bg-color;
-  color: $text-color;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -47,32 +47,32 @@ h1 {
   margin: 0;
   font-weight: 600;
   font-size: 1.5rem;
-  color: $text-color;
+  color: var(--text-color);
 }
 
 h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: $text-color;
+  color: var(--text-color);
   margin: 0 0 1.5rem 0;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid $primary-color;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: $text-secondary;
+  color: var(--text-secondary);
   margin: 1.5rem 0 1rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid var(--border-color);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 
 .hint {
   font-size: 0.85rem;
-  color: $text-secondary;
+  color: var(--text-secondary);
   margin: -0.5rem 0 1rem 0;
   font-style: italic;
 }
@@ -85,9 +85,9 @@ h3 {
 }
 
 div.search_panel {
-  background: $card-bg;
+  background: var(--card-bg);
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid var(--border-color);
   box-shadow: $shadow-sm;
   position: sticky;
   top: 0;
@@ -115,17 +115,17 @@ div.container > .content > .left {
     padding: 0.75rem 1rem;
     margin-bottom: 0.25rem;
     border-radius: $radius;
-    color: $text-secondary;
+    color: var(--text-secondary);
     font-weight: 500;
     transition: all $transition-slow;
 
     &:hover {
-      background-color: $input-bg;
-      color: $text-color;
+      background-color: var(--input-bg);
+      color: var(--text-color);
     }
 
     &.active {
-      background-color: $primary-color;
+      background-color: var(--primary-color);
       color: white;
 
       &:hover {
@@ -143,7 +143,7 @@ div.container > .content > .right {
 
 // Page Cards
 .page {
-  background: $card-bg;
+  background: var(--card-bg);
   border-radius: $radius-lg;
   padding: 1.5rem;
   box-shadow: $shadow-md;
@@ -159,7 +159,7 @@ div.optionItem {
 }
 
 label > span:first-child {
-  color: $text-secondary;
+  color: var(--text-secondary);
   font-weight: 500;
   min-width: 200px;
   flex-shrink: 0;
@@ -177,21 +177,21 @@ input[type="text"],
 input[type="password"],
 input[type="number"] {
   padding: 0.625rem 0.875rem;
-  border: 1px solid $border-color;
+  border: 1px solid var(--border-color);
   border-radius: $radius;
-  background-color: $input-bg;
-  color: $text-color;
+  background-color: var(--input-bg);
+  color: var(--text-color);
   font-size: 14px;
   transition: all $transition-slow;
   outline: none;
 
   &:focus {
-    background-color: $input-focus-bg;
+    background-color: var(--input-focus-bg);
     @include input-focus;
   }
 
   &::placeholder {
-    color: $text-secondary;
+    color: var(--text-secondary);
   }
 }
 
@@ -217,7 +217,7 @@ input[type="number"] {
     height: 0;
 
     &:checked + .toggle-slider {
-      background-color: $primary-color;
+      background-color: var(--primary-color);
     }
 
     &:checked + .toggle-slider:before {
@@ -236,7 +236,7 @@ input[type="number"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: $border-color;
+    background-color: var(--border-color);
     transition: all 0.2s ease;
     border-radius: 24px;
 
@@ -259,7 +259,7 @@ input[type="number"] {
 input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: $primary-color;
+  accent-color: var(--primary-color);
   cursor: pointer;
 }
 
@@ -268,7 +268,7 @@ button,
 input[type="button"],
 input[type="submit"] {
   padding: 0.625rem 1.25rem;
-  background-color: $primary-color;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: $radius;
@@ -288,8 +288,8 @@ input[type="submit"] {
   }
 
   &:disabled {
-    background-color: $border-color;
-    color: $text-secondary;
+    background-color: var(--border-color);
+    color: var(--text-secondary);
     cursor: not-allowed;
     transform: none;
   }
@@ -303,12 +303,12 @@ input[type="submit"] {
   flex-wrap: wrap;
 
   input[type="button"] {
-    background-color: $input-bg;
-    color: $text-color;
-    border: 1px solid $border-color;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 
     &:hover:not(:disabled) {
-      background-color: $border-color;
+      background-color: var(--border-color);
       border-color: color.adjust($border-color, $lightness: -10%);
     }
   }
@@ -319,10 +319,10 @@ textarea {
   width: 100%;
   min-height: 300px;
   padding: 1rem;
-  border: 1px solid $border-color;
+  border: 1px solid var(--border-color);
   border-radius: $radius;
-  background-color: $input-bg;
-  color: $text-color;
+  background-color: var(--input-bg);
+  color: var(--text-color);
   font-family: $font-family-mono;
   font-size: $font-size-base;
   resize: vertical;
@@ -330,38 +330,37 @@ textarea {
   transition: all $transition-slow;
 
   &:focus {
-    background-color: $input-focus-bg;
+    background-color: var(--input-focus-bg);
     @include input-focus;
   }
 }
 
-// Select (folder list)
+// Select dropdown
 select {
-  width: 100%;
-  max-width: 500px;
-  min-height: 120px;
-  padding: 0.5rem;
-  border: 1px solid $border-color;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--border-color);
   border-radius: $radius;
-  background-color: $input-bg;
-  color: $text-color;
+  background-color: var(--input-bg);
+  color: var(--text-color);
   font-size: 14px;
   outline: none;
 
   &:focus {
     @include input-focus;
   }
-
-  option {
-    padding: 0.5rem;
-  }
 }
 
+// Multi-select lists (folder list, label list)
 #folderList,
 #labelList {
   width: 100%;
   max-width: 500px;
-  height: 150px;
+  min-height: 150px;
+  padding: 0.5rem;
+
+  option {
+    padding: 0.5rem;
+  }
 }
 
 // Status Messages
@@ -382,7 +381,7 @@ select {
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid var(--border-color);
 
   > div {
     display: flex;
@@ -395,7 +394,7 @@ select {
   display: inline-block;
   width: 32px;
   height: 32px;
-  border: 2px solid $border-color;
+  border: 2px solid var(--border-color);
   border-radius: 50%;
   cursor: pointer;
   transition: all $transition-slow;
@@ -403,7 +402,7 @@ select {
 
   &:hover {
     transform: scale(1.1);
-    border-color: $primary-color;
+    border-color: var(--primary-color);
   }
 }
 
@@ -411,16 +410,16 @@ select {
 .bottom {
   padding: 1rem;
   text-align: center;
-  color: $text-secondary;
+  color: var(--text-secondary);
   font-size: $font-size-base;
-  border-top: 1px solid $border-color;
-  background: $card-bg;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
 
   a {
-    color: $text-secondary;
+    color: var(--text-secondary);
 
     &:hover {
-      color: $primary-color;
+      color: var(--primary-color);
     }
   }
 }
@@ -429,7 +428,7 @@ select {
 div.info {
   background-color: rgba($primary-color, 0.08);
   border: 1px solid rgba($primary-color, 0.2);
-  border-left: 4px solid $primary-color;
+  border-left: 4px solid var(--primary-color);
   border-radius: $radius;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -469,8 +468,8 @@ div.info {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid $border-color;
-  border-top-color: $primary-color;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -531,7 +530,7 @@ div.info {
 
 ol.help li {
   padding: 0.5rem 0;
-  color: $text-secondary;
+  color: var(--text-secondary);
 }
 
 .helpImgContainer {
@@ -548,7 +547,7 @@ ol.help li {
 // Section hint (under h3)
 .section-hint {
   font-size: 0.85rem;
-  color: $text-secondary;
+  color: var(--text-secondary);
   margin: -0.5rem 0 1rem 0;
   font-style: italic;
 }

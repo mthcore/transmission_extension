@@ -52,7 +52,7 @@ table.fl-table-body thead {
 }
 
 div.fl-layer tr:nth-child(even) {
-  background-color: $bg-color;
+  background-color: var(--bg-color);
 }
 
 div.fl-layer table {
@@ -87,13 +87,13 @@ div.file-list div.bottom-menu {
   flex-shrink: 0;
   align-items: center;
   padding: 8px 12px;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid var(--border-color);
   gap: 8px;
 
   input {
     font-size: $font-size-base;
     border: none;
-    color: $text-secondary;
+    color: var(--text-secondary);
     flex-grow: 99;
     background: transparent;
   }
@@ -111,6 +111,7 @@ div.file-list div.bottom-menu {
     display: inline-flex;
     border-radius: $radius-sm;
     transition: all $transition-base;
+    filter: var(--icon-filter);
 
     &.update {
       background-image: url("../img/refresh.svg");
@@ -123,8 +124,8 @@ div.file-list div.bottom-menu {
     }
 
     &:hover {
-      background-color: $input-bg;
-      border-color: $border-color;
+      background-color: var(--input-bg);
+      border-color: var(--border-color);
     }
 
     &:active {
@@ -135,9 +136,9 @@ div.file-list div.bottom-menu {
 
 // Folder tags
 div.fl-layer a.folder {
-  background-color: $input-bg;
+  background-color: var(--input-bg);
   border-radius: $radius-sm;
-  color: $text-color;
+  color: var(--text-color);
   margin-right: 2px;
   padding: 1px 4px;
   text-decoration: none;
@@ -145,7 +146,7 @@ div.fl-layer a.folder {
   transition: background-color $transition-base;
 
   &:hover {
-    background-color: $border-color;
+    background-color: var(--border-color);
   }
 }
 

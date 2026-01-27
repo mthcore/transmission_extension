@@ -75,6 +75,7 @@ table {
       background-size: 14px;
       opacity: 0.5;
       transition: transform $transition-slow, opacity $transition-slow;
+      filter: var(--icon-filter);
     }
 
     &.sortUp,

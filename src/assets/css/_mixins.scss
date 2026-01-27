@@ -25,6 +25,7 @@
   background-position: center center;
   border-radius: $radius-sm;
   border: 1px solid transparent;
+  filter: var(--icon-filter);
 
   &:hover {
     background-color: var(--input-bg);

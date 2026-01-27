@@ -18,7 +18,7 @@ table {
       flex-shrink: 0;
       position: relative;
       border: none;
-      background-color: $progress-bg;
+      background-color: var(--progress-bg);
       border-radius: 2px;
       color: var(--text-color);
       height: 16px;

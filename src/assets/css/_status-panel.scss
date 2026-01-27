@@ -26,13 +26,14 @@
 
     &.disk {
       background-image: url(../img/free_space.svg);
+      filter: var(--icon-filter);
     }
   }
 
   .session-totals {
     display: flex;
     gap: 12px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     border-right: 1px solid var(--border-color);
     padding-right: 16px;
 
@@ -43,6 +44,7 @@
       background-repeat: no-repeat;
       background-position: 0 center;
       background-size: 12px;
+      filter: var(--icon-filter);
     }
 
     .total-dl {
@@ -62,6 +64,7 @@
     background-position: 0 center;
     background-size: 12px;
     white-space: nowrap;
+    filter: var(--icon-filter);
   }
 
   .download {

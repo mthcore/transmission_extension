@@ -7,24 +7,25 @@
 @use "mixins" as *;
 
 .rc-select {
-  color: $text-color;
+  color: var(--text-color);
   width: 100%;
   outline: 0;
   font-size: $font-size-base;
 
   .rc-select-selector {
     outline: none;
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color) !important;
     border-radius: $radius-sm;
     white-space: nowrap;
     height: 28px;
     line-height: 26px;
-    background-color: $card-bg;
-    transition: border-color $transition-base, box-shadow $transition-base;
+    background-color: var(--input-bg) !important;
+    transition: border-color $transition-base, box-shadow $transition-base, background-color $transition-base;
     padding: 0 !important;
 
     &:hover {
-      border-color: color.adjust($border-color, $lightness: -10%);
+      border-color: var(--text-secondary) !important;
+      background-color: var(--input-focus-bg) !important;
     }
 
     .rc-select-selection-wrap {
@@ -61,12 +62,12 @@
   }
 
   &.rc-select-focused .rc-select-selector {
-    border-color: $primary-color;
+    border-color: var(--primary-color) !important;
     box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
   }
 
   &.rc-select-open .rc-select-selector {
-    border-color: $primary-color;
+    border-color: var(--primary-color) !important;
   }
 
   .rc-select-arrow {
@@ -85,7 +86,7 @@
       width: 0;
       height: 0;
       border: 5px solid transparent;
-      border-top-color: $text-secondary;
+      border-top-color: var(--text-secondary);
       display: block;
       margin-top: 4px;
       transition: transform $transition-slow;
@@ -100,13 +101,13 @@
 
 // Dropdown
 .rc-select-dropdown {
-  border: 1px solid $border-color;
-  border-top-color: $primary-color;
-  color: $text-color;
+  border: 1px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  color: var(--text-color);
   z-index: 1000;
   box-shadow: $shadow-md;
   border-radius: 0 0 $radius-sm $radius-sm;
-  background: $card-bg;
+  background: var(--card-bg);
   min-height: auto;
   max-height: none;
   overflow: hidden;
@@ -121,7 +122,7 @@
     display: flex;
     align-items: center;
     padding: 8px 28px 8px 12px;
-    color: $text-color;
+    color: var(--text-color);
     font-size: $font-size-base;
     line-height: 1.4;
     transition: background-color $transition-fast;
@@ -143,17 +144,17 @@
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      color: $primary-color;
+      color: var(--primary-color);
       font-size: 12px;
     }
 
     &.rc-select-item-option-active {
-      background-color: $input-bg;
+      background-color: var(--input-bg);
     }
 
     &.rc-select-item-option-selected {
       color: #fff;
-      background-color: $primary-color;
+      background-color: var(--primary-color);
 
       .image {
         filter: brightness(0) invert(1);
@@ -181,6 +182,7 @@
     vertical-align: middle;
     margin-right: 8px;
     flex-shrink: 0;
+    filter: var(--icon-filter);
 
     &[data-image] {
       background-repeat: no-repeat;
