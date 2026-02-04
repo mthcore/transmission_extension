@@ -9,7 +9,7 @@ declare module 'promise-limit' {
    * @param concurrency - The maximum number of concurrent promises
    * @returns A function that wraps promise-returning functions to enforce the limit
    */
-  function promiseLimit<T>(
+  function promiseLimit(
     concurrency: number
   ): <R>(fn: () => Promise<R>) => Promise<R>;
 

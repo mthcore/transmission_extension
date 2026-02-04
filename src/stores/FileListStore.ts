@@ -164,9 +164,10 @@ function setFilesShortName(files: FileData[]): { dir: string; files: FileData[] 
     dir = '';
   }
 
+  const dirLength = dir.length;
   if (isEvery) {
     files.forEach((file) => {
-      file.shortName = file.name.substring(dir!.length + 1);
+      file.shortName = file.name.substring(dirLength + 1);
     });
   }
 

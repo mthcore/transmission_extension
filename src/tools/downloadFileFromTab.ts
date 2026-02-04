@@ -52,7 +52,10 @@ async function downloadFileFromTab(
       if (response.error.name) err.name = response.error.name;
       throw err;
     }
-    return response.result!;
+    if (!response.result) {
+      throw new Error('Response result is empty');
+    }
+    return response.result;
   }).then(({ response, base64 }) => {
     const arrayBuffer = base64ToArrayBuffer(base64);
     const headers = new Headers(response.headers);

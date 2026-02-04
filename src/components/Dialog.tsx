@@ -6,9 +6,10 @@ interface DialogProps {
   onClose: () => void;
   className?: string;
   children?: ReactNode;
+  isAlert?: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, className, children, ...props }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, className, children, isAlert, ...props }) => {
   const refDialog = useDialog(onClose);
 
   const classList = ['dialog__body'];
@@ -17,7 +18,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, className, children, ...props 
   }
 
   const dialog = (
-    <div {...props} ref={refDialog} className={classList.join(' ')} role="dialog" aria-modal="true">
+    <div {...props} ref={refDialog} className={classList.join(' ')} role={isAlert ? 'alertdialog' : 'dialog'} aria-modal="true">
       {children}
     </div>
   );

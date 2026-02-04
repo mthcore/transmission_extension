@@ -11,7 +11,7 @@ const FileStore = types.model('FileStore', {
   priority: types.number,
 }).views((self) => {
   let cachedNamePartsName: string | null = null;
-  let cachedNameParts: string[] | null = null;
+  let cachedNameParts: string[] = [];
 
   return {
     get progress(): number {
@@ -46,7 +46,7 @@ const FileStore = types.model('FileStore', {
         cachedNamePartsName = self.shortName;
         cachedNameParts = cachedNamePartsName.split(/[\\/]/);
       }
-      return cachedNameParts!;
+      return cachedNameParts;
     },
     get normalizedName(): string {
       return this.nameParts.join('/');

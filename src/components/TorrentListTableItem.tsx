@@ -4,6 +4,7 @@ import RootStoreCtx from "../tools/rootStoreCtx";
 import TorrentContextMenu from "./TorrentContextMenu";
 import TorrentName from "./TorrentName";
 import { PROGRESS_LIGHT_DENOMINATOR } from "../constants";
+import { useLoading } from "../hooks/useLoading";
 
 interface Torrent {
   id: number;
@@ -28,8 +29,8 @@ interface Torrent {
   shared: number;
   addedTimeStr: string;
   completedTimeStr: string;
-  start: () => void;
-  stop: () => void;
+  start: () => Promise<void>;
+  stop: () => Promise<void>;
 }
 
 interface TorrentListTableItemProps {
@@ -46,6 +47,8 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
   const rootStore = useContext(RootStoreCtx);
   const torrentListStore = rootStore?.torrentList as TorrentListStore | undefined;
   const config = rootStore?.config;
+  const { isLoading: isStarting, withLoading: withStartLoading } = useLoading();
+  const { isLoading: isStopping, withLoading: withStopLoading } = useLoading();
 
   const handleSelect = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!torrent.selected) {
@@ -60,12 +63,12 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
   }, [torrent, torrentListStore]);
 
   const handleStart = useCallback(() => {
-    torrent.start();
-  }, [torrent]);
+    withStartLoading(() => torrent.start());
+  }, [torrent, withStartLoading]);
 
   const handleStop = useCallback(() => {
-    torrent.stop();
-  }, [torrent]);
+    withStopLoading(() => torrent.stop());
+  }, [torrent, withStopLoading]);
 
   const handleDblClick = useCallback((e: React.MouseEvent<HTMLTableRowElement>) => {
     e.preventDefault();
@@ -249,8 +252,22 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
         columns.push(
           <td key={name} className={name}>
             <div className="btns">
-              <button onClick={handleStart} title={chrome.i18n.getMessage('ML_START')} aria-label={chrome.i18n.getMessage('ML_START')} className="start" type="button"/>
-              <button onClick={handleStop} title={chrome.i18n.getMessage('ML_STOP')} aria-label={chrome.i18n.getMessage('ML_STOP')} className="stop" type="button"/>
+              <button
+                onClick={handleStart}
+                title={chrome.i18n.getMessage('ML_START')}
+                aria-label={chrome.i18n.getMessage('ML_START')}
+                className={`start${isStarting ? ' btn-loading' : ''}`}
+                type="button"
+                disabled={isStarting}
+              />
+              <button
+                onClick={handleStop}
+                title={chrome.i18n.getMessage('ML_STOP')}
+                aria-label={chrome.i18n.getMessage('ML_STOP')}
+                className={`stop${isStopping ? ' btn-loading' : ''}`}
+                type="button"
+                disabled={isStopping}
+              />
             </div>
           </td>
         );

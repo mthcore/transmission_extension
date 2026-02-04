@@ -47,7 +47,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
     }
   }, [file, fileListStore]);
 
-  if (!rootStore || !config) return null;
+  if (!rootStore || !config || !fileListStore) return null;
 
   const visibleFileColumns = config.visibleFileColumns as unknown as Array<{ column: string }>;
 
@@ -65,7 +65,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
       case 'name': {
         columns.push(
           <td key={name} className={name}>
-            <FileName fileListStore={fileListStore!} fileStore={file}/>
+            <FileName fileListStore={fileListStore} fileStore={file}/>
           </td>
         );
         break;

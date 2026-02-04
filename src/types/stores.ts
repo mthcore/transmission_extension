@@ -2,8 +2,6 @@
  * MobX-State-Tree Store Types
  */
 
-import type { Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
-
 // Torrent store snapshot (data format)
 export interface TorrentSnapshot {
   id: number;

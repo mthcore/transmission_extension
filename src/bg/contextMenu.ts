@@ -75,12 +75,14 @@ class ContextMenu {
       }
       return { url };
     }).then((data) => {
-      return this.bg.client!.putTorrent(data, directory);
+      if (!this.bg.client) throw new Error('Client not initialized');
+      return this.bg.client.putTorrent(data, directory);
     }).then(() => {
       if (this.bgStore.config.selectDownloadCategoryAfterPutTorrentFromContextMenu) {
         this.bgStore.config.setSelectedLabel('DL', true);
       }
-      return this.bg.client!.updateTorrents();
+      if (!this.bg.client) throw new Error('Client not initialized');
+      return this.bg.client.updateTorrents();
     }).then(() => {
       // void return
     }).catch((err) => {
@@ -102,7 +104,8 @@ class ContextMenu {
         switch (itemInfo.name) {
           case 'default': {
             this.bg.whenReady().then(() => {
-              return this.onSendLink(linkUrl!, tab!.id!, frameId);
+              if (!linkUrl || !tab?.id) return;
+              return this.onSendLink(linkUrl, tab.id, frameId);
             }).catch((err) => {
               logger.error('handleClick default error', err);
             });
@@ -121,8 +124,9 @@ class ContextMenu {
       }
       case 'folder': {
         this.bg.whenReady().then(() => {
-          const folder = this.bgStore.config.folders[itemInfo.index!];
-          return this.onSendLink(linkUrl!, tab!.id!, frameId, folder);
+          if (!linkUrl || !tab?.id || itemInfo.index === undefined) return;
+          const folder = this.bgStore.config.folders[itemInfo.index];
+          return this.onSendLink(linkUrl, tab.id, frameId, folder);
         }).catch((err) => {
           logger.error('handleClick folder error', err);
         });
@@ -205,7 +209,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
   folders.forEach((folder) => {
     const place = folder.path;
     if (sep === null) {
-      if (place.indexOf('\/') !== -1) {
+      if (place.indexOf('/') !== -1) {
         sep = '/';
       } else if (place.indexOf('\\') !== -1) {
         sep = '\\';
@@ -228,7 +232,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
   places.forEach((place) => {
     const parts = place.split('/');
     if (parts[0] === '') {
-      parts.unshift(parts.splice(0, 2).join(sep!));
+      parts.unshift(parts.splice(0, 2).join(sep ?? '/'));
     }
 
     let parentThree: Record<string, unknown> = tree;
@@ -255,7 +259,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
 
     const subParts = Object.keys(subTree as Record<string, unknown>);
     if (subParts.length === 1) {
-      const subPart = subParts.shift()!;
+      const subPart = subParts[0];
       if (subPart === './') {
         tree[part] = (subTree as Record<string, unknown>)[subPart];
       } else {

@@ -99,7 +99,9 @@ const RootStore = types.model('RootStore', {
     },
     createFileList(id: number): IFileListStore {
       self.fileList = cast({ id });
-      return self.fileList!;
+      const fileList = self.fileList;
+      if (!fileList) throw new Error('FileList creation failed');
+      return fileList;
     },
     destroyFileList() {
       self.fileList = undefined;

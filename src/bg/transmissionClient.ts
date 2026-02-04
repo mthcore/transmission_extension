@@ -181,7 +181,7 @@ class TransmissionClient {
     function safeParser(text: string): TransmissionResponse {
       try {
         return JSON.parse(text);
-      } catch (err) {
+      } catch {
         return JSON.parse(text.replace(/"(announce|scrape|lastAnnounceResult|lastScrapeResult)":"([^"]+)"/g, safeValue));
       }
     }
@@ -189,7 +189,7 @@ class TransmissionClient {
     function safeValue(match: string, key: string, value: string): string {
       try {
         JSON.parse(`"${value}"`);
-      } catch (err) {
+      } catch {
         value = encodeURIComponent(value);
       }
       return `"${key}":"${value}"`;
@@ -303,8 +303,8 @@ class TransmissionClient {
             filename: data.url
           }
         }));
-      } else {
-        return readBlobAsArrayBuffer(data.blob!).then(ab => arrayBufferToBase64(ab)).then((base64) => {
+      } else if (data.blob) {
+        return readBlobAsArrayBuffer(data.blob).then(ab => arrayBufferToBase64(ab)).then((base64) => {
           return this.sendAction(putDirectory({
             method: 'torrent-add',
             arguments: {
@@ -312,6 +312,8 @@ class TransmissionClient {
             }
           }));
         });
+      } else {
+        throw new Error('No URL or blob provided');
       }
     }).catch((err) => {
       if (err.code === 'TRANSMISSION_ERROR') {

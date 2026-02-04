@@ -82,7 +82,9 @@ declare global {
 
 const rootStore = window.rootStore = RootStore.create();
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Root element not found');
+createRoot(rootElement).render(
   <RootStoreCtx.Provider value={rootStore as unknown as import('../../stores/RootStore').IRootStore}>
     <Options />
   </RootStoreCtx.Provider>

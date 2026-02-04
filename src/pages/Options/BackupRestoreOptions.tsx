@@ -53,7 +53,7 @@ const BackupRestoreOptions: React.FC = () => {
   useEffect(() => {
     handleLoadConfig();
     checkCloudData();
-  }, []);
+  }, [handleLoadConfig, checkCloudData]);
 
   const handleSaveToCloud = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

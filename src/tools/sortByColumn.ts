@@ -37,7 +37,10 @@ export function createColumnSorter<T extends Sortable>(
       if (a === b) {
         return 0;
       }
-      if (a! > b!) {
+      // Handle null/undefined - push them to the end
+      if (a == null) return down;
+      if (b == null) return up;
+      if (a > b) {
         return up;
       }
       return down;

@@ -1,8 +1,5 @@
-import getLogger from "./getLogger";
 import storageGet from "./storageGet";
 import storageSet from "./storageSet";
-
-const logger = getLogger('loadConfig');
 
 // OldFolder is a tuple: [unknown, path: string, label: string]
 type OldFolder = [unknown, string, string];

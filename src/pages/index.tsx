@@ -9,17 +9,11 @@ import RootStore from "../stores/RootStore";
 import TorrentListTable from "../components/TorrentListTable";
 import FileListTable from "../components/FileListTable";
 import Footer from "../components/Footer";
-import PutFilesDialog from "../components/PutFilesDialog";
-import RemoveConfirmDialog from "../components/RemoveConfirmDialog";
-import PutUrlDialog from "../components/PutUrlDialog";
 import Interval from "../components/Interval";
 import getLogger from "../tools/getLogger";
-import RenameDialog from "../components/RenameDialog";
-import CopyMagnetUrlDialog from "../components/CopyMagnetUrlDialog";
-import MoveDialog from "../components/MoveDialog";
-import TorrentDetailsDialog from "../components/TorrentDetailsDialog";
 import RootStoreCtx from "../tools/rootStoreCtx";
 import { useTheme } from "../hooks/useTheme";
+import DialogLoader from "../components/DialogLoader";
 
 const logger = getLogger('Index');
 
@@ -268,57 +262,23 @@ const Index: React.FC = observer(() => {
 const Dialogs: React.FC = observer(() => {
   const rootStore = React.useContext(RootStoreCtx) as unknown as RootStoreType;
 
-  const dialogs: React.ReactNode[] = [];
-  rootStore.dialogs.forEach((dialog) => {
-    switch (dialog.type) {
-      case 'putFiles': {
-        if (dialog.isReady) {
-          dialogs.push(
-            <PutFilesDialog key={dialog.id} dialogStore={dialog as never} />
-          );
+  return (
+    <>
+      {Array.from(rootStore.dialogs.values()).map((dialog) => {
+        // putFiles needs to wait for isReady
+        if (dialog.type === 'putFiles' && !dialog.isReady) {
+          return null;
         }
-        break;
-      }
-      case 'putUrl': {
-        dialogs.push(
-          <PutUrlDialog key={dialog.id} dialogStore={dialog as never} />
+        return (
+          <DialogLoader
+            key={dialog.id}
+            type={dialog.type}
+            dialogStore={dialog}
+          />
         );
-        break;
-      }
-      case 'removeConfirm': {
-        dialogs.push(
-          <RemoveConfirmDialog key={dialog.id} dialogStore={dialog as never} />
-        );
-        break;
-      }
-      case 'rename': {
-        dialogs.push(
-          <RenameDialog key={dialog.id} dialogStore={dialog as never} />
-        );
-        break;
-      }
-      case 'copyMagnetUrl': {
-        dialogs.push(
-          <CopyMagnetUrlDialog key={dialog.id} dialogStore={dialog as never} />
-        );
-        break;
-      }
-      case 'move': {
-        dialogs.push(
-          <MoveDialog key={dialog.id} dialogStore={dialog as never} />
-        );
-        break;
-      }
-      case 'torrentDetails': {
-        dialogs.push(
-          <TorrentDetailsDialog key={dialog.id} dialogStore={dialog as never} />
-        );
-        break;
-      }
-    }
-  });
-
-  return <>{dialogs}</>;
+      })}
+    </>
+  );
 });
 
 interface GoInOptionsProps {
@@ -363,7 +323,9 @@ declare global {
 
 const rootStore = window.rootStore = RootStore.create();
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Root element not found');
+createRoot(rootElement).render(
   <RootStoreCtx.Provider value={rootStore as unknown as import('../stores/RootStore').IRootStore}>
     <Index />
   </RootStoreCtx.Provider>

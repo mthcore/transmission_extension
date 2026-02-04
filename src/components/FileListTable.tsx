@@ -10,6 +10,20 @@ import { useScrollSync } from "../hooks/useScrollSync";
 
 const logger = getLogger('FileListTable');
 
+interface FileItem {
+  name: string;
+  selected: boolean;
+  sizeStr: string;
+  downloadedStr: string;
+  progressStr: string;
+  priorityStr: string;
+  size: number;
+  downloaded: number;
+  priority: number;
+  shortName: string;
+  nameParts: string[];
+}
+
 interface FileListStore {
   id: number;
   torrent: unknown;
@@ -17,7 +31,7 @@ interface FileListStore {
   joinedDirectory: string;
   setRemoveSelectOnHide: (value: boolean) => void;
   fetchFiles: () => Promise<void>;
-  sortedFiles: Array<{ name: string }>;
+  sortedFiles: FileItem[];
   isSelectedAll: boolean;
   toggleSelectAll: () => void;
 }
@@ -200,7 +214,7 @@ class FileListTableHeadColumn extends TableHeadColumn {
     return this.rootStore?.fileList as FileListStore | undefined;
   }
 
-  handleSelectAll = (e: ChangeEvent<HTMLInputElement>): void => {
+  handleSelectAll = (_e: ChangeEvent<HTMLInputElement>): void => {
     this.fileListStore?.toggleSelectAll();
   };
 
@@ -281,7 +295,7 @@ class FileListTableFiles extends React.PureComponent {
 
     const files = this.rootStore.fileList.sortedFiles.map((file) => {
       return (
-        <FileListTableItem key={file.name} file={file as any}/>
+        <FileListTableItem key={file.name} file={file as FileItem}/>
       );
     });
 

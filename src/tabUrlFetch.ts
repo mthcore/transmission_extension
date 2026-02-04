@@ -40,7 +40,11 @@ declare global {
 
     switch (message && message.action) {
       case 'fetchUrl': {
-        promise = closeLockWrap(fetchUrl(message.url!));
+        if (!message.url) {
+          promise = Promise.reject(new Error('URL is required'));
+        } else {
+          promise = closeLockWrap(fetchUrl(message.url));
+        }
         break;
       }
       default: {

@@ -27,8 +27,8 @@ class Bg {
   bgStore: IBgStore;
   bgStorePathLine: MobxPatchLine;
   client: TransmissionClient | null;
-  daemon: Daemon;
-  contextMenu: ContextMenu;
+  daemon: Daemon | null;
+  contextMenu: ContextMenu | null;
   initPromise: Promise<void> | null;
 
   constructor() {
@@ -36,8 +36,8 @@ class Bg {
     // Cast to Record for MobxPatchLine compatibility with MST types
     this.bgStorePathLine = new MobxPatchLine(this.bgStore as unknown as Record<string, unknown>, ['client']);
     this.client = null;
-    this.daemon = null!;
-    this.contextMenu = null!;
+    this.daemon = null;
+    this.contextMenu = null;
 
     this.initPromise = null;
 
@@ -57,7 +57,7 @@ class Bg {
 
       autorun(() => {
         autorunLogger.info('daemon');
-        this.daemon.start();
+        this.daemon?.start();
       });
 
       autorun(() => {
@@ -123,14 +123,21 @@ class Bg {
         ];
 
         if (dep.length) {
-          this.contextMenu.create();
+          this.contextMenu?.create();
         }
       });
     });
   }
 
   whenReady(): Promise<void> {
-    return this.initPromise!;
+    return this.initPromise ?? Promise.resolve();
+  }
+
+  private requireClient(): TransmissionClient {
+    if (!this.client) {
+      throw new Error('Client not initialized');
+    }
+    return this.client;
   }
 
   handleMessage = (message: BgMessage, sender: chrome.runtime.MessageSender, response: (result: unknown) => void): boolean | void => {
@@ -153,7 +160,7 @@ class Bg {
       }
       case 'updateTorrentList': {
         promise = this.whenReady().then(() => {
-          return this.client!.updateTorrents(message.force);
+          return this.requireClient().updateTorrents(message.force);
         });
         break;
       }
@@ -166,7 +173,7 @@ class Bg {
       case 'reannounce': {
         const action = message.action;
         const ids = message.ids;
-        promise = this.client![action](ids);
+        promise = this.requireClient()[action](ids);
         break;
       }
       case 'queueTop':
@@ -175,15 +182,15 @@ class Bg {
       case 'queueBottom': {
         const action = message.action;
         const ids = message.ids;
-        promise = this.client![action](ids);
+        promise = this.requireClient()[action](ids);
         break;
       }
       case 'setPriority': {
-        promise = this.client!.setPriority(message.id, message.level, message.fileIdxs);
+        promise = this.requireClient().setPriority(message.id, message.level, message.fileIdxs);
         break;
       }
       case 'getFileList': {
-        promise = this.client!.getFileList(message.id);
+        promise = this.requireClient().getFileList(message.id);
         break;
       }
       case 'setDownloadSpeedLimitEnabled':
@@ -191,7 +198,7 @@ class Bg {
         const action = message.action;
         const enabled = message.enabled;
         promise = this.whenReady().then(() => {
-          return this.client![action](enabled);
+          return this.requireClient()[action](enabled);
         });
         break;
       }
@@ -200,13 +207,13 @@ class Bg {
         const action = message.action;
         const speed = message.speed;
         promise = this.whenReady().then(() => {
-          return this.client![action](speed);
+          return this.requireClient()[action](speed);
         });
         break;
       }
       case 'setAltSpeedEnabled': {
         promise = this.whenReady().then(() => {
-          return this.client!.setAltSpeedEnabled(message.enabled);
+          return this.requireClient().setAltSpeedEnabled(message.enabled);
         });
         break;
       }
@@ -215,34 +222,34 @@ class Bg {
         const action = message.action;
         const speed = message.speed;
         promise = this.whenReady().then(() => {
-          return this.client![action](speed);
+          return this.requireClient()[action](speed);
         });
         break;
       }
       case 'updateSettings': {
         promise = this.whenReady().then(() => {
-          return this.client!.updateSettings();
+          return this.requireClient().updateSettings();
         });
         break;
       }
       case 'sendFiles': {
         promise = this.whenReady().then(() => {
-          return this.client!.sendFiles(message.urls, message.directory);
+          return this.requireClient().sendFiles(message.urls, message.directory);
         });
         break;
       }
       case 'getFreeSpace': {
         promise = this.whenReady().then(() => {
-          return this.client!.getFreeSpace(message.path);
+          return this.requireClient().getFreeSpace(message.path);
         });
         break;
       }
       case 'rename': {
-        promise = this.client!.rename(message.ids, message.path, message.name);
+        promise = this.requireClient().rename(message.ids, message.path, message.name);
         break;
       }
       case 'torrentSetLocation': {
-        promise = this.client!.torrentSetLocation(message.ids, message.location);
+        promise = this.requireClient().torrentSetLocation(message.ids, message.location);
         break;
       }
       default: {
@@ -311,8 +318,10 @@ function showNotification(id: string, iconUrl: string, title = '', message = '')
 function setBadgeBackgroundColor(color: string): void {
   const colors = color.split(',').map(i => parseFloat(i));
   if (colors.length === 4) {
-    const alpha = colors.pop()!;
-    colors.push(Math.round(255 * alpha));
+    const alpha = colors.pop();
+    if (alpha !== undefined) {
+      colors.push(Math.round(255 * alpha));
+    }
   }
   chrome.action.setBadgeBackgroundColor({ color: colors as [number, number, number, number] });
 }

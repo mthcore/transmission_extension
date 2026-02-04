@@ -1,10 +1,37 @@
-import React, { useContext, useRef, useEffect, ChangeEvent, MouseEvent, DragEvent } from "react";
+import React, { useContext, useRef, useEffect, ChangeEvent, MouseEvent } from "react";
 import { observer } from "mobx-react";
-import TableHeadColumn, { Column, TableHeadColumnProps } from "./TableHeadColumn";
+import TableHeadColumn, { Column } from "./TableHeadColumn";
 import TorrentListTableItem from "./TorrentListTableItem";
 import TorrentColumnContextMenu from "./TorrentColumnMenu";
 import RootStoreCtx from "../tools/rootStoreCtx";
 import { useScrollSync } from "../hooks/useScrollSync";
+
+interface TorrentItem {
+  id: number;
+  name: string;
+  selected: boolean;
+  order: number;
+  sizeStr: string;
+  remainingStr: string;
+  isSeeding: boolean;
+  progressStr: string;
+  errorMessage?: string;
+  stateText: string;
+  seeds: number;
+  peers: number;
+  activePeers: number;
+  activeSeeds: number;
+  downloadSpeedStr: string;
+  uploadSpeedStr: string;
+  etaStr: string;
+  uploadedStr: string;
+  downloadedStr: string;
+  shared: number;
+  addedTimeStr: string;
+  completedTimeStr: string;
+  start: () => Promise<void>;
+  stop: () => Promise<void>;
+}
 
 interface RootStore {
   flushTorrentList: () => void;
@@ -17,7 +44,7 @@ interface RootStore {
     saveTorrentsColumns: () => void;
   };
   torrentList: {
-    sortedTorrents: Array<{ id: number }>;
+    sortedTorrents: TorrentItem[];
     isSelectedAll: boolean;
     toggleSelectAll: () => void;
   };
@@ -120,7 +147,7 @@ class TorrentListTableHeadColumn extends TableHeadColumn {
     return this.rootStore?.torrentList as TorrentListStore | undefined;
   }
 
-  handleSelectAll = (e: ChangeEvent<HTMLInputElement>): void => {
+  handleSelectAll = (_e: ChangeEvent<HTMLInputElement>): void => {
     this.torrentListStore?.toggleSelectAll();
   };
 
@@ -207,7 +234,7 @@ class TorrentListTableTorrents extends React.PureComponent {
 
     const torrens = this.torrentListStore.sortedTorrents.map((torrent) => {
       return (
-        <TorrentListTableItem key={torrent.id} torrent={torrent as any}/>
+        <TorrentListTableItem key={torrent.id} torrent={torrent as TorrentItem}/>
       );
     });
 

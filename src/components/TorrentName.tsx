@@ -10,9 +10,9 @@ interface StyleCacheEntry {
 const styleCache = new Map<string, StyleCacheEntry>();
 
 function getOrCreateStyle(moveName: string, width: number, elWidth: number): string {
-  if (styleCache.has(moveName)) {
-    const cached = styleCache.get(moveName)!;
-    cached.useCount++;
+  const existing = styleCache.get(moveName);
+  if (existing) {
+    existing.useCount++;
     return moveName;
   }
 
@@ -27,9 +27,10 @@ function getOrCreateStyle(moveName: string, width: number, elWidth: number): str
 }
 
 function releaseStyle(moveName: string | null): void {
-  if (!moveName || !styleCache.has(moveName)) return;
+  if (!moveName) return;
+  const cached = styleCache.get(moveName);
+  if (!cached) return;
 
-  const cached = styleCache.get(moveName)!;
   cached.useCount--;
 
   if (cached.useCount <= 0) {

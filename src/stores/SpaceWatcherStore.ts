@@ -45,7 +45,8 @@ const SpaceWatcherStore = types.model('SpaceWatcherStore', {
           yield rootStore.client.updateSettings();
         }
         if (isAlive(self)) {
-          const settings = rootStore.client.settings!;
+          const settings = rootStore.client.settings;
+          if (!settings) return;
           const { downloadDir, downloadDirFreeSpace, hasDownloadDirFreeSpace } = settings;
           if (hasDownloadDirFreeSpace) {
             result.push({
