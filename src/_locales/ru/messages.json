@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Transmission easy client"
+        "message": "Transmission Easy Client"
     },
     "appDesc": {
         "message": "Расширение добавит Web-интерфейс Transmission в ваш браузер"
@@ -283,7 +283,7 @@
         "message": "Пароль"
     },
     "PRS_COL_IP": {
-        "message": "IP-адрес"
+        "message": "IP/Хост"
     },
     "PRS_COL_PORT": {
         "message": "Порт"

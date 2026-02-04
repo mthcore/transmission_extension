@@ -1,6 +1,6 @@
 {
   "name": "transmission-easy-client",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "scripts": {
     "watch": "cross-env BROWSER=chrome webpack --mode development --watch",
     "watch:firefox": "cross-env BROWSER=firefox webpack --mode development --watch",

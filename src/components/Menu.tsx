@@ -15,6 +15,7 @@ const Menu: React.FC = observer(() => {
   const dropTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const client = rootStore?.client;
   const config = rootStore?.config;
+  const isRefreshing = rootStore?.isRefreshing ?? false;
 
   const onPutFiles = useCallback((files: FileList) => {
     if (!files.length || !rootStore) return;
@@ -67,46 +68,48 @@ const Menu: React.FC = observer(() => {
     };
   }, [handleDropOver, handleDrop]);
 
-  const handleRefresh = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    client?.updateTorrentList(true).catch((err) => {
-      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to refresh', err);
-    });
-    client?.updateSettings().catch((err) => {
-      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to update settings', err);
-    });
-  }, [client]);
+  const handleRefresh = useCallback(async () => {
+    if (!rootStore || isRefreshing) return;
+    rootStore.setRefreshing(true);
+    try {
+      await Promise.all([
+        client?.updateTorrentList(true).catch((err) => {
+          showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to refresh', err);
+        }),
+        client?.updateSettings().catch((err) => {
+          showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to update settings', err);
+        })
+      ]);
+    } finally {
+      rootStore.setRefreshing(false);
+    }
+  }, [client, rootStore, isRefreshing]);
 
-  const handleAddFile = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleAddFile = useCallback(() => {
     refFileInput.current?.dispatchEvent(new MouseEvent('click'));
   }, []);
 
-  const handleAddUrl = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleAddUrl = useCallback(() => {
     rootStore?.createDialog({
       type: 'putUrl'
     });
   }, [rootStore]);
 
-  const handleStartAll = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleStartAll = useCallback(() => {
     const ids = client?.torrentIds;
     if (ids && client) {
       client.torrentsStart(ids);
     }
   }, [client]);
 
-  const handleStopAll = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleStopAll = useCallback(() => {
     const ids = client?.torrentIds;
     if (ids && client) {
       client.torrentsStop(ids);
     }
   }, [client]);
 
-  const handleToggleAltSpeed = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleToggleAltSpeed = useCallback(() => {
     if (client?.settings) {
       client.setAltSpeedEnabled(!client.settings.altSpeedEnabled);
     }
@@ -152,37 +155,38 @@ const Menu: React.FC = observer(() => {
     <>
       <ul className="menu">
         <li>
-          <a onClick={handleRefresh} title={chrome.i18n.getMessage('refresh')} className="btn refresh"
-             aria-label={chrome.i18n.getMessage('refresh')} href="#refresh"/>
+          <button onClick={handleRefresh} title={chrome.i18n.getMessage('refresh')}
+             className="btn refresh"
+             aria-label={chrome.i18n.getMessage('refresh')} type="button" disabled={isRefreshing}/>
         </li>
         <li>
-          <a href={config.webUiUrl} target="_blank" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
+          <a href={config.webUiUrl} target="_blank" rel="noopener noreferrer" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
              aria-label={chrome.i18n.getMessage('ST_CAPT_WEBUI')} className="btn wui"/>
         </li>
         <li className="separate"/>
         <li>
-          <a onClick={handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
-             aria-label={chrome.i18n.getMessage('Open_file')} href="#add_file"/>
+          <button onClick={handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
+             aria-label={chrome.i18n.getMessage('Open_file')} type="button"/>
           <input ref={refFileInput} onChange={handleFileChange} type="file"
-                 accept="application/x-bittorrent" multiple={true} style={{ display: 'none' }}/>
+                 accept="application/x-bittorrent" multiple style={{ display: 'none' }}/>
         </li>
         <li>
-          <a onClick={handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
-             aria-label={chrome.i18n.getMessage('MM_FILE_ADD_URL')} className="btn add_magnet" href="#add_magnet"/>
-        </li>
-        <li className="separate"/>
-        <li>
-          <a onClick={handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
-             aria-label={chrome.i18n.getMessage('altSpeedEnable')} className={altSpeedClassList.join(' ')} href="#alt_speed"/>
+          <button onClick={handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
+             aria-label={chrome.i18n.getMessage('MM_FILE_ADD_URL')} className="btn add_magnet" type="button"/>
         </li>
         <li className="separate"/>
         <li>
-          <a onClick={handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
-             aria-label={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')} className="btn start_all" href="#start_all"/>
+          <button onClick={handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
+             aria-label={chrome.i18n.getMessage('altSpeedEnable')} className={altSpeedClassList.join(' ')} type="button"/>
+        </li>
+        <li className="separate"/>
+        <li>
+          <button onClick={handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
+             aria-label={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')} className="btn start_all" type="button"/>
         </li>
         <li>
-          <a onClick={handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
-             aria-label={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')} className="btn pause_all" href="#stop_all"/>
+          <button onClick={handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
+             aria-label={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')} className="btn pause_all" type="button"/>
         </li>
         <li className="graph">
           {graph}

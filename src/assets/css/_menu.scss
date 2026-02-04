@@ -49,13 +49,19 @@
     }
   }
 
-  a.btn {
+  a.btn,
+  button.btn {
     @include icon-button;
+    background-color: transparent;
   }
 
-  a.refresh {
+  .refresh {
     background-image: url("../img/refresh.svg");
     background-size: 20px;
+
+    &.btn-loading {
+      background-image: none;
+    }
   }
 
   a.wui {
@@ -63,27 +69,27 @@
     background-size: 20px;
   }
 
-  a.start_all {
+  .start_all {
     background-image: url("../img/play_all.svg");
     background-size: 20px;
   }
 
-  a.pause_all {
+  .pause_all {
     background-image: url("../img/pause_all.svg");
     background-size: 20px;
   }
 
-  a.add_file {
+  .add_file {
     background-image: url("../img/add.svg");
     background-size: 20px;
   }
 
-  a.add_magnet {
+  .add_magnet {
     background-image: url("../img/magnet.svg");
     background-size: 20px;
   }
 
-  a.alt_speed {
+  .alt_speed {
     background-image: url("../img/alt_speed.svg");
     background-size: 20px;
 

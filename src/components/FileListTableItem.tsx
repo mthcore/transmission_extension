@@ -181,15 +181,14 @@ interface FileNamePartProps {
 }
 
 const FileNamePart = React.memo<FileNamePartProps>(({ level, name, onSetFilter }) => {
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleClick = useCallback(() => {
     onSetFilter(level);
   }, [level, onSetFilter]);
 
   const classList = ['folder', `c${level - 1}`];
 
   return (
-    <a onClick={handleClick} className={classList.join(' ')} href="#">{name}</a>
+    <button onClick={handleClick} className={classList.join(' ')} type="button">{name}</button>
   );
 });
 

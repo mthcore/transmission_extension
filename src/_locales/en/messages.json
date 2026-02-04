@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Transmission easy client"
+        "message": "Transmission Easy Client"
     },
     "appDesc": {
         "message": "Extension add Transmission web GUI in your web browser"
@@ -270,7 +270,7 @@
         "message": "Password"
     },
     "PRS_COL_IP": {
-        "message": "IP"
+        "message": "IP/Host"
     },
     "PRS_COL_PORT": {
         "message": "Port"

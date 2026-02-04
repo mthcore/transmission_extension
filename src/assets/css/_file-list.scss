@@ -135,7 +135,8 @@ div.file-list div.bottom-menu {
 }
 
 // Folder tags
-div.fl-layer a.folder {
+div.fl-layer a.folder,
+div.fl-layer button.folder {
   background-color: var(--input-bg);
   border-radius: $radius-sm;
   color: var(--text-color);
@@ -143,6 +144,8 @@ div.fl-layer a.folder {
   padding: 1px 4px;
   text-decoration: none;
   font-size: $font-size-sm;
+  border: none;
+  cursor: pointer;
   transition: background-color $transition-base;
 
   &:hover {
@@ -152,7 +155,8 @@ div.fl-layer a.folder {
 
 // Folder color variants
 @each $index, $color in $folder-colors {
-  div.fl-layer a.folder.c#{$index} {
+  div.fl-layer a.folder.c#{$index},
+  div.fl-layer button.folder.c#{$index} {
     background-color: $color;
   }
 }

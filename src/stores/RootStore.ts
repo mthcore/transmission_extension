@@ -42,6 +42,7 @@ interface DialogProps {
 
 const RootStore = types.model('RootStore', {
   state: types.optional(types.enumeration(['idle', 'pending', 'done', 'error']), 'idle'),
+  isRefreshing: types.optional(types.boolean, false),
   config: types.maybe(ConfigStore),
   client: types.maybe(ClientStore),
   torrentList: types.optional(TorrentListStore, {}),
@@ -116,6 +117,9 @@ const RootStore = types.model('RootStore', {
     },
     destroySpaceWatcher() {
       self.spaceWatcher = undefined;
+    },
+    setRefreshing(value: boolean) {
+      self.isRefreshing = value;
     }
   };
 }).views(() => {

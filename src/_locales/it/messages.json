@@ -1,0 +1,569 @@
+{
+    "appName": {
+        "message": "Transmission Easy Client"
+    },
+    "appDesc": {
+        "message": "Estensione che aggiunge l'interfaccia web di Transmission al browser"
+    },
+    "lang": {
+        "message": "it"
+    },
+    "sizeList": {
+        "message": "[\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\"]"
+    },
+    "sizePsList": {
+        "message": "[\"B/s\", \"kB/s\", \"MB/s\", \"GB/s\", \"TB/s\", \"PB/s\", \"EB/s\"]"
+    },
+    "timeOutList": {
+        "message": "[\"sett\", \"g\", \"h\", \"m\", \"s\"]"
+    },
+    "OV_COL_NAME": {
+        "message": "Nome"
+    },
+    "OV_COL_ORDER": {
+        "message": "Coda"
+    },
+    "OV_COL_ORDER_SHORT": {
+        "message": "#"
+    },
+    "OV_COL_SIZE": {
+        "message": "Dimensione"
+    },
+    "OV_COL_REMAINING": {
+        "message": "Rimanente"
+    },
+    "OV_COL_DONE": {
+        "message": "%"
+    },
+    "OV_COL_STATUS": {
+        "message": "Stato"
+    },
+    "OV_COL_SEEDS": {
+        "message": "Seed"
+    },
+    "OV_COL_PEERS": {
+        "message": "Peer"
+    },
+    "OV_COL_SEEDS_PEERS": {
+        "message": "Seed/Peer"
+    },
+    "OV_COL_SEEDS_PEERS_SHORT": {
+        "message": "S/P"
+    },
+    "OV_COL_DOWNSPD": {
+        "message": "Velocità DL"
+    },
+    "OV_COL_UPSPD": {
+        "message": "Velocità UP"
+    },
+    "OV_COL_ETA": {
+        "message": "Tempo rim."
+    },
+    "OV_COL_UPPED": {
+        "message": "Caricato"
+    },
+    "OV_COL_DOWNLOADED": {
+        "message": "Scaricato"
+    },
+    "OV_COL_SHARED": {
+        "message": "Rapporto"
+    },
+    "OV_COL_AVAIL": {
+        "message": "Disponibilità"
+    },
+    "OV_COL_AVAIL_SHORT": {
+        "message": "Disp."
+    },
+    "OV_COL_LABEL": {
+        "message": "Etichetta"
+    },
+    "OV_COL_DATE_ADDED": {
+        "message": "Aggiunto"
+    },
+    "OV_COL_DATE_COMPLETED": {
+        "message": "Completato il"
+    },
+    "Actions": {
+        "message": "Azioni"
+    },
+    "FI_COL_NAME": {
+        "message": "Nome"
+    },
+    "FI_COL_SIZE": {
+        "message": "Dimensione"
+    },
+    "FI_COL_PRIO": {
+        "message": "Priorità"
+    },
+    "OV_FL_SEEDING": {
+        "message": "In seed"
+    },
+    "OV_CAT_ACTIVE": {
+        "message": "Attivi"
+    },
+    "OV_CAT_ALL": {
+        "message": "Tutti"
+    },
+    "OV_CAT_COMPL": {
+        "message": "Completati"
+    },
+    "OV_CAT_DL": {
+        "message": "In download"
+    },
+    "OV_CAT_INACTIVE": {
+        "message": "Inattivi"
+    },
+    "OV_CAT_NOLABEL": {
+        "message": "Senza etichetta"
+    },
+    "OV_FL_CHECKED": {
+        "message": "Verificato"
+    },
+    "OV_FL_DOWNLOADING": {
+        "message": "In download"
+    },
+    "OV_FL_ERROR": {
+        "message": "Errore"
+    },
+    "OV_FL_FINISHED": {
+        "message": "Completato"
+    },
+    "OV_FL_PAUSED": {
+        "message": "In pausa"
+    },
+    "OV_FL_QUEUED": {
+        "message": "In coda"
+    },
+    "OV_FL_QUEUED_SEED": {
+        "message": "Seed in coda"
+    },
+    "OV_FL_STOPPED": {
+        "message": "Fermato"
+    },
+    "MF_DONT": {
+        "message": "Non scaricare"
+    },
+    "MF_HIGH": {
+        "message": "Alta"
+    },
+    "MF_LOW": {
+        "message": "Bassa"
+    },
+    "MF_NORMAL": {
+        "message": "Normale"
+    },
+    "ML_START": {
+        "message": "Avvia"
+    },
+    "ML_PAUSE": {
+        "message": "Pausa"
+    },
+    "ML_STOP": {
+        "message": "Ferma"
+    },
+    "OV_REMOVE_LABEL": {
+        "message": "Rimuovi etichetta"
+    },
+    "OV_NEW_LABEL": {
+        "message": "Nuova etichetta..."
+    },
+    "ML_FORCE_START": {
+        "message": "Avvio forzato"
+    },
+    "ML_FORCE_RECHECK": {
+        "message": "Ricontrolla"
+    },
+    "ML_REMOVE": {
+        "message": "Rimuovi"
+    },
+    "ML_REMOVE_AND": {
+        "message": "Rimuovi e"
+    },
+    "ML_DELETE_TORRENT": {
+        "message": "Elimina .torrent"
+    },
+    "ML_DELETE_DATA": {
+        "message": "Elimina dati"
+    },
+    "ML_DELETE_DATATORRENT": {
+        "message": "Elimina .torrent + dati"
+    },
+    "DLG_RSSDOWNLOADER_24": {
+        "message": "Scarica"
+    },
+    "MENU_UNLIMITED": {
+        "message": "Illimitato"
+    },
+    "Open_file": {
+        "message": "Aggiungi file torrent..."
+    },
+    "ST_CAPT_WEBUI": {
+        "message": "Interfaccia Web"
+    },
+    "MM_FILE_ADD_URL": {
+        "message": "Aggiungi torrent da URL..."
+    },
+    "STM_TORRENTS_RESUMEALL": {
+        "message": "Riprendi tutti i torrent"
+    },
+    "STM_TORRENTS_PAUSEALL": {
+        "message": "Metti in pausa tutti i torrent"
+    },
+    "DLG_BTN_CLOSE": {
+        "message": "Chiudi"
+    },
+    "OV_CONFIRM_DELETE_ONE": {
+        "message": "Vuoi davvero rimuovere il torrent selezionato?"
+    },
+    "OV_CONFIRM_DELETE_MULTIPLE": {
+        "message": "Vuoi davvero rimuovere i %d torrent selezionati?"
+    },
+    "OV_CONFIRM_DELETE_DATA_ONE": {
+        "message": "Vuoi davvero rimuovere il torrent selezionato E eliminare tutti i dati scaricati?"
+    },
+    "OV_CONFIRM_DELETE_DATA_MULTIPLE": {
+        "message": "Vuoi davvero rimuovere i %d torrent selezionati E eliminare tutti i dati scaricati?"
+    },
+    "DLG_BTN_YES": {
+        "message": "Sì"
+    },
+    "DLG_BTN_NO": {
+        "message": "No"
+    },
+    "DLG_BTN_CANCEL": {
+        "message": "Annulla"
+    },
+    "DLG_BTN_APPLY": {
+        "message": "Applica"
+    },
+    "DLG_BTN_OK": {
+        "message": "OK"
+    },
+    "ST_CAPT_FOLDER": {
+        "message": "Cartelle"
+    },
+    "Paste_a_torrent_URL": {
+        "message": "Incolla URL torrent"
+    },
+    "OV_NEWLABEL_CAPTION": {
+        "message": "Inserisci etichetta"
+    },
+    "DLG_SETTINGS_4_CONN_16": {
+        "message": "Nome utente"
+    },
+    "DLG_SETTINGS_4_CONN_18": {
+        "message": "Password"
+    },
+    "PRS_COL_IP": {
+        "message": "IP/Host"
+    },
+    "PRS_COL_PORT": {
+        "message": "Porta"
+    },
+    "ST_CAPT_ADVANCED": {
+        "message": "Avanzate"
+    },
+    "resume": {
+        "message": "Riprendi"
+    },
+    "enterNewLabel": {
+        "message": "Inserisci la nuova etichetta per il torrent selezionato"
+    },
+    "defaultPath": {
+        "message": "Cartella predefinita"
+    },
+    "add": {
+        "message": "Aggiungi"
+    },
+    "available": {
+        "message": "Accessibile"
+    },
+    "up": {
+        "message": "Sposta su"
+    },
+    "down": {
+        "message": "Sposta giù"
+    },
+    "update": {
+        "message": "Aggiorna"
+    },
+    "deleteSelected": {
+        "message": "Elimina selezionati"
+    },
+    "torrentAdded": {
+        "message": "Torrent aggiunto!"
+    },
+    "unexpectedError": {
+        "message": "Errore imprevisto!"
+    },
+    "fileSizeError": {
+        "message": "File troppo grande"
+    },
+    "addInTorrentClient": {
+        "message": "Aggiungi in Transmission"
+    },
+    "enterNewDirPath": {
+        "message": "Inserisci il percorso della nuova cartella"
+    },
+    "torrentFileExists": {
+        "message": "Il file torrent probabilmente esiste già!"
+    },
+    "currentDirectory": {
+        "message": "Cartella corrente"
+    },
+    "openInTab": {
+        "message": "Apri in scheda"
+    },
+    "optClient": {
+        "message": "Transmission"
+    },
+    "optMain": {
+        "message": "Generale"
+    },
+    "optNotify": {
+        "message": "Notifiche"
+    },
+    "optCtx": {
+        "message": "Menu contestuale"
+    },
+    "backup": {
+        "message": "Backup"
+    },
+    "restore": {
+        "message": "Ripristina"
+    },
+    "backupRestore": {
+        "message": "Backup e Ripristino"
+    },
+    "backupHint": {
+        "message": "Esporta le impostazioni correnti per salvare o sincronizzare nel cloud"
+    },
+    "restoreHint": {
+        "message": "Importa impostazioni da un backup precedente o dal cloud"
+    },
+    "loadCurrentConfig": {
+        "message": "Carica configurazione attuale"
+    },
+    "configData": {
+        "message": "Dati di configurazione"
+    },
+    "clickLoadConfig": {
+        "message": "Clicca \"Carica configurazione attuale\" per visualizzare le impostazioni"
+    },
+    "useSSL": {
+        "message": "Usa SSL"
+    },
+    "path": {
+        "message": "Percorso"
+    },
+    "hideSeedStatusItem": {
+        "message": "Nascondi torrent con stato \"In seed\""
+    },
+    "hideFinishStatusItem": {
+        "message": "Nascondi torrent con stato \"Completato\""
+    },
+    "showSpeedGraph": {
+        "message": "Mostra grafico velocità"
+    },
+    "ms": {
+        "message": "ms"
+    },
+    "popupUpdateInterval": {
+        "message": "Intervallo aggiornamento lista torrent"
+    },
+    "fixCyrillicIf": {
+        "message": "Correggi cirillico se..."
+    },
+    "fixCyrillicTitle": {
+        "message": "I nomi dei torrent vengono visualizzati in modo errato"
+    },
+    "fixCyrillicTorrentPath": {
+        "message": "La cartella del nuovo torrent viene impostata in modo errato"
+    },
+    "showNotificationOnDownloadComplete": {
+        "message": "Mostra notifica al completamento del download"
+    },
+    "displayActiveTorrentCountIcon": {
+        "message": "Mostra numero di download sull'icona estensione"
+    },
+    "backgroundUpdateInterval": {
+        "message": "Intervallo aggiornamento in background"
+    },
+    "notificationTimeout": {
+        "message": "Nascondi notifica dopo"
+    },
+    "folderContextMenu": {
+        "message": "Mostra lista cartelle"
+    },
+    "labelContextMenu": {
+        "message": "Mostra lista etichette"
+    },
+    "selectDownloadCategoryOnAddItemFromContextMenu": {
+        "message": "Apri categoria \"Download\" quando aggiungi un torrent"
+    },
+    "treeViewContextMenu": {
+        "message": "Raggruppa cartelle ad albero"
+    },
+    "treeViewContextMenuHint": {
+        "message": "Organizza le cartelle gerarchicamente invece che in lista"
+    },
+    "showDefaultFolderContextMenuItem": {
+        "message": "Mostra opzione \"Percorso predefinito\""
+    },
+    "showDefaultFolderContextMenuItemHint": {
+        "message": "Aggiungi opzione per scaricare nella cartella predefinita di Transmission"
+    },
+    "dirList": {
+        "message": "Cartelle di download"
+    },
+    "dirListHint": {
+        "message": "Clic destro su un link torrent per scegliere la destinazione"
+    },
+    "options": {
+        "message": "Opzioni"
+    },
+    "subPath": {
+        "message": "Sottocartella"
+    },
+    "labelList": {
+        "message": "Lista etichette"
+    },
+    "optSaveInCloud": {
+        "message": "Salva nel cloud"
+    },
+    "toRestore": {
+        "message": "Ripristina"
+    },
+    "optGetFromCloud": {
+        "message": "Ottieni dal cloud"
+    },
+    "optClearCloudStorage": {
+        "message": "Cancella dati nel cloud"
+    },
+    "confirmRestore": {
+        "message": "Vuoi davvero ripristinare questa configurazione? Tutte le impostazioni attuali saranno sovrascritte."
+    },
+    "confirmClearCloud": {
+        "message": "Vuoi davvero cancellare il backup nel cloud?"
+    },
+    "showFileList": {
+        "message": "Lista file"
+    },
+    "selectAll": {
+        "message": "Seleziona tutti"
+    },
+    "refresh": {
+        "message": "Aggiorna"
+    },
+    "checkSettings": {
+        "message": "Verifica impostazioni"
+    },
+    "showFreeSpace": {
+        "message": "Mostra spazio disco disponibile"
+    },
+    "freeSpace": {
+        "message": "Spazio libero"
+    },
+    "startNow": {
+        "message": "Avvia ora"
+    },
+    "rename": {
+        "message": "Rinomina"
+    },
+    "renameText": {
+        "message": "Inserisci nome file"
+    },
+    "move": {
+        "message": "Sposta"
+    },
+    "moveNewPath": {
+        "message": "Inserisci nuovo percorso"
+    },
+    "fullPath": {
+        "message": "Cartella (percorso completo)"
+    },
+    "guiPath": {
+        "message": "Percorso WebUI"
+    },
+    "altSpeedEnable": {
+        "message": "Limiti velocità temporanei"
+    },
+    "torrentFileIsExists": {
+        "message": "Torrent già aggiunto in precedenza"
+    },
+    "reannounce": {
+        "message": "Richiedi altri peer"
+    },
+    "extra": {
+        "message": "Extra"
+    },
+    "queueTop": {
+        "message": "Inizio"
+    },
+    "queueBottom": {
+        "message": "Fine"
+    },
+    "requireAuthentication": {
+        "message": "Autenticazione richiesta"
+    },
+    "badgeColor": {
+        "message": "Colore badge icona"
+    },
+    "magnetUri": {
+        "message": "Magnet-URI"
+    },
+    "copy": {
+        "message": "Copia"
+    },
+    "addItem": {
+        "message": "Aggiungi elemento"
+    },
+    "shortName": {
+        "message": "Nome breve"
+    },
+    "portIncorrect": {
+        "message": "Porta non valida"
+    },
+    "search": {
+        "message": "Cerca"
+    },
+    "theme": {
+        "message": "Tema"
+    },
+    "themeSystem": {
+        "message": "Sistema"
+    },
+    "themeLight": {
+        "message": "Chiaro"
+    },
+    "themeDark": {
+        "message": "Scuro"
+    },
+    "configureClient": {
+        "message": "Configura Transmission"
+    },
+    "configureClientHint": {
+        "message": "Configura la connessione al server Transmission per iniziare."
+    },
+    "openOptions": {
+        "message": "Apri Impostazioni"
+    },
+    "properties": {
+        "message": "Proprietà"
+    },
+    "copyName": {
+        "message": "Copia nome"
+    },
+    "copyHash": {
+        "message": "Copia hash"
+    },
+    "sessionTotals": {
+        "message": "Totali sessione"
+    },
+    "responseEmpty": {
+        "message": "Risposta vuota"
+    },
+    "clearSearch": {
+        "message": "Cancella ricerca"
+    }
+}

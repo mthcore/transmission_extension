@@ -8,6 +8,7 @@ import { useScrollSync } from "../hooks/useScrollSync";
 
 interface RootStore {
   flushTorrentList: () => void;
+  isRefreshing: boolean;
   config: {
     torrentsSort: { by: string; direction: number };
     visibleTorrentColumns: Column[];
@@ -35,6 +36,11 @@ const TorrentListTable: React.FC = observer(() => {
 
   return (
     <div onScroll={handleScroll} className="torrent-list-layer">
+      {rootStore.isRefreshing && (
+        <div className="torrent-list-loading">
+          <div className="spinner spinner--large" />
+        </div>
+      )}
       <TorrentColumnContextMenu>
         <table ref={refFixedHead} className="torrent-table-head" border={0} cellSpacing={0} cellPadding={0}>
           <TorrentListTableHead withStyle={true}/>

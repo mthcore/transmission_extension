@@ -18,6 +18,24 @@
   }
 }
 
+// Loading overlay
+.torrent-list-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(var(--bg-color-rgb, 255, 255, 255), 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+
+  .dark & {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
 // Full screen mode - table fills width, scroll when needed
 body:not(.popup) .torrent-list-layer table {
   min-width: 100%;
@@ -96,7 +114,8 @@ table.torrent-table-body thead {
 
 // Action buttons
 div.torrent-list-layer table td.actions div.btns {
-  a {
+  a,
+  button {
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -104,6 +123,9 @@ div.torrent-list-layer table td.actions div.btns {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 10px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
     opacity: 0.5;
     vertical-align: middle;
     border-radius: $radius-sm;
@@ -118,23 +140,26 @@ div.torrent-list-layer table td.actions div.btns {
 }
 
 div.torrent-list-layer table tr:hover td.actions div.btns > a,
-div.torrent-list-layer table tr.selected td.actions div.btns > a {
+div.torrent-list-layer table tr:hover td.actions div.btns > button,
+div.torrent-list-layer table tr.selected td.actions div.btns > a,
+div.torrent-list-layer table tr.selected td.actions div.btns > button {
   opacity: 0.8;
 }
 
-div.torrent-list-layer table tr.selected td.actions div.btns > a {
+div.torrent-list-layer table tr.selected td.actions div.btns > a,
+div.torrent-list-layer table tr.selected td.actions div.btns > button {
   filter: invert(100%);
 }
 
-div.torrent-list-layer table td.actions div.btns > a.start {
+div.torrent-list-layer table td.actions div.btns > .start {
   background-image: url('../img/play.svg');
 }
 
-div.torrent-list-layer table td.actions div.btns > a.pause {
+div.torrent-list-layer table td.actions div.btns > .pause {
   background-image: url('../img/pause.svg');
 }
 
-div.torrent-list-layer table td.actions div.btns > a.stop {
+div.torrent-list-layer table td.actions div.btns > .stop {
   background-image: url('../img/stop.svg');
 }
 

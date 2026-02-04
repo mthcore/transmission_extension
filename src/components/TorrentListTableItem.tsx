@@ -59,13 +59,11 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
     }
   }, [torrent, torrentListStore]);
 
-  const handleStart = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleStart = useCallback(() => {
     torrent.start();
   }, [torrent]);
 
-  const handleStop = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleStop = useCallback(() => {
     torrent.stop();
   }, [torrent]);
 
@@ -251,8 +249,8 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
         columns.push(
           <td key={name} className={name}>
             <div className="btns">
-              <a onClick={handleStart} title={chrome.i18n.getMessage('ML_START')} aria-label={chrome.i18n.getMessage('ML_START')} className="start" href="#start"/>
-              <a onClick={handleStop} title={chrome.i18n.getMessage('ML_STOP')} aria-label={chrome.i18n.getMessage('ML_STOP')} className="stop" href="#stop"/>
+              <button onClick={handleStart} title={chrome.i18n.getMessage('ML_START')} aria-label={chrome.i18n.getMessage('ML_START')} className="start" type="button"/>
+              <button onClick={handleStop} title={chrome.i18n.getMessage('ML_STOP')} aria-label={chrome.i18n.getMessage('ML_STOP')} className="stop" type="button"/>
             </div>
           </td>
         );

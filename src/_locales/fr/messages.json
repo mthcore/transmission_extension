@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Transmission easy client"
+        "message": "Transmission Easy Client"
     },
     "appDesc": {
         "message": "Cette extension vous permet d'utiliser Transmission directement dans votre navigateur"
@@ -266,7 +266,7 @@
         "message": "M. passe"
     },
     "PRS_COL_IP": {
-        "message": "IP"
+        "message": "IP/Hôte"
     },
     "PRS_COL_PORT": {
         "message": "Port"
