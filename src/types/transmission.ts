@@ -2,28 +2,11 @@
  * Transmission RPC API Types
  */
 
-// Torrent status codes
-export const TorrentStatus = {
-  STOPPED: 0,
-  CHECK_WAIT: 1,
-  CHECK: 2,
-  DOWNLOAD_WAIT: 3,
-  DOWNLOAD: 4,
-  SEED_WAIT: 5,
-  SEED: 6,
-} as const;
+// Torrent status codes: 0=stopped, 1=check wait, 2=check, 3=download wait, 4=download, 5=seed wait, 6=seed
+export type TorrentStatusCode = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export type TorrentStatusCode = (typeof TorrentStatus)[keyof typeof TorrentStatus];
-
-// Priority levels for files
-export const FilePriority = {
-  DONT_DOWNLOAD: 0,
-  LOW: 1,
-  NORMAL: 2,
-  HIGH: 3,
-} as const;
-
-export type FilePriorityLevel = (typeof FilePriority)[keyof typeof FilePriority];
+// Priority levels for files: 0=don't download, 1=low, 2=normal, 3=high
+export type FilePriorityLevel = 0 | 1 | 2 | 3;
 
 // Raw torrent data from Transmission API
 export interface RawTorrent {

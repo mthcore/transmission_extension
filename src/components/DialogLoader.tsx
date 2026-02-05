@@ -19,7 +19,7 @@ interface DialogLoaderProps {
   dialogStore: unknown;
 }
 
-export const DialogLoader: React.FC<DialogLoaderProps> = ({ type, dialogStore }) => {
+const DialogLoader: React.FC<DialogLoaderProps> = ({ type, dialogStore }) => {
   const Component = dialogComponents[type as DialogType];
 
   if (!Component) {

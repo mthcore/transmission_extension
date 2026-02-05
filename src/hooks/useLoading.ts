@@ -23,5 +23,3 @@ export function useLoading(): UseLoadingResult {
 
   return { isLoading, withLoading };
 }
-
-export default useLoading;

@@ -5,7 +5,7 @@ const logger = getLogger('showError');
 /**
  * Show error notification to user and log to console
  */
-export function showError(message: string, error?: Error): void {
+function showError(message: string, error?: Error): void {
   logger.error(message, error);
 
   if (chrome.notifications) {
