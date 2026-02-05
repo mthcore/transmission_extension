@@ -36,7 +36,8 @@ const config = {
     moduleIds: 'deterministic',
     chunkIds: 'deterministic',
     splitChunks: {
-      chunks: 'all',
+      // Only split chunks for index and options, NOT for bg (service worker needs single file)
+      chunks: chunk => ['index', 'options'].includes(chunk.name),
       cacheGroups: {
         // Vendor chunk for node_modules shared between index and options
         vendor: {
