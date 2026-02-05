@@ -1,12 +1,13 @@
 import React, { useContext, useRef, useEffect, useCallback, useMemo, MouseEvent, ChangeEvent } from "react";
 import { observer } from "mobx-react";
-import TableHeadColumn, { Column } from "./TableHeadColumn";
+import { Column } from "./TableHeadColumn";
 import FileListTableItem from "./FileListTableItem";
 import FileColumnContextMenu from "./FileColumnMenu";
 import Interval from "./Interval";
 import getLogger from "../tools/getLogger";
 import RootStoreCtx from "../tools/rootStoreCtx";
 import { useScrollSync } from "../hooks/useScrollSync";
+import { useTableHeadColumn } from "../hooks/useTableHeadColumn";
 
 const logger = getLogger('FileListTable');
 
@@ -155,156 +156,169 @@ interface FileListTableHeadProps {
   withStyle?: boolean;
 }
 
-@observer
-class FileListTableHead extends React.PureComponent<FileListTableHeadProps> {
-  static contextType = RootStoreCtx;
-  context!: RootStore | null;
+const FileListTableHead: React.FC<FileListTableHeadProps> = observer(({ withStyle }) => {
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
 
-  get rootStore(): RootStore | null {
-    return this.context;
-  }
+  const handleSort = useCallback((column: string, direction: number): void => {
+    rootStore?.config.setFilesSort(column, direction);
+  }, [rootStore]);
 
-  handleSort = (column: string, direction: number): void => {
-    this.rootStore?.config.setFilesSort(column, direction);
-  };
+  const handleMoveColumn = useCallback((from: string, to: string): void => {
+    rootStore?.config.moveFilesColumn(from, to);
+  }, [rootStore]);
 
-  handleMoveColumn = (from: string, to: string): void => {
-    this.rootStore?.config.moveFilesColumn(from, to);
-  };
+  const handleSaveColumns = useCallback((): void => {
+    rootStore?.config.saveFilesColumns();
+  }, [rootStore]);
 
-  handleSaveColumns = (): void => {
-    this.rootStore?.config.saveFilesColumns();
-  };
+  if (!rootStore) return null;
 
-  render(): React.ReactNode {
-    if (!this.rootStore) return null;
+  const sort = rootStore.config.filesSort;
+  const fileColumns = rootStore.config.visibleFileColumns;
 
-    const sort = this.rootStore.config.filesSort;
-    const fileColumns = this.rootStore.config.visibleFileColumns;
-    const columns: React.ReactNode[] = [];
-    fileColumns.forEach((column) => {
-      if (!column.display) return;
-
-      columns.push(
-        <FileListTableHeadColumn key={column.column} column={column}
-          isSorted={sort.by === column.column} sortDirection={sort.direction}
-          onMoveColumn={this.handleMoveColumn}
-          onSort={this.handleSort}
-          onSaveColumns={this.handleSaveColumns}
-          withStyle={this.props.withStyle}
-        />
-      );
-    });
-
-    return (
-      <thead>
+  return (
+    <thead>
       <tr>
-        {columns}
+        {fileColumns
+          .filter((column) => column.display)
+          .map((column) => (
+            <FileListTableHeadColumn
+              key={column.column}
+              column={column}
+              isSorted={sort.by === column.column}
+              sortDirection={sort.direction}
+              onMoveColumn={handleMoveColumn}
+              onSort={handleSort}
+              onSaveColumns={handleSaveColumns}
+              withStyle={withStyle}
+            />
+          ))}
       </tr>
-      </thead>
-    );
-  }
+    </thead>
+  );
+});
+
+interface FileListTableHeadColumnProps {
+  column: Column;
+  isSorted: boolean;
+  sortDirection: number;
+  onMoveColumn: (from: string, to: string) => void;
+  onSort: (column: string, direction: number) => void;
+  onSaveColumns: () => void;
+  withStyle?: boolean;
 }
 
-@observer
-class FileListTableHeadColumn extends TableHeadColumn {
-  type = 'fl';
+const FileListTableHeadColumn: React.FC<FileListTableHeadColumnProps> = observer((props) => {
+  const { column, isSorted, sortDirection, onMoveColumn, onSort, onSaveColumns, withStyle } = props;
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+  const fileListStore = rootStore?.fileList;
 
-  get fileListStore(): FileListStore | undefined {
-    return this.rootStore?.fileList as FileListStore | undefined;
-  }
+  const {
+    refTh,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleResizeClick,
+    handleResizeMouseDown,
+    handleSort,
+  } = useTableHeadColumn({
+    type: 'fl',
+    column,
+    onMoveColumn,
+    onSaveColumns,
+    onSort,
+    isSorted,
+    sortDirection,
+  });
 
-  handleSelectAll = (_e: ChangeEvent<HTMLInputElement>): void => {
-    this.fileListStore?.toggleSelectAll();
-  };
+  const handleSelectAll = useCallback((_e: ChangeEvent<HTMLInputElement>): void => {
+    fileListStore?.toggleSelectAll();
+  }, [fileListStore]);
 
-  render(): React.ReactNode {
-    const { column, isSorted, sortDirection } = this.props;
-    const classList = [column.column];
-    if (isSorted) {
-      if (sortDirection === 1) {
-        classList.push('sortDown');
-      } else {
-        classList.push('sortUp');
-      }
-    }
-
-    let body: React.ReactNode = null;
-    if (column.column === 'checkbox') {
-      body = (
-        <div>
-          <input checked={this.fileListStore?.isSelectedAll} onChange={this.handleSelectAll} type="checkbox"/>
-        </div>
-      );
+  const classList = [column.column];
+  if (isSorted) {
+    if (sortDirection === 1) {
+      classList.push('sortDown');
     } else {
-      body = (
-        <div>
-          {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
-        </div>
-      );
+      classList.push('sortUp');
     }
+  }
 
-    let style: React.ReactNode = null;
-    if (this.props.withStyle) {
-      const styleText = `.fl-layer th.${column.column}, .fl-layer td.${column.column} {
-        min-width: ${column.width}px;
-        max-width: ${column.width}px;
-      }`.split(/\r?\n/).map(line => line.trim()).join('');
-      style = (
-        <style>{styleText}</style>
-      );
-    }
-
-    let arrow: React.ReactNode = null;
-    if (column.order !== 0) {
-      arrow = (
-        <i className="arrow"/>
-      );
-    }
-
-    let onClick: ((e: MouseEvent<HTMLTableCellElement>) => void) | undefined = undefined;
-    if (column.order) {
-      onClick = this.handleSort;
-    }
-
-    const isFixedColumn = column.column === 'checkbox';
-    const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
-
-    return (
-      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={title} draggable={true}>
-        {body}
-        {!isFixedColumn && <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>}
-        {arrow}
-        {style}
-      </th>
+  let body: React.ReactNode = null;
+  if (column.column === 'checkbox') {
+    body = (
+      <div>
+        <input checked={fileListStore?.isSelectedAll} onChange={handleSelectAll} type="checkbox"/>
+      </div>
+    );
+  } else {
+    body = (
+      <div>
+        {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
+      </div>
     );
   }
-}
 
-@observer
-class FileListTableFiles extends React.PureComponent {
-  static contextType = RootStoreCtx;
-  context!: RootStore | null;
-
-  get rootStore(): RootStore | null {
-    return this.context;
+  let style: React.ReactNode = null;
+  if (withStyle) {
+    const styleText = `.fl-layer th.${column.column}, .fl-layer td.${column.column} {
+      min-width: ${column.width}px;
+      max-width: ${column.width}px;
+    }`.split(/\r?\n/).map(line => line.trim()).join('');
+    style = (
+      <style>{styleText}</style>
+    );
   }
 
-  render(): React.ReactNode {
-    if (!this.rootStore?.fileList) return null;
+  let arrow: React.ReactNode = null;
+  if (column.order !== 0) {
+    arrow = (
+      <i className="arrow"/>
+    );
+  }
 
-    const files = this.rootStore.fileList.sortedFiles.map((file) => {
-      return (
+  const onClick = column.order ? handleSort : undefined;
+  const isFixedColumn = column.column === 'checkbox';
+  const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
+
+  return (
+    <th
+      ref={refTh}
+      onClick={onClick}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className={classList.join(' ')}
+      title={title}
+      draggable={true}
+    >
+      {body}
+      {!isFixedColumn && (
+        <div
+          className="resize-el"
+          draggable={false}
+          onClick={handleResizeClick}
+          onMouseDown={handleResizeMouseDown}
+        />
+      )}
+      {arrow}
+      {style}
+    </th>
+  );
+});
+
+const FileListTableFiles: React.FC = observer(() => {
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+
+  if (!rootStore?.fileList) return null;
+
+  return (
+    <tbody>
+      {rootStore.fileList.sortedFiles.map((file) => (
         <FileListTableItem key={file.name} file={file as FileItem}/>
-      );
-    });
-
-    return (
-      <tbody>
-        {files}
-      </tbody>
-    );
-  }
-}
+      ))}
+    </tbody>
+  );
+});
 
 export default FileListTable;

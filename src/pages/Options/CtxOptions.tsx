@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, FormEvent } from "react";
+import React, { useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useOptionsPage } from "../../hooks/useOptionsPage";
 
@@ -42,9 +42,9 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
     });
   }, [configStore]);
 
-  const handleSubmit = useCallback((e: FormEvent<CtxOptionsDirsFormElement>) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback((e) => {
     e.preventDefault();
-    const form = e.currentTarget;
+    const form = e.currentTarget as CtxOptionsDirsFormElement;
 
     const path = form.elements.path.value.trim();
     const name = form.elements.name.value.trim();

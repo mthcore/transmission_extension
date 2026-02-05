@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useRef, FormEvent } from "react";
+import React, { useContext, useState, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useLocation } from "react-router-dom";
 import RootStoreCtx from "../../tools/rootStoreCtx";
@@ -48,9 +48,9 @@ const ClientOptions = observer(() => {
   const [clientStatus, setClientStatus] = useState<ClientStatus>(null);
   const [clientStatusText, setClientStatusText] = useState('');
 
-  const handleSubmit = useCallback((e: FormEvent<ClientFormElement>) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(async (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
+    const form = e.currentTarget as ClientFormElement;
     const login = form.elements.login.value;
     const password = form.elements.password.value;
     const hostname = form.elements.hostname.value.trim();
@@ -61,17 +61,15 @@ const ClientOptions = observer(() => {
     const authenticationRequired = form.elements.authenticationRequired.checked;
 
     setClientStatus('pending');
-    Promise.resolve().then(() => {
+    try {
       if (!Number.isFinite(port)) {
         throw new Error(chrome.i18n.getMessage('portIncorrect'));
       }
-      return configStore.setOptions({
+      await configStore.setOptions({
         login, password, hostname, port, ssl, pathname, webPathname, authenticationRequired
       });
-    }).then(() => {
       if (!refPage.current) return;
-      return rootStore.client.updateSettings();
-    }).then(() => {
+      await rootStore.client.updateSettings();
       if (!refPage.current) return;
       setClientStatus('done');
 
@@ -80,11 +78,12 @@ const ClientOptions = observer(() => {
       } else if (location.hash === '#redirectPopup') {
         window.location.href = '/index.html#popup';
       }
-    }, (err: Error) => {
+    } catch (err) {
       if (!refPage.current) return;
       setClientStatus('error');
-      setClientStatusText(`${err.name}: ${err.message}`);
-    });
+      const error = err as Error;
+      setClientStatusText(`${error.name}: ${error.message}`);
+    }
   }, [rootStore, configStore, location]);
 
   let status: React.ReactNode = null;

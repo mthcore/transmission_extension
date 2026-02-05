@@ -269,7 +269,7 @@ const ConfigStore = types.model('ConfigStore', {
     if (namespace === 'local') {
       const keyValue: Record<string, unknown> = {};
       Object.entries(changes).forEach(([key, { newValue }]) => {
-        if (configKeys.indexOf(key) !== -1) {
+        if (configKeys.includes(key)) {
           keyValue[key] = newValue;
         }
       });

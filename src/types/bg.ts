@@ -6,7 +6,7 @@
 
 import type { Instance } from 'mobx-state-tree';
 import type BgStore from '../stores/BgStore';
-import type TransmissionClient from '../bg/transmissionClient';
+import type TransmissionClient from '../bg/TransmissionClient';
 
 // Type for the BgStore instance
 export type IBgStore = Instance<typeof BgStore>;

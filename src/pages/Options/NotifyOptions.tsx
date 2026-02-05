@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { observer } from "mobx-react";
-import { SketchPicker, ColorResult } from "react-color";
+import { RgbaColorPicker, RgbaColor } from "react-colorful";
 import { Popover } from "react-tiny-popover";
 import { useOptionsPage } from "../../hooks/useOptionsPage";
 
@@ -21,15 +21,15 @@ const NotifyOptions: React.FC = observer(() => {
     setColorPickerOpened(prev => !prev);
   }, []);
 
-  const handleChangeColor = useCallback((color: ColorResult) => {
-    const rgba = [color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a].join(',');
+  const handleChangeColor = useCallback((color: RgbaColor) => {
+    const rgba = [color.r, color.g, color.b, color.a].join(',');
     typedConfigStore.setOptions({
       badgeColor: rgba
     });
   }, [typedConfigStore]);
 
   const [r, g, b, a] = typedConfigStore.badgeColor.split(',');
-  const sketchPickerColor = {
+  const pickerColor: RgbaColor = {
     r: parseInt(r, 10),
     g: parseInt(g, 10),
     b: parseInt(b, 10),
@@ -60,7 +60,7 @@ const NotifyOptions: React.FC = observer(() => {
           onClickOutside={handleToggleColorPicker}
           positions={['bottom']}
           content={(
-            <SketchPicker color={sketchPickerColor} onChangeComplete={handleChangeColor} />
+            <RgbaColorPicker color={pickerColor} onChange={handleChangeColor} />
           )}
         >
           <span onClick={handleToggleColorPicker} className="selectColor" style={{ backgroundColor: `rgba(${typedConfigStore.badgeColor})` }} />

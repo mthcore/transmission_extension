@@ -70,12 +70,10 @@ const ClientStore = types.model('ClientStore', {
 
       torrents.forEach((torrent) => {
         const id = torrent.id;
-
         const pos = removedIds.indexOf(id);
         if (pos !== -1) {
           removedIds.splice(pos, 1);
         }
-
         self.torrents.set(String(id), torrent as never);
       });
 

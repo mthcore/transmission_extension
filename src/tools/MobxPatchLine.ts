@@ -1,6 +1,6 @@
 import { getSnapshot, onPatch, IDisposer } from "mobx-state-tree";
 import type { IJsonPatch } from "mobx-state-tree";
-import ErrorWithCode from "./errorWithCode";
+import ErrorWithCode from "./ErrorWithCode";
 import escapeStringRegexp from 'escape-string-regexp';
 
 const INDEX_LIMIT = 1E9;
@@ -48,7 +48,7 @@ class MobxPatchLine {
     }
 
     let id = -1;
-    while (id === -1 || this.idLine.indexOf(id) !== -1) {
+    while (id === -1 || this.idLine.includes(id)) {
       id = ++this.index;
     }
 
@@ -73,7 +73,7 @@ class MobxPatchLine {
         result: this.getPatchAfterId(fromPatchId)
       };
     } catch (err) {
-      if (err instanceof ErrorWithCode && ['ID_IS_NOT_EQUAL', 'PATCH_ID_IS_NOT_FOUND'].indexOf(err.code || '') !== -1) {
+      if (err instanceof ErrorWithCode && ['ID_IS_NOT_EQUAL', 'PATCH_ID_IS_NOT_FOUND'].includes(err.code || '')) {
         return {
           id: this.id,
           branches: this.branches,
@@ -125,7 +125,7 @@ class MobxPatchLine {
     if (this.branchesRe) {
       if (!this.branchesRe.test(patch.path))
         return;
-      patch = Object.assign({}, patch, { path: '.' + patch.path });
+      patch = { ...patch, path: '.' + patch.path };
     }
     this.patchLine.push(patch);
     this.idLine.push(this.patchId);

@@ -1,10 +1,11 @@
-import React, { useContext, useRef, useEffect, ChangeEvent, MouseEvent } from "react";
+import React, { useContext, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import { observer } from "mobx-react";
-import TableHeadColumn, { Column } from "./TableHeadColumn";
+import { Column } from "./TableHeadColumn";
 import TorrentListTableItem from "./TorrentListTableItem";
 import TorrentColumnContextMenu from "./TorrentColumnMenu";
 import RootStoreCtx from "../tools/rootStoreCtx";
 import { useScrollSync } from "../hooks/useScrollSync";
+import { useTableHeadColumn } from "../hooks/useTableHeadColumn";
 
 interface TorrentItem {
   id: number;
@@ -85,165 +86,170 @@ interface TorrentListTableHeadProps {
   withStyle?: boolean;
 }
 
-@observer
-class TorrentListTableHead extends React.PureComponent<TorrentListTableHeadProps> {
-  static contextType = RootStoreCtx;
-  context!: RootStore | null;
+const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ withStyle }) => {
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
 
-  get rootStore(): RootStore | null {
-    return this.context;
-  }
+  const handleSort = useCallback((column: string, direction: number): void => {
+    rootStore?.config.setTorrentsSort(column, direction);
+  }, [rootStore]);
 
-  handleSort = (column: string, direction: number): void => {
-    this.rootStore?.config.setTorrentsSort(column, direction);
-  };
+  const handleMoveColumn = useCallback((from: string, to: string): void => {
+    rootStore?.config.moveTorrentsColumn(from, to);
+  }, [rootStore]);
 
-  handleMoveColumn = (from: string, to: string): void => {
-    this.rootStore?.config.moveTorrentsColumn(from, to);
-  };
+  const handleSaveColumns = useCallback((): void => {
+    rootStore?.config.saveTorrentsColumns();
+  }, [rootStore]);
 
-  handleSaveColumns = (): void => {
-    this.rootStore?.config.saveTorrentsColumns();
-  };
+  if (!rootStore) return null;
 
-  render(): React.ReactNode {
-    if (!this.rootStore) return null;
+  const torrentsSort = rootStore.config.torrentsSort;
+  const torrentColumns = rootStore.config.visibleTorrentColumns;
 
-    const torrentsSort = this.rootStore.config.torrentsSort;
-    const torrentColumns = this.rootStore.config.visibleTorrentColumns;
-    const columns: React.ReactNode[] = [];
-    torrentColumns.forEach((column) => {
-      columns.push(
-        <TorrentListTableHeadColumn key={column.column} column={column}
-          isSorted={torrentsSort.by === column.column} sortDirection={torrentsSort.direction}
-          onMoveColumn={this.handleMoveColumn}
-          onSort={this.handleSort}
-          onSaveColumns={this.handleSaveColumns}
-          withStyle={this.props.withStyle}
-        />
-      );
-    });
-
-    return (
-      <thead>
+  return (
+    <thead>
       <tr>
-        {columns}
+        {torrentColumns.map((column) => (
+          <TorrentListTableHeadColumn
+            key={column.column}
+            column={column}
+            isSorted={torrentsSort.by === column.column}
+            sortDirection={torrentsSort.direction}
+            onMoveColumn={handleMoveColumn}
+            onSort={handleSort}
+            onSaveColumns={handleSaveColumns}
+            withStyle={withStyle}
+          />
+        ))}
       </tr>
-      </thead>
-    );
-  }
+    </thead>
+  );
+});
+
+interface TorrentListTableHeadColumnProps {
+  column: Column;
+  isSorted: boolean;
+  sortDirection: number;
+  onMoveColumn: (from: string, to: string) => void;
+  onSort: (column: string, direction: number) => void;
+  onSaveColumns: () => void;
+  withStyle?: boolean;
 }
 
-interface TorrentListStore {
-  isSelectedAll: boolean;
-  toggleSelectAll: () => void;
-}
+const TorrentListTableHeadColumn: React.FC<TorrentListTableHeadColumnProps> = observer((props) => {
+  const { column, isSorted, sortDirection, onMoveColumn, onSort, onSaveColumns, withStyle } = props;
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+  const torrentListStore = rootStore?.torrentList;
 
-@observer
-class TorrentListTableHeadColumn extends TableHeadColumn {
-  type = 'tr';
+  const {
+    refTh,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleResizeClick,
+    handleResizeMouseDown,
+    handleSort,
+  } = useTableHeadColumn({
+    type: 'tr',
+    column,
+    onMoveColumn,
+    onSaveColumns,
+    onSort,
+    isSorted,
+    sortDirection,
+  });
 
-  get torrentListStore(): TorrentListStore | undefined {
-    return this.rootStore?.torrentList as TorrentListStore | undefined;
-  }
+  const handleSelectAll = useCallback((_e: ChangeEvent<HTMLInputElement>): void => {
+    torrentListStore?.toggleSelectAll();
+  }, [torrentListStore]);
 
-  handleSelectAll = (_e: ChangeEvent<HTMLInputElement>): void => {
-    this.torrentListStore?.toggleSelectAll();
-  };
-
-  render(): React.ReactNode {
-    const { column, isSorted, sortDirection } = this.props;
-    const classList = [column.column];
-    if (isSorted) {
-      if (sortDirection === 1) {
-        classList.push('sortDown');
-      } else {
-        classList.push('sortUp');
-      }
-    }
-
-    let body: React.ReactNode = null;
-    if (column.column === 'checkbox') {
-      body = (
-        <div>
-          <input checked={this.torrentListStore?.isSelectedAll} onChange={this.handleSelectAll} type="checkbox"/>
-        </div>
-      );
-    } else if (column.column === 'actions') {
-      body = <div/>;
+  const classList = [column.column];
+  if (isSorted) {
+    if (sortDirection === 1) {
+      classList.push('sortDown');
     } else {
-      body = (
-        <div>
-          {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
-        </div>
-      );
+      classList.push('sortUp');
     }
+  }
 
-    let style: React.ReactNode = null;
-    if (this.props.withStyle) {
-      const styleText = `.torrent-list-layer th.${column.column}, .torrent-list-layer td.${column.column} {
-        min-width: ${column.width}px;
-        max-width: ${column.width}px;
-      }`.split(/\r?\n/).map(line => line.trim()).join('');
-      style = (
-        <style>{styleText}</style>
-      );
-    }
-
-    let arrow: React.ReactNode = null;
-    if (column.order !== 0) {
-      arrow = (
-        <i className="arrow"/>
-      );
-    }
-
-    let onClick: ((e: MouseEvent<HTMLTableCellElement>) => void) | undefined = undefined;
-    if (column.order) {
-      onClick = this.handleSort;
-    }
-
-    const isFixedColumn = column.column === 'checkbox' || column.column === 'actions';
-    const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
-
-    return (
-      <th ref={this.refTh} onClick={onClick} onDragStart={this.handleDragStart} onDragOver={this.handleDragOver} onDrop={this.handleDrop} className={classList.join(' ')} title={title} draggable={true}>
-        {body}
-        {!isFixedColumn && <div className="resize-el" draggable={false} onClick={this.handleResizeClick} onMouseDown={this.handleResizeMouseDown}/>}
-        {arrow}
-        {style}
-      </th>
+  let body: React.ReactNode = null;
+  if (column.column === 'checkbox') {
+    body = (
+      <div>
+        <input checked={torrentListStore?.isSelectedAll} onChange={handleSelectAll} type="checkbox"/>
+      </div>
+    );
+  } else if (column.column === 'actions') {
+    body = <div/>;
+  } else {
+    body = (
+      <div>
+        {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
+      </div>
     );
   }
-}
 
-@observer
-class TorrentListTableTorrents extends React.PureComponent {
-  static contextType = RootStoreCtx;
-  context!: RootStore | null;
-
-  get rootStore(): RootStore | null {
-    return this.context;
+  let style: React.ReactNode = null;
+  if (withStyle) {
+    const styleText = `.torrent-list-layer th.${column.column}, .torrent-list-layer td.${column.column} {
+      min-width: ${column.width}px;
+      max-width: ${column.width}px;
+    }`.split(/\r?\n/).map(line => line.trim()).join('');
+    style = (
+      <style>{styleText}</style>
+    );
   }
 
-  get torrentListStore() {
-    return this.rootStore?.torrentList;
+  let arrow: React.ReactNode = null;
+  if (column.order !== 0) {
+    arrow = (
+      <i className="arrow"/>
+    );
   }
 
-  render(): React.ReactNode {
-    if (!this.torrentListStore) return null;
+  const onClick = column.order ? handleSort : undefined;
+  const isFixedColumn = column.column === 'checkbox' || column.column === 'actions';
+  const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
 
-    const torrens = this.torrentListStore.sortedTorrents.map((torrent) => {
-      return (
+  return (
+    <th
+      ref={refTh}
+      onClick={onClick}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className={classList.join(' ')}
+      title={title}
+      draggable={true}
+    >
+      {body}
+      {!isFixedColumn && (
+        <div
+          className="resize-el"
+          draggable={false}
+          onClick={handleResizeClick}
+          onMouseDown={handleResizeMouseDown}
+        />
+      )}
+      {arrow}
+      {style}
+    </th>
+  );
+});
+
+const TorrentListTableTorrents: React.FC = observer(() => {
+  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+  const torrentListStore = rootStore?.torrentList;
+
+  if (!torrentListStore) return null;
+
+  return (
+    <tbody>
+      {torrentListStore.sortedTorrents.map((torrent) => (
         <TorrentListTableItem key={torrent.id} torrent={torrent as TorrentItem}/>
-      );
-    });
-
-    return (
-      <tbody>
-        {torrens}
-      </tbody>
-    );
-  }
-}
+      ))}
+    </tbody>
+  );
+});
 
 export default TorrentListTable;

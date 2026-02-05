@@ -22,12 +22,12 @@ function mergeColumns(columns: ColumnConfig[], defColumns: ColumnConfig[]): Colu
       unknownColumns.push(column);
     }
 
-    const normColumn = Object.assign({}, defIdColumn[id], column);
+    const normColumn = { ...defIdColumn[id], ...column };
     Object.assign(column, normColumn);
   });
 
   removedIds.forEach((id) => {
-    const column = Object.assign({}, defIdColumn[id]);
+    const column = { ...defIdColumn[id] };
     columns.splice(defIdIndex[id], 0, column);
   });
 

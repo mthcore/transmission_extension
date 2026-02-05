@@ -1,10 +1,10 @@
 import getLogger from "../tools/getLogger";
-import Daemon from "./daemon";
-import ContextMenu from "./contextMenu";
+import Daemon from "./Daemon";
+import ContextMenu from "./ContextMenu";
 import BgStore, { IBgStore } from "../stores/BgStore";
 import { autorun } from "mobx";
-import TransmissionClient from "./transmissionClient";
-import MobxPatchLine from "../tools/mobxPatchLine";
+import TransmissionClient from "./TransmissionClient";
+import MobxPatchLine from "../tools/MobxPatchLine";
 import { serializeError } from 'serialize-error';
 import type { BgMessage, IBgForDaemon, IBgForContextMenu } from '../types';
 import { getSnapshot } from "mobx-state-tree";
@@ -140,7 +140,7 @@ class Bg {
     return this.client;
   }
 
-  handleMessage = (message: BgMessage, sender: chrome.runtime.MessageSender, response: (result: unknown) => void): boolean | void => {
+  handleMessage = (message: BgMessage, _sender: chrome.runtime.MessageSender, response: (result: unknown) => void): boolean | void => {
     let promise: Promise<unknown> | null = null;
 
     // Type narrowing happens automatically in each case block

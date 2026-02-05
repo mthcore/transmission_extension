@@ -1,4 +1,4 @@
-import ErrorWithCode from "./errorWithCode";
+import ErrorWithCode from "./ErrorWithCode";
 import base64ToArrayBuffer from "./base64ToArrayBuffer";
 
 interface DownloadResult {

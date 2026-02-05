@@ -27,27 +27,29 @@ const BackupRestoreOptions: React.FC = () => {
   const [hasCloudData, setHasCloudData] = useState(false);
   const [storage, setStorage] = useState<string | null>(null);
 
-  const checkCloudData = useCallback(() => {
-    storageGet({ backup: '' }, 'sync').then((storage: StorageData) => {
+  const checkCloudData = useCallback(async () => {
+    try {
+      const storage: StorageData = await storageGet({ backup: '' }, 'sync');
       if (!refPage.current) return;
       setHasCloudData(!!storage.backup);
-    }, (err: Error) => {
+    } catch (err) {
       logger.error('checkCloudData error', err);
-    });
+    }
   }, []);
 
-  const handleLoadConfig = useCallback((e?: React.MouseEvent<HTMLButtonElement>) => {
-    e && e.preventDefault();
+  const handleLoadConfig = useCallback(async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
     setLoadState('pending');
-    storageGet(null).then((storage: StorageData) => {
+    try {
+      const storage: StorageData = await storageGet(null);
       if (!refPage.current) return;
       setLoadState('done');
       setStorage(JSON.stringify(storage, null, 2));
-    }, () => {
+    } catch {
       if (!refPage.current) return;
       setLoadState('error');
       setStorage('');
-    });
+    }
   }, []);
 
   useEffect(() => {
@@ -55,10 +57,11 @@ const BackupRestoreOptions: React.FC = () => {
     checkCloudData();
   }, [handleLoadConfig, checkCloudData]);
 
-  const handleSaveToCloud = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSaveToCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setSaveState('pending');
-    storageSet({ backup: refData.current?.value }, 'sync').then(() => {
+    try {
+      await storageSet({ backup: refData.current?.value }, 'sync');
       if (!refPage.current) return;
       setSaveState('done');
       setHasCloudData(true);
@@ -66,61 +69,62 @@ const BackupRestoreOptions: React.FC = () => {
         if (!refPage.current) return;
         setSaveState('idle');
       }, 2000);
-    }, (err: Error) => {
+    } catch (err) {
       logger.error('handleSaveToCloud error', err);
       if (!refPage.current) return;
       setSaveState('error');
-    });
+    }
   }, []);
 
-  const handleLoadFromCloud = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLoadFromCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    storageGet({ backup: '' }, 'sync').then((storage: StorageData) => {
+    try {
+      const storage: StorageData = await storageGet({ backup: '' }, 'sync');
       if (!refPage.current) return;
       if (storage.backup && refData.current) {
         refData.current.value = storage.backup;
       }
-    }, (err: Error) => {
+    } catch (err) {
       logger.error('handleLoadFromCloud error', err);
-    });
+    }
   }, []);
 
-  const handleClearCloud = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClearCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const confirmMessage = chrome.i18n.getMessage('confirmClearCloud') || 'Are you sure you want to clear the cloud backup?';
     if (!window.confirm(confirmMessage)) return;
-    storageRemove(['backup'], 'sync').then(() => {
+    try {
+      await storageRemove(['backup'], 'sync');
       if (!refPage.current) return;
       setHasCloudData(false);
-    }, (err: Error) => {
+    } catch (err) {
       logger.error('handleClearCloud error', err);
-    });
+    }
   }, []);
 
-  const handleRestore = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRestore = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const confirmMessage = chrome.i18n.getMessage('confirmRestore') || 'Are you sure you want to restore this configuration? This will overwrite all current settings.';
     if (!window.confirm(confirmMessage)) return;
     setRestoreState('pending');
-    Promise.resolve().then(() => {
-      const config: StorageData = Object.assign({ configVersion: 1 }, JSON.parse(refData.current?.value || '{}'));
+    try {
+      const config: StorageData = { configVersion: 1, ...JSON.parse(refData.current?.value || '{}') };
       if (config.configVersion !== 2) {
         config.configVersion = 2;
         migrateConfig(config as Record<string, unknown>, config as Record<string, unknown>);
       }
-      return storageSet(config);
-    }).then(() => {
+      await storageSet(config);
       if (!refPage.current) return;
       setRestoreState('done');
       setTimeout(() => {
         if (!refPage.current) return;
         setRestoreState('idle');
       }, 2000);
-    }).catch((err: Error) => {
+    } catch (err) {
       logger.error('handleRestore error', err);
       if (!refPage.current) return;
       setRestoreState('error');
-    });
+    }
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 import "whatwg-fetch";
 import arrayBufferToBase64 from "./tools/arrayBufferToBase64";
 import getLogger from "./tools/getLogger";
-import ErrorWithCode from "./tools/errorWithCode";
+import ErrorWithCode from "./tools/ErrorWithCode";
 import { serializeError } from 'serialize-error';
 import { MAX_FETCH_SIZE } from "./constants";
 
@@ -35,7 +35,7 @@ declare global {
 !window.tabUrlFetch && (() => {
   window.tabUrlFetch = true;
 
-  chrome.runtime.onMessage.addListener((message: FetchMessage, sender: chrome.runtime.MessageSender, response: (result: { result?: FetchResult; error?: unknown }) => void) => {
+  chrome.runtime.onMessage.addListener((message: FetchMessage, _sender: chrome.runtime.MessageSender, response: (result: { result?: FetchResult; error?: unknown }) => void) => {
     let promise: Promise<FetchResult> | null = null;
 
     switch (message && message.action) {

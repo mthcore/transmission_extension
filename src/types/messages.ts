@@ -13,17 +13,6 @@ export interface DirectoryConfig {
   path: string;
 }
 
-// Base message responses
-export interface MessageResponse<T = unknown> {
-  result?: T;
-  error?: {
-    message: string;
-    code?: string;
-    name?: string;
-    stack?: string;
-  };
-}
-
 // Discriminated union of all message types
 export type BgMessage =
   // Store sync messages
@@ -161,44 +150,4 @@ export interface TorrentSetLocationMessage {
   action: 'torrentSetLocation';
   ids: TorrentId[];
   location: string;
-}
-
-// Type guard functions
-export function isTorrentActionMessage(
-  msg: BgMessage
-): msg is TorrentActionMessage {
-  return [
-    'start',
-    'forcestart',
-    'stop',
-    'recheck',
-    'removetorrent',
-    'removedatatorrent',
-    'reannounce',
-  ].includes(msg.action);
-}
-
-export function isQueueActionMessage(msg: BgMessage): msg is QueueActionMessage {
-  return ['queueTop', 'queueUp', 'queueDown', 'queueBottom'].includes(msg.action);
-}
-
-export function isSpeedLimitEnabledMessage(
-  msg: BgMessage
-): msg is SpeedLimitEnabledMessage {
-  return [
-    'setDownloadSpeedLimitEnabled',
-    'setUploadSpeedLimitEnabled',
-  ].includes(msg.action);
-}
-
-export function isSpeedLimitMessage(msg: BgMessage): msg is SpeedLimitMessage {
-  return ['setDownloadSpeedLimit', 'setUploadSpeedLimit'].includes(msg.action);
-}
-
-export function isAltSpeedLimitMessage(
-  msg: BgMessage
-): msg is AltSpeedLimitMessage {
-  return ['setAltUploadSpeedLimit', 'setAltDownloadSpeedLimit'].includes(
-    msg.action
-  );
 }

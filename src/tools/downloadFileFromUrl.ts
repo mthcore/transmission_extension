@@ -1,4 +1,4 @@
-import ErrorWithCode from "./errorWithCode";
+import ErrorWithCode from "./ErrorWithCode";
 
 interface DownloadResult {
   blob: Blob;

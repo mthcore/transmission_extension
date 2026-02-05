@@ -1,5 +1,5 @@
 import getLogger from "../tools/getLogger";
-import ErrorWithCode from "../tools/errorWithCode";
+import ErrorWithCode from "../tools/ErrorWithCode";
 import readBlobAsArrayBuffer from "../tools/readBlobAsArrayBuffer";
 import arrayBufferToBase64 from "../tools/arrayBufferToBase64";
 import arrayDifferent from "../tools/arrayDifferent";
@@ -186,7 +186,7 @@ class TransmissionClient {
       }
     }
 
-    function safeValue(match: string, key: string, value: string): string {
+    function safeValue(_match: string, key: string, value: string): string {
       try {
         JSON.parse(`"${value}"`);
       } catch {

@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -15,7 +16,7 @@ const browser = BUILD_ENV.browser;
 
 const config = {
   entry: {
-    bg: './src/bg/bg',
+    bg: './src/bg/Bg',
     index: './src/pages/index',
     options: './src/pages/Options',
     tabUrlFetch: './src/tabUrlFetch',
@@ -29,25 +30,65 @@ const config = {
   mode: mode,
   devtool: devtool,
   optimization: {
+    // Enable module concatenation for smaller bundles
+    concatenateModules: true,
+    // Use deterministic IDs for better caching
+    moduleIds: 'deterministic',
+    chunkIds: 'deterministic',
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
+        // Vendor chunk for node_modules shared between index and options
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: chunk => ['index', 'options'].includes(chunk.name),
+          priority: 20,
+          reuseExistingChunk: true,
+        },
+        // Commons for shared application code
         commons: {
-          name: "commons",
+          name: 'commons',
           chunks: chunk => ['index', 'options'].includes(chunk.name),
           minChunks: 2,
           priority: 10,
-        },
-        commons_ui: {
-          name: "commons-ui",
-          chunks: chunk => ['index', 'options'].includes(chunk.name),
-          minChunks: 2,
-          priority: 5,
+          reuseExistingChunk: true,
         },
       }
     },
     minimizer: [
-      '...',
-      new CssMinimizerPlugin(),
+      new TerserPlugin({
+        terserOptions: {
+          parse: {
+            ecma: 2020,
+          },
+          compress: {
+            ecma: 2020,
+            comparisons: false,
+            inline: 2,
+            drop_console: mode === 'production',
+            drop_debugger: true,
+            pure_funcs: mode === 'production' ? ['console.log', 'console.info'] : [],
+          },
+          mangle: {
+            safari10: true,
+          },
+          output: {
+            ecma: 2020,
+            comments: false,
+            ascii_only: true,
+          },
+        },
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: ['default', {
+            discardComments: { removeAll: true },
+            normalizeWhitespace: true,
+          }],
+        },
+      }),
     ],
   },
   module: {
@@ -66,9 +107,6 @@ const config = {
           options: {
             plugins: [
               ['@babel/plugin-proposal-decorators', {'legacy': true}],
-              '@babel/plugin-syntax-dynamic-import',
-              '@babel/plugin-proposal-class-properties',
-              ...(mode === 'production' ? [['transform-react-remove-prop-types', {removeImport: true}]] : [])
             ],
             presets: [
               '@babel/preset-react',
@@ -108,6 +146,8 @@ const config = {
     },
     alias: {
       "process/browser": require.resolve("process/browser.js"),
+      // Force all lodash imports to use lodash-es for better tree-shaking
+      "lodash": "lodash-es",
     }
   },
   plugins: [
@@ -147,7 +187,7 @@ const config = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './src/templates/index.html',
-      chunks: ['commons', 'commons-ui', 'index'],
+      chunks: ['vendor', 'commons', 'index'],
       minify: {
         collapseWhitespace: true,
         removeComments: true,
@@ -160,7 +200,7 @@ const config = {
     new HtmlWebpackPlugin({
       filename: 'options.html',
       template: './src/templates/options.html',
-      chunks: ['commons', 'commons-ui', 'options'],
+      chunks: ['vendor', 'commons', 'options'],
       minify: {
         collapseWhitespace: true,
         removeComments: true,

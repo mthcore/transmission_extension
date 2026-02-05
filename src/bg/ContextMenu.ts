@@ -58,39 +58,53 @@ class ContextMenu {
     }
   }
 
-  onSendLink(url: string, tabId: number, frameId: number | undefined, directory?: Folder): Promise<void> {
-    return downloadFileFromTab(url, tabId, frameId).catch((err) => {
-      if (['FILE_SIZE_EXCEEDED', 'LINK_IS_NOT_SUPPORTED'].indexOf(err.code) === -1) {
-        logger.error('onSendLink: downloadFileFromTab error, fallback to downloadFileFromUrl', err);
-        return downloadFileFromUrl(url);
+  async onSendLink(url: string, tabId: number, frameId: number | undefined, directory?: Folder): Promise<void> {
+    try {
+      let data: { blob?: Blob; url?: string };
+      try {
+        data = await downloadFileFromTab(url, tabId, frameId);
+      } catch (err: unknown) {
+        const error = err as { code?: string };
+        if (!['FILE_SIZE_EXCEEDED', 'LINK_IS_NOT_SUPPORTED'].includes(error.code ?? '')) {
+          logger.error('onSendLink: downloadFileFromTab error, fallback to downloadFileFromUrl', err);
+          data = await downloadFileFromUrl(url);
+        } else {
+          throw err;
+        }
       }
-      throw err;
-    }).catch((err) => {
-      if (err.code === 'FILE_SIZE_EXCEEDED') {
-        this.bg.torrentErrorNotify(chrome.i18n.getMessage('fileSizeError'));
-        throw err;
-      }
-      if (err.code !== 'LINK_IS_NOT_SUPPORTED') {
-        logger.error('onSendLink: downloadFileFromUrl error, fallback to url', err);
-      }
-      return { url };
-    }).then((data) => {
       if (!this.bg.client) throw new Error('Client not initialized');
-      return this.bg.client.putTorrent(data, directory);
-    }).then(() => {
+      await this.bg.client.putTorrent(data, directory);
       if (this.bgStore.config.selectDownloadCategoryAfterPutTorrentFromContextMenu) {
         this.bgStore.config.setSelectedLabel('DL', true);
       }
       if (!this.bg.client) throw new Error('Client not initialized');
-      return this.bg.client.updateTorrents();
-    }).then(() => {
-      // void return
-    }).catch((err) => {
+      await this.bg.client.updateTorrents();
+    } catch (err: unknown) {
+      const error = err as { code?: string };
+      if (error.code === 'FILE_SIZE_EXCEEDED') {
+        this.bg.torrentErrorNotify(chrome.i18n.getMessage('fileSizeError'));
+        return;
+      }
+      if (error.code === 'LINK_IS_NOT_SUPPORTED') {
+        // Fallback to URL
+        try {
+          if (!this.bg.client) throw new Error('Client not initialized');
+          await this.bg.client.putTorrent({ url }, directory);
+          if (this.bgStore.config.selectDownloadCategoryAfterPutTorrentFromContextMenu) {
+            this.bgStore.config.setSelectedLabel('DL', true);
+          }
+          if (!this.bg.client) throw new Error('Client not initialized');
+          await this.bg.client.updateTorrents();
+        } catch (fallbackErr) {
+          logger.error('onSendLink error', fallbackErr);
+        }
+        return;
+      }
       logger.error('onSendLink error', err);
-    });
+    }
   }
 
-  handleClick = (info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab): void => {
+  handleClick = async (info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab): Promise<void> => {
     const { menuItemId, linkUrl, frameId } = info;
     let itemInfo: MenuItemInfo;
     try {
@@ -99,54 +113,47 @@ class ContextMenu {
       logger.error('Invalid menuItemId JSON', err);
       return;
     }
-    switch (itemInfo.type) {
-      case 'action': {
-        switch (itemInfo.name) {
-          case 'default': {
-            this.bg.whenReady().then(() => {
+    try {
+      switch (itemInfo.type) {
+        case 'action': {
+          switch (itemInfo.name) {
+            case 'default': {
+              await this.bg.whenReady();
               if (!linkUrl || !tab?.id) return;
-              return this.onSendLink(linkUrl, tab.id, frameId);
-            }).catch((err) => {
-              logger.error('handleClick default error', err);
-            });
-            break;
+              await this.onSendLink(linkUrl, tab.id, frameId);
+              break;
+            }
+            case 'createFolder': {
+              await this.bg.whenReady();
+              this.onCreateFolder();
+              break;
+            }
           }
-          case 'createFolder': {
-            this.bg.whenReady().then(() => {
-              return this.onCreateFolder();
-            }).catch((err) => {
-              logger.error('handleClick createFolder error', err);
-            });
-            break;
-          }
+          break;
         }
-        break;
-      }
-      case 'folder': {
-        this.bg.whenReady().then(() => {
+        case 'folder': {
+          await this.bg.whenReady();
           if (!linkUrl || !tab?.id || itemInfo.index === undefined) return;
           const folder = this.bgStore.config.folders[itemInfo.index];
-          return this.onSendLink(linkUrl, tab.id, frameId, folder);
-        }).catch((err) => {
-          logger.error('handleClick folder error', err);
-        });
-        break;
+          await this.onSendLink(linkUrl, tab.id, frameId, folder);
+          break;
+        }
       }
+    } catch (err) {
+      logger.error('handleClick error', err);
     }
   };
 
   create(): Promise<void> {
-    return oneThread(() => {
-      return contextMenusRemoveAll().then(() => {
-        const menuId = JSON.stringify({ type: 'action', name: 'default', source: 'main' });
-        return contextMenusCreate({
-          id: menuId,
-          title: chrome.i18n.getMessage('addInTorrentClient'),
-          contexts: ['link']
-        }).then(() => {
-          return this.createFolderMenu(menuId);
-        });
+    return oneThread(async () => {
+      await contextMenusRemoveAll();
+      const menuId = JSON.stringify({ type: 'action', name: 'default', source: 'main' });
+      await contextMenusCreate({
+        id: menuId,
+        title: chrome.i18n.getMessage('addInTorrentClient'),
+        contexts: ['link']
       });
+      await this.createFolderMenu(menuId);
     });
   }
 
@@ -209,9 +216,9 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
   folders.forEach((folder) => {
     const place = folder.path;
     if (sep === null) {
-      if (place.indexOf('/') !== -1) {
+      if (place.includes('/')) {
         sep = '/';
-      } else if (place.indexOf('\\') !== -1) {
+      } else if (place.includes('\\')) {
         sep = '\\';
       }
     }
@@ -307,17 +314,12 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
   return menus;
 }
 
-const contextMenusRemoveAll = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    chrome.contextMenus.removeAll(() => {
-      const err = chrome.runtime.lastError;
-      err ? reject(err) : resolve();
-    });
-  });
+const contextMenusRemoveAll = async (): Promise<void> => {
+  await chrome.contextMenus.removeAll();
 };
 
-const contextMenusCreate = (details: chrome.contextMenus.CreateProperties): Promise<void> => {
-  return new Promise((resolve, reject) => {
+const contextMenusCreate = async (details: chrome.contextMenus.CreateProperties): Promise<void> => {
+  await new Promise<void>((resolve, reject) => {
     chrome.contextMenus.create(details, () => {
       const err = chrome.runtime.lastError;
       err ? reject(err) : resolve();
