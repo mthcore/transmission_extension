@@ -1,13 +1,13 @@
-import getLogger from "../tools/getLogger";
-import Daemon from "./Daemon";
-import ContextMenu from "./ContextMenu";
-import BgStore, { IBgStore } from "../stores/BgStore";
-import { autorun } from "mobx";
-import TransmissionClient from "./TransmissionClient";
-import MobxPatchLine from "../tools/MobxPatchLine";
+import getLogger from '../tools/getLogger';
+import Daemon from './Daemon';
+import ContextMenu from './ContextMenu';
+import BgStore, { IBgStore } from '../stores/BgStore';
+import { autorun } from 'mobx';
+import TransmissionClient from './TransmissionClient';
+import MobxPatchLine from '../tools/MobxPatchLine';
 import { serializeError } from 'serialize-error';
 import type { BgMessage, IBgForDaemon, IBgForContextMenu } from '../types';
-import { getSnapshot } from "mobx-state-tree";
+import { getSnapshot } from 'mobx-state-tree';
 
 const logger = getLogger('background');
 
@@ -34,7 +34,9 @@ class Bg {
   constructor() {
     this.bgStore = BgStore.create();
     // Cast to Record for MobxPatchLine compatibility with MST types
-    this.bgStorePathLine = new MobxPatchLine(this.bgStore as unknown as Record<string, unknown>, ['client']);
+    this.bgStorePathLine = new MobxPatchLine(this.bgStore as unknown as Record<string, unknown>, [
+      'client',
+    ]);
     this.client = null;
     this.daemon = null;
     this.contextMenu = null;
@@ -52,7 +54,7 @@ class Bg {
     this.daemon = new Daemon(this as unknown as IBgForDaemon);
     this.contextMenu = new ContextMenu(this as unknown as IBgForContextMenu);
 
-    return this.initPromise = this.bgStore.fetchConfig().then(() => {
+    return (this.initPromise = this.bgStore.fetchConfig().then(() => {
       const autorunLogger = getLogger('autorun');
 
       autorun(() => {
@@ -119,14 +121,14 @@ class Bg {
         const dep = [
           config.folders.length,
           config.treeViewContextMenu,
-          config.putDefaultPathInContextMenu
+          config.putDefaultPathInContextMenu,
         ];
 
         if (dep.length) {
           this.contextMenu?.create();
         }
       });
-    });
+    }));
   }
 
   whenReady(): Promise<void> {
@@ -140,7 +142,11 @@ class Bg {
     return this.client;
   }
 
-  handleMessage = (message: BgMessage, _sender: chrome.runtime.MessageSender, response: (result: unknown) => void): boolean | void => {
+  handleMessage = (
+    message: BgMessage,
+    _sender: chrome.runtime.MessageSender,
+    response: (result: unknown) => void
+  ): boolean | void => {
     let promise: Promise<unknown> | null = null;
 
     // Type narrowing happens automatically in each case block
@@ -255,18 +261,25 @@ class Bg {
       default: {
         // Exhaustive check - TypeScript will error if a case is missing
         const _exhaustiveCheck: never = message;
-        promise = Promise.reject(new Error(`Unknown request: ${(_exhaustiveCheck as BgMessage).action}`));
+        promise = Promise.reject(
+          new Error(`Unknown request: ${(_exhaustiveCheck as BgMessage).action}`)
+        );
       }
     }
 
     if (promise) {
-      promise.then((result) => {
-        response({ result });
-      }, (err) => {
-        response({ error: serializeError(err) });
-      }).catch((err) => {
-        logger.error('Send response error', err);
-      });
+      promise
+        .then(
+          (result) => {
+            response({ result });
+          },
+          (err) => {
+            response({ error: serializeError(err) });
+          }
+        )
+        .catch((err) => {
+          logger.error('Send response error', err);
+        });
       return true;
     }
   };
@@ -311,12 +324,12 @@ function showNotification(id: string, iconUrl: string, title = '', message = '')
     type: 'basic',
     iconUrl: iconUrl,
     title: title,
-    message: message
+    message: message,
   });
 }
 
 function setBadgeBackgroundColor(color: string): void {
-  const colors = color.split(',').map(i => parseFloat(i));
+  const colors = color.split(',').map((i) => parseFloat(i));
   if (colors.length === 4) {
     const alpha = colors.pop();
     if (alpha !== undefined) {
@@ -328,6 +341,6 @@ function setBadgeBackgroundColor(color: string): void {
 
 declare const self: Window & { bg: Bg };
 
-const bg = self.bg = new Bg();
+const bg = (self.bg = new Bg());
 
 export default bg;

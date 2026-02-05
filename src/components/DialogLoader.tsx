@@ -28,8 +28,20 @@ export const DialogLoader: React.FC<DialogLoaderProps> = ({ type, dialogStore })
   }
 
   return (
-    <ErrorBoundary fallback={<div className="dialog-error">{chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to load dialog'}</div>}>
-      <React.Suspense fallback={<div className="dialog-loading"><Spinner /></div>}>
+    <ErrorBoundary
+      fallback={
+        <div className="dialog-error">
+          {chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to load dialog'}
+        </div>
+      }
+    >
+      <React.Suspense
+        fallback={
+          <div className="dialog-loading">
+            <Spinner />
+          </div>
+        }
+      >
         <Component dialogStore={dialogStore as never} />
       </React.Suspense>
     </ErrorBoundary>

@@ -1,7 +1,7 @@
-import { isObjectOrArray } from "./MobxPatchLine";
-import { applyPatch, applySnapshot } from "mobx-state-tree";
-import type { IJsonPatch } from "mobx-state-tree";
-import ErrorWithCode from "./ErrorWithCode";
+import { isObjectOrArray } from './MobxPatchLine';
+import { applyPatch, applySnapshot } from 'mobx-state-tree';
+import type { IJsonPatch } from 'mobx-state-tree';
+import ErrorWithCode from './ErrorWithCode';
 
 interface Session {
   id: number | null;

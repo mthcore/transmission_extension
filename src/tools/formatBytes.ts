@@ -5,7 +5,7 @@ const sizeList: string[] = JSON.parse(chrome.i18n.getMessage('sizeList'));
 const formatBytes = (bytes: number): string => {
   return filesize(bytes, {
     fullform: true,
-    fullforms: sizeList
+    fullforms: sizeList,
   }) as string;
 };
 

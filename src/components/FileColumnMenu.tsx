@@ -1,8 +1,8 @@
-import React, { useContext, useCallback, ReactNode } from "react";
-import * as ContextMenu from "@radix-ui/react-context-menu";
-import { observer } from "mobx-react";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useColumnToggle } from "../hooks/useColumnToggle";
+import React, { useContext, useCallback, ReactNode } from 'react';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { observer } from 'mobx-react';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useColumnToggle } from '../hooks/useColumnToggle';
 
 interface Column {
   column: string;
@@ -18,9 +18,7 @@ interface FileColumnContextMenuProps {
 const FileColumnContextMenu: React.FC<FileColumnContextMenuProps> = observer(({ children }) => {
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger asChild>
-        {children}
-      </ContextMenu.Trigger>
+      <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
         <FileColumnMenuContent />
       </ContextMenu.Portal>

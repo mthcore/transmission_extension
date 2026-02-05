@@ -1,8 +1,8 @@
-import { observer } from "mobx-react";
-import React, { useContext, useCallback, ChangeEvent } from "react";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import FileContextMenu from "./FileContextMenu";
-import { PROGRESS_LIGHT_DENOMINATOR } from "../constants";
+import { observer } from 'mobx-react';
+import React, { useContext, useCallback, ChangeEvent } from 'react';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import FileContextMenu from './FileContextMenu';
+import { PROGRESS_LIGHT_DENOMINATOR } from '../constants';
 
 interface File {
   name: string;
@@ -35,17 +35,20 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
   const config = rootStore?.config;
 
-  const handleSelect = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (!file.selected) {
-      if (e.nativeEvent instanceof MouseEvent && (e.nativeEvent as MouseEvent).shiftKey) {
-        fileListStore?.addMultipleSelectedId(file.name);
+  const handleSelect = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (!file.selected) {
+        if (e.nativeEvent instanceof MouseEvent && (e.nativeEvent as MouseEvent).shiftKey) {
+          fileListStore?.addMultipleSelectedId(file.name);
+        } else {
+          fileListStore?.addSelectedId(file.name);
+        }
       } else {
-        fileListStore?.addSelectedId(file.name);
+        fileListStore?.removeSelectedId(file.name);
       }
-    } else {
-      fileListStore?.removeSelectedId(file.name);
-    }
-  }, [file, fileListStore]);
+    },
+    [file, fileListStore]
+  );
 
   if (!rootStore || !config || !fileListStore) return null;
 
@@ -57,7 +60,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
       case 'checkbox': {
         columns.push(
           <td key={name} className={name}>
-            <input checked={file.selected} onChange={handleSelect} type="checkbox"/>
+            <input checked={file.selected} onChange={handleSelect} type="checkbox" />
           </td>
         );
         break;
@@ -65,7 +68,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
       case 'name': {
         columns.push(
           <td key={name} className={name}>
-            <FileName fileListStore={fileListStore} fileStore={file}/>
+            <FileName fileListStore={fileListStore} fileStore={file} />
           </td>
         );
         break;
@@ -91,14 +94,17 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
         const progressClass = isComplete ? 'complete' : 'downloading';
         const progressWidth = file.progressStr;
         const progressNum = parseFloat(progressWidth) || 0;
-        const lightWidth = progressNum > 0 ? `${PROGRESS_LIGHT_DENOMINATOR / progressNum}%` : '100%';
+        const lightWidth =
+          progressNum > 0 ? `${PROGRESS_LIGHT_DENOMINATOR / progressNum}%` : '100%';
 
         columns.push(
           <td key={name} className={name}>
             <div className="progress_b">
               <div className="val">{file.progressStr}</div>
               <div className={`progress_b_i ${progressClass}`} style={{ width: progressWidth }}>
-                <div className="val-light" style={{ width: lightWidth }}>{file.progressStr}</div>
+                <div className="val-light" style={{ width: lightWidth }}>
+                  {file.progressStr}
+                </div>
               </div>
             </div>
           </td>
@@ -123,9 +129,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
 
   return (
     <FileContextMenu fileId={file.name}>
-      <tr className={classList.join(' ')}>
-        {columns}
-      </tr>
+      <tr className={classList.join(' ')}>{columns}</tr>
     </FileContextMenu>
   );
 });
@@ -136,14 +140,17 @@ interface FileNameProps {
 }
 
 const FileName: React.FC<FileNameProps> = observer(({ fileStore, fileListStore }) => {
-  const handleSetFilter = useCallback((level: number) => {
-    let targetLevel = level;
-    if (targetLevel === fileListStore.filterLevel) {
-      targetLevel--;
-    }
-    const filter = fileStore.nameParts.slice(0, targetLevel).join('/');
-    fileListStore.setFilter(filter);
-  }, [fileStore, fileListStore]);
+  const handleSetFilter = useCallback(
+    (level: number) => {
+      let targetLevel = level;
+      if (targetLevel === fileListStore.filterLevel) {
+        targetLevel--;
+      }
+      const filter = fileStore.nameParts.slice(0, targetLevel).join('/');
+      fileListStore.setFilter(filter);
+    },
+    [fileStore, fileListStore]
+  );
 
   const parts: string[] = [];
   const nameParts = fileStore.nameParts;
@@ -156,20 +163,28 @@ const FileName: React.FC<FileNameProps> = observer(({ fileStore, fileListStore }
   const filename = parts.pop();
   const links = parts.map((name, index) => {
     return (
-      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel + index + 1} name={name}/>
+      <FileNamePart
+        key={name}
+        onSetFilter={handleSetFilter}
+        level={filterLevel + index + 1}
+        name={name}
+      />
     );
   });
 
   if (filterLevel > 0) {
     const name = '←';
     links.unshift(
-      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel} name={name}/>
+      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel} name={name} />
     );
   }
 
   return (
     <div title={fileStore.shortName}>
-      <span>{links}{filename}</span>
+      <span>
+        {links}
+        {filename}
+      </span>
     </div>
   );
 });
@@ -188,7 +203,9 @@ const FileNamePart = React.memo<FileNamePartProps>(({ level, name, onSetFilter }
   const classList = ['folder', `c${level - 1}`];
 
   return (
-    <button onClick={handleClick} className={classList.join(' ')} type="button">{name}</button>
+    <button onClick={handleClick} className={classList.join(' ')} type="button">
+      {name}
+    </button>
   );
 });
 

@@ -1,10 +1,17 @@
-import React, { useContext, useCallback, useState, FormEvent, ChangeEvent, MouseEvent } from "react";
-import { observer } from "mobx-react";
-import Dialog from "./Dialog";
-import DirectorySelect from "./DirectorySelect";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import showError from "../tools/showError";
-import { useDialogClose } from "../hooks/useDialogClose";
+import React, {
+  useContext,
+  useCallback,
+  useState,
+  FormEvent,
+  ChangeEvent,
+  MouseEvent,
+} from 'react';
+import { observer } from 'mobx-react';
+import Dialog from './Dialog';
+import DirectorySelect from './DirectorySelect';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import showError from '../tools/showError';
+import { useDialogClose } from '../hooks/useDialogClose';
 
 interface Folder {
   name?: string;
@@ -28,35 +35,38 @@ const MoveDialog: React.FC<MoveDialogProps> = observer(({ dialogStore }) => {
   const client = rootStore?.client;
   const config = rootStore?.config;
 
-  const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const form = e.currentTarget;
 
-    let location: string | null = null;
+      let location: string | null = null;
 
-    const directorySelect = form.elements.namedItem('directory') as HTMLSelectElement | null;
-    if (directorySelect) {
-      const directoryIndex = parseInt(directorySelect.value, 10);
-      if (directoryIndex > -2) {
-        if (directoryIndex === -1) {
-          location = client?.settings?.downloadDir ?? null;
-        } else {
-          location = (config?.folders as Folder[] | undefined)?.[directoryIndex]?.path ?? null;
+      const directorySelect = form.elements.namedItem('directory') as HTMLSelectElement | null;
+      if (directorySelect) {
+        const directoryIndex = parseInt(directorySelect.value, 10);
+        if (directoryIndex > -2) {
+          if (directoryIndex === -1) {
+            location = client?.settings?.downloadDir ?? null;
+          } else {
+            location = (config?.folders as Folder[] | undefined)?.[directoryIndex]?.path ?? null;
+          }
         }
       }
-    }
 
-    if (location === null) {
-      const locationInput = form.elements.namedItem('location') as HTMLInputElement;
-      location = locationInput.value.trim();
-    }
+      if (location === null) {
+        const locationInput = form.elements.namedItem('location') as HTMLInputElement;
+        location = locationInput.value.trim();
+      }
 
-    client?.torrentSetLocation(dialogStore.torrentIds, location).catch((err) => {
-      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to move torrent', err);
-    });
+      client?.torrentSetLocation(dialogStore.torrentIds, location).catch((err) => {
+        showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to move torrent', err);
+      });
 
-    dialogStore.close();
-  }, [client, config, dialogStore]);
+      dialogStore.close();
+    },
+    [client, config, dialogStore]
+  );
 
   const handleChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const directoryIndex = parseInt(e.currentTarget.value, 10);
@@ -70,7 +80,7 @@ const MoveDialog: React.FC<MoveDialogProps> = observer(({ dialogStore }) => {
     customLocation = (
       <div className="nf-subItem">
         <label>{chrome.i18n.getMessage('moveNewPath')}</label>
-        <input type="text" name="location" defaultValue={dialogStore.directory} autoFocus/>
+        <input type="text" name="location" defaultValue={dialogStore.directory} autoFocus />
       </div>
     );
   }
@@ -87,8 +97,12 @@ const MoveDialog: React.FC<MoveDialogProps> = observer(({ dialogStore }) => {
             onChange={handleChange}
           />
           <div className="nf-subItem">
-            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')}/>
-            <input onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void} type="button" value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}/>
+            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')} />
+            <input
+              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              type="button"
+              value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}
+            />
           </div>
         </form>
       </div>

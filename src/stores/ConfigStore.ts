@@ -1,7 +1,7 @@
-import { getPropertyMembers, resolveIdentifier, types, Instance, cast } from "mobx-state-tree";
-import storageSet from "../tools/storageSet";
+import { getPropertyMembers, resolveIdentifier, types, Instance, cast } from 'mobx-state-tree';
+import storageSet from '../tools/storageSet';
 import url from 'url';
-import { BG_UPDATE_INTERVAL, UI_UPDATE_INTERVAL } from "../constants";
+import { BG_UPDATE_INTERVAL, UI_UPDATE_INTERVAL } from '../constants';
 
 interface ColumnDef {
   column: string;
@@ -30,7 +30,7 @@ const defaultTorrentListColumnList: ColumnDef[] = [
   { column: 'shared', display: 1, order: 1, width: 91, lang: 'OV_COL_SHARED' },
   { column: 'added', display: 1, order: 1, width: 94, lang: 'OV_COL_DATE_ADDED' },
   { column: 'completed', display: 1, order: 1, width: 110, lang: 'OV_COL_DATE_COMPLETED' },
-  { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' }
+  { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 
 const defaultTorrentListColumnListPopup: ColumnDef[] = [
@@ -52,7 +52,7 @@ const defaultTorrentListColumnListPopup: ColumnDef[] = [
   { column: 'shared', display: 0, order: 1, width: 70, lang: 'OV_COL_SHARED' },
   { column: 'added', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_ADDED' },
   { column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED' },
-  { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' }
+  { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 
 const defaultFileListColumnList: ColumnDef[] = [
@@ -61,260 +61,279 @@ const defaultFileListColumnList: ColumnDef[] = [
   { column: 'downloaded', display: 1, order: 1, width: 101, lang: 'OV_COL_DOWNLOADED' },
   { column: 'done', display: 1, order: 1, width: 100, lang: 'OV_COL_DONE' },
   { column: 'name', display: 1, order: 1, width: 342, lang: 'FI_COL_NAME' },
-  { column: 'prio', display: 1, order: 1, width: 100, lang: 'FI_COL_PRIO' }
+  { column: 'prio', display: 1, order: 1, width: 100, lang: 'FI_COL_PRIO' },
 ];
 
-const ColumnStore = types.model('ColumnsStore', {
-  column: types.identifier,
-  display: types.number,
-  order: types.number,
-  width: types.number,
-  lang: types.string,
-}).actions((self) => {
-  return {
-    setWidth(value: number) {
-      self.width = value;
-    },
-    toggleDisplay() {
-      self.display = self.display ? 0 : 1;
-    }
-  };
-});
+const ColumnStore = types
+  .model('ColumnsStore', {
+    column: types.identifier,
+    display: types.number,
+    order: types.number,
+    width: types.number,
+    lang: types.string,
+  })
+  .actions((self) => {
+    return {
+      setWidth(value: number) {
+        self.width = value;
+      },
+      toggleDisplay() {
+        self.display = self.display ? 0 : 1;
+      },
+    };
+  });
 
 const TorrentsColumnStore = types.compose('TorrentsColumnsStore', ColumnStore, types.model({}));
 const FilesColumnStore = types.compose('FilesColumnsStore', ColumnStore, types.model({}));
 
 const FolderStore = types.model('FolderStore', {
   name: types.string,
-  path: types.string
+  path: types.string,
 });
 
-const SelectedLabelStore = types.model('SelectedLabelStore', {
-  label: types.string,
-  custom: types.boolean,
-}).views((self) => {
-  return {
-    get id(): string {
-      return JSON.stringify({
-        label: self.label,
-        custom: self.custom,
-      });
-    }
-  };
-});
-
-const ConfigStore = types.model('ConfigStore', {
-  hostname: types.optional(types.string, ''),
-  ssl: types.optional(types.boolean, true),
-  port: types.optional(types.number, 9091),
-  pathname: types.optional(types.string, '/transmission/rpc'),
-  webPathname: types.optional(types.string, ''),
-
-  authenticationRequired: types.optional(types.boolean, true),
-  login: types.optional(types.string, ''),
-  password: types.optional(types.string, ''),
-
-  showActiveCountBadge: types.optional(types.boolean, true),
-  showDownloadCompleteNotifications: types.optional(types.boolean, true),
-  backgroundUpdateInterval: types.optional(types.number, BG_UPDATE_INTERVAL),
-  uiUpdateInterval: types.optional(types.number, UI_UPDATE_INTERVAL),
-
-  hideSeedingTorrents: types.optional(types.boolean, false),
-  hideFinishedTorrents: types.optional(types.boolean, false),
-  showSpeedGraph: types.optional(types.boolean, true),
-
-  selectDownloadCategoryAfterPutTorrentFromContextMenu: types.optional(types.boolean, false),
-  treeViewContextMenu: types.optional(types.boolean, true),
-  putDefaultPathInContextMenu: types.optional(types.boolean, true),
-
-  badgeColor: types.optional(types.string, '0,0,0,0.40'),
-
-  showFreeSpace: types.optional(types.boolean, true),
-
-  searchQuery: types.optional(types.string, ''),
-  theme: types.optional(types.enumeration(['light', 'dark', 'system']), 'system'),
-
-  folders: types.array(FolderStore),
-
-  isPopupMode: types.optional(types.boolean, false),
-
-  torrentColumns: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnList),
-  torrentColumnsPopup: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnListPopup),
-  filesColumns: types.optional(types.array(FilesColumnStore), defaultFileListColumnList),
-
-  torrentsSort: types.optional(types.model({
-    by: types.string,
-    direction: types.optional(types.number, 1)
-  }), { by: 'done' }),
-
-  filesSort: types.optional(types.model({
-    by: types.string,
-    direction: types.optional(types.number, 1)
-  }), { by: 'size' }),
-
-  selectedLabel: types.optional(SelectedLabelStore, { label: 'ALL', custom: true }),
-
-  configVersion: types.optional(types.number, 2),
-}).actions((self) => {
-  return {
-    setKeyValue(keyValue: Record<string, unknown>) {
-      Object.assign(self, keyValue);
-    },
-    setPopupMode(isPopup: boolean) {
-      self.isPopupMode = isPopup;
-    },
-    addFolder(path: string, name = '') {
-      self.folders.push({ path, name });
-      return storageSet({
-        folders: self.folders.toJSON()
-      });
-    },
-    hasFolder(path: string): boolean {
-      return self.folders.some(folder => folder.path === path);
-    },
-    moveTorrentsColumn(from: string, to: string) {
-      const sourceColumns = self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
-      const column = sourceColumns.find(c => c.column === from);
-      const columnTarget = sourceColumns.find(c => c.column === to);
-
-      if (!column || !columnTarget) return;
-
-      const columns = moveColumn(sourceColumns.slice(0), column, columnTarget);
-
-      if (self.isPopupMode) {
-        self.torrentColumnsPopup = cast(columns);
-        return storageSet({
-          torrentColumnsPopup: columns
+const SelectedLabelStore = types
+  .model('SelectedLabelStore', {
+    label: types.string,
+    custom: types.boolean,
+  })
+  .views((self) => {
+    return {
+      get id(): string {
+        return JSON.stringify({
+          label: self.label,
+          custom: self.custom,
         });
-      } else {
-        self.torrentColumns = cast(columns);
-        return storageSet({
-          torrentColumns: columns
-        });
-      }
-    },
-    saveTorrentsColumns() {
-      if (self.isPopupMode) {
-        return storageSet({
-          torrentColumnsPopup: self.torrentColumnsPopup.toJSON(),
-        });
-      } else {
-        return storageSet({
-          torrentColumns: self.torrentColumns.toJSON(),
-        });
-      }
-    },
-    moveFilesColumn(from: string, to: string) {
-      const column = resolveIdentifier(FilesColumnStore, self, from);
-      const columnTarget = resolveIdentifier(FilesColumnStore, self, to);
+      },
+    };
+  });
 
-      if (!column || !columnTarget) return;
+const ConfigStore = types
+  .model('ConfigStore', {
+    hostname: types.optional(types.string, ''),
+    ssl: types.optional(types.boolean, true),
+    port: types.optional(types.number, 9091),
+    pathname: types.optional(types.string, '/transmission/rpc'),
+    webPathname: types.optional(types.string, ''),
 
-      const columns = moveColumn(self.filesColumns.slice(0), column, columnTarget);
+    authenticationRequired: types.optional(types.boolean, true),
+    login: types.optional(types.string, ''),
+    password: types.optional(types.string, ''),
 
-      self.filesColumns = cast(columns);
-      return storageSet({
-        filesColumns: columns
-      });
-    },
-    saveFilesColumns() {
-      return storageSet({
-        filesColumns: self.filesColumns.toJSON(),
-      });
-    },
-    setTorrentsSort(by: string, direction: number) {
-      self.torrentsSort = cast({ by, direction });
-      return storageSet({
-        torrentsSort: { by, direction }
-      });
-    },
-    setFilesSort(by: string, direction: number) {
-      self.filesSort = cast({ by, direction });
-      return storageSet({
-        filesSort: { by, direction }
-      });
-    },
-    setSelectedLabel(label: string, isCustom: boolean) {
-      self.selectedLabel = cast({ label, custom: isCustom });
-      return storageSet({
-        selectedLabel: { label, custom: isCustom }
-      });
-    },
-    setOptions(obj: Record<string, unknown>) {
-      Object.assign(self, obj);
-      return storageSet(obj);
-    },
-    removeFolders(selectedFolders: Instance<typeof FolderStore>[]) {
-      self.folders = cast(removeItems(self.folders.slice(0), selectedFolders));
-      return storageSet({
-        folders: self.folders.toJSON()
-      });
-    },
-    moveFolders(selectedFolders: Instance<typeof FolderStore>[], index: number) {
-      self.folders = cast(moveItems(self.folders.slice(0), selectedFolders, index));
-      return storageSet({
-        folders: self.folders.toJSON()
-      });
-    },
-    setSearchQuery(query: string) {
-      self.searchQuery = query;
-    },
-    setTheme(theme: 'light' | 'dark' | 'system') {
-      self.theme = theme;
-      return storageSet({ theme });
-    },
-  };
-}).views((self) => {
-  const storageChangeListener = (changes: { [key: string]: chrome.storage.StorageChange }, namespace: string) => {
-    if (namespace === 'local') {
-      const keyValue: Record<string, unknown> = {};
-      Object.entries(changes).forEach(([key, { newValue }]) => {
-        if (configKeys.includes(key)) {
-          keyValue[key] = newValue;
+    showActiveCountBadge: types.optional(types.boolean, true),
+    showDownloadCompleteNotifications: types.optional(types.boolean, true),
+    backgroundUpdateInterval: types.optional(types.number, BG_UPDATE_INTERVAL),
+    uiUpdateInterval: types.optional(types.number, UI_UPDATE_INTERVAL),
+
+    hideSeedingTorrents: types.optional(types.boolean, false),
+    hideFinishedTorrents: types.optional(types.boolean, false),
+    showSpeedGraph: types.optional(types.boolean, true),
+
+    selectDownloadCategoryAfterPutTorrentFromContextMenu: types.optional(types.boolean, false),
+    treeViewContextMenu: types.optional(types.boolean, true),
+    putDefaultPathInContextMenu: types.optional(types.boolean, true),
+
+    badgeColor: types.optional(types.string, '0,0,0,0.40'),
+
+    showFreeSpace: types.optional(types.boolean, true),
+
+    searchQuery: types.optional(types.string, ''),
+    theme: types.optional(types.enumeration(['light', 'dark', 'system']), 'system'),
+
+    folders: types.array(FolderStore),
+
+    isPopupMode: types.optional(types.boolean, false),
+
+    torrentColumns: types.optional(types.array(TorrentsColumnStore), defaultTorrentListColumnList),
+    torrentColumnsPopup: types.optional(
+      types.array(TorrentsColumnStore),
+      defaultTorrentListColumnListPopup
+    ),
+    filesColumns: types.optional(types.array(FilesColumnStore), defaultFileListColumnList),
+
+    torrentsSort: types.optional(
+      types.model({
+        by: types.string,
+        direction: types.optional(types.number, 1),
+      }),
+      { by: 'done' }
+    ),
+
+    filesSort: types.optional(
+      types.model({
+        by: types.string,
+        direction: types.optional(types.number, 1),
+      }),
+      { by: 'size' }
+    ),
+
+    selectedLabel: types.optional(SelectedLabelStore, { label: 'ALL', custom: true }),
+
+    configVersion: types.optional(types.number, 2),
+  })
+  .actions((self) => {
+    return {
+      setKeyValue(keyValue: Record<string, unknown>) {
+        Object.assign(self, keyValue);
+      },
+      setPopupMode(isPopup: boolean) {
+        self.isPopupMode = isPopup;
+      },
+      addFolder(path: string, name = '') {
+        self.folders.push({ path, name });
+        return storageSet({
+          folders: self.folders.toJSON(),
+        });
+      },
+      hasFolder(path: string): boolean {
+        return self.folders.some((folder) => folder.path === path);
+      },
+      moveTorrentsColumn(from: string, to: string) {
+        const sourceColumns = self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
+        const column = sourceColumns.find((c) => c.column === from);
+        const columnTarget = sourceColumns.find((c) => c.column === to);
+
+        if (!column || !columnTarget) return;
+
+        const columns = moveColumn(sourceColumns.slice(0), column, columnTarget);
+
+        if (self.isPopupMode) {
+          self.torrentColumnsPopup = cast(columns);
+          return storageSet({
+            torrentColumnsPopup: columns,
+          });
+        } else {
+          self.torrentColumns = cast(columns);
+          return storageSet({
+            torrentColumns: columns,
+          });
         }
-      });
-      self.setKeyValue(keyValue);
-    }
-  };
+      },
+      saveTorrentsColumns() {
+        if (self.isPopupMode) {
+          return storageSet({
+            torrentColumnsPopup: self.torrentColumnsPopup.toJSON(),
+          });
+        } else {
+          return storageSet({
+            torrentColumns: self.torrentColumns.toJSON(),
+          });
+        }
+      },
+      moveFilesColumn(from: string, to: string) {
+        const column = resolveIdentifier(FilesColumnStore, self, from);
+        const columnTarget = resolveIdentifier(FilesColumnStore, self, to);
 
-  return {
-    get url(): string {
-      return url.format({
-        protocol: self.ssl ? 'https' : 'http',
-        port: self.port,
-        hostname: self.hostname,
-        pathname: self.pathname,
-      });
-    },
-    get webUiUrl(): string {
-      const urlObject: url.UrlObject = {
-        protocol: self.ssl ? 'https' : 'http',
-        port: self.port,
-        hostname: self.hostname,
-        pathname: self.webPathname,
-      };
-      if (self.authenticationRequired) {
-        urlObject.auth = [self.login, self.password].join(':');
+        if (!column || !columnTarget) return;
+
+        const columns = moveColumn(self.filesColumns.slice(0), column, columnTarget);
+
+        self.filesColumns = cast(columns);
+        return storageSet({
+          filesColumns: columns,
+        });
+      },
+      saveFilesColumns() {
+        return storageSet({
+          filesColumns: self.filesColumns.toJSON(),
+        });
+      },
+      setTorrentsSort(by: string, direction: number) {
+        self.torrentsSort = cast({ by, direction });
+        return storageSet({
+          torrentsSort: { by, direction },
+        });
+      },
+      setFilesSort(by: string, direction: number) {
+        self.filesSort = cast({ by, direction });
+        return storageSet({
+          filesSort: { by, direction },
+        });
+      },
+      setSelectedLabel(label: string, isCustom: boolean) {
+        self.selectedLabel = cast({ label, custom: isCustom });
+        return storageSet({
+          selectedLabel: { label, custom: isCustom },
+        });
+      },
+      setOptions(obj: Record<string, unknown>) {
+        Object.assign(self, obj);
+        return storageSet(obj);
+      },
+      removeFolders(selectedFolders: Instance<typeof FolderStore>[]) {
+        self.folders = cast(removeItems(self.folders.slice(0), selectedFolders));
+        return storageSet({
+          folders: self.folders.toJSON(),
+        });
+      },
+      moveFolders(selectedFolders: Instance<typeof FolderStore>[], index: number) {
+        self.folders = cast(moveItems(self.folders.slice(0), selectedFolders, index));
+        return storageSet({
+          folders: self.folders.toJSON(),
+        });
+      },
+      setSearchQuery(query: string) {
+        self.searchQuery = query;
+      },
+      setTheme(theme: 'light' | 'dark' | 'system') {
+        self.theme = theme;
+        return storageSet({ theme });
+      },
+    };
+  })
+  .views((self) => {
+    const storageChangeListener = (
+      changes: { [key: string]: chrome.storage.StorageChange },
+      namespace: string
+    ) => {
+      if (namespace === 'local') {
+        const keyValue: Record<string, unknown> = {};
+        Object.entries(changes).forEach(([key, { newValue }]) => {
+          if (configKeys.includes(key)) {
+            keyValue[key] = newValue;
+          }
+        });
+        self.setKeyValue(keyValue);
       }
-      return url.format(urlObject);
-    },
-    get activeTorrentColumns() {
-      return self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
-    },
-    get visibleTorrentColumns() {
-      return this.activeTorrentColumns.filter(column => column.display);
-    },
-    get visibleFileColumns() {
-      return self.filesColumns.filter(column => column.display);
-    },
-    afterCreate() {
-      chrome.storage.onChanged.addListener(storageChangeListener);
-    },
-    beforeDestroy() {
-      chrome.storage.onChanged.removeListener(storageChangeListener);
-    },
-  };
-});
+    };
+
+    return {
+      get url(): string {
+        return url.format({
+          protocol: self.ssl ? 'https' : 'http',
+          port: self.port,
+          hostname: self.hostname,
+          pathname: self.pathname,
+        });
+      },
+      get webUiUrl(): string {
+        const urlObject: url.UrlObject = {
+          protocol: self.ssl ? 'https' : 'http',
+          port: self.port,
+          hostname: self.hostname,
+          pathname: self.webPathname,
+        };
+        if (self.authenticationRequired) {
+          urlObject.auth = [self.login, self.password].join(':');
+        }
+        return url.format(urlObject);
+      },
+      get activeTorrentColumns() {
+        return self.isPopupMode ? self.torrentColumnsPopup : self.torrentColumns;
+      },
+      get visibleTorrentColumns() {
+        return this.activeTorrentColumns.filter((column) => column.display);
+      },
+      get visibleFileColumns() {
+        return self.filesColumns.filter((column) => column.display);
+      },
+      afterCreate() {
+        chrome.storage.onChanged.addListener(storageChangeListener);
+      },
+      beforeDestroy() {
+        chrome.storage.onChanged.removeListener(storageChangeListener);
+      },
+    };
+  });
 
 function moveColumn<T>(columns: T[], column: T, columnTarget: T): T[] {
   const pos = columns.indexOf(column);

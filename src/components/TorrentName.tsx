@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
-import { ANIMATION_TIME_MULTIPLIER } from "../constants";
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { ANIMATION_TIME_MULTIPLIER } from '../constants';
 
 interface StyleCacheEntry {
   style: HTMLStyleElement;
@@ -16,7 +16,7 @@ function getOrCreateStyle(moveName: string, width: number, elWidth: number): str
     return moveName;
   }
 
-  const timeCalc = Math.round(elWidth / width * ANIMATION_TIME_MULTIPLIER);
+  const timeCalc = Math.round((elWidth / width) * ANIMATION_TIME_MULTIPLIER);
   const style = document.createElement('style');
   style.classList.add(moveName);
   style.textContent = `@keyframes a_${moveName}{0%{margin-left:2px;}50%{margin-left:-${elWidth - width}px;}90%{margin-left:6px;}100%{margin-left:2px;}}div.${moveName}:hover>span{overflow:visible;animation:a_${moveName} ${timeCalc}s;}`;

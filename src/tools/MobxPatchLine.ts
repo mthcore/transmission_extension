@@ -1,9 +1,9 @@
-import { getSnapshot, onPatch, IDisposer } from "mobx-state-tree";
-import type { IJsonPatch } from "mobx-state-tree";
-import ErrorWithCode from "./ErrorWithCode";
+import { getSnapshot, onPatch, IDisposer } from 'mobx-state-tree';
+import type { IJsonPatch } from 'mobx-state-tree';
+import ErrorWithCode from './ErrorWithCode';
 import escapeStringRegexp from 'escape-string-regexp';
 
-const INDEX_LIMIT = 1E9;
+const INDEX_LIMIT = 1e9;
 
 interface DeltaResult {
   id: number;
@@ -32,7 +32,8 @@ class MobxPatchLine {
     this.timeLine = [];
     this.idLine = [];
     this.branches = branches;
-    this.branchesRe = branches && new RegExp(`^/(${branches.map(escapeStringRegexp).join('|')})(\\/|$)`);
+    this.branchesRe =
+      branches && new RegExp(`^/(${branches.map(escapeStringRegexp).join('|')})(\\/|$)`);
 
     this.index = 0;
 
@@ -70,16 +71,19 @@ class MobxPatchLine {
         branches: this.branches,
         patchId,
         type: 'patch',
-        result: this.getPatchAfterId(fromPatchId)
+        result: this.getPatchAfterId(fromPatchId),
       };
     } catch (err) {
-      if (err instanceof ErrorWithCode && ['ID_IS_NOT_EQUAL', 'PATCH_ID_IS_NOT_FOUND'].includes(err.code || '')) {
+      if (
+        err instanceof ErrorWithCode &&
+        ['ID_IS_NOT_EQUAL', 'PATCH_ID_IS_NOT_FOUND'].includes(err.code || '')
+      ) {
         return {
           id: this.id,
           branches: this.branches,
           patchId,
           type: 'snapshot',
-          result: this.getSnapshot()
+          result: this.getSnapshot(),
         };
       }
       throw err;
@@ -123,8 +127,7 @@ class MobxPatchLine {
 
   handlePath = (patch: IJsonPatch): void => {
     if (this.branchesRe) {
-      if (!this.branchesRe.test(patch.path))
-        return;
+      if (!this.branchesRe.test(patch.path)) return;
       patch = { ...patch, path: '.' + patch.path };
     }
     this.patchLine.push(patch);

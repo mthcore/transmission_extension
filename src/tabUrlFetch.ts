@@ -1,9 +1,9 @@
-import "whatwg-fetch";
-import arrayBufferToBase64 from "./tools/arrayBufferToBase64";
-import getLogger from "./tools/getLogger";
-import ErrorWithCode from "./tools/ErrorWithCode";
+import 'whatwg-fetch';
+import arrayBufferToBase64 from './tools/arrayBufferToBase64';
+import getLogger from './tools/getLogger';
+import ErrorWithCode from './tools/ErrorWithCode';
 import { serializeError } from 'serialize-error';
-import { MAX_FETCH_SIZE } from "./constants";
+import { MAX_FETCH_SIZE } from './constants';
 
 const logger = getLogger('tabUrlFetch');
 
@@ -32,73 +32,88 @@ declare global {
   }
 }
 
-!window.tabUrlFetch && (() => {
-  window.tabUrlFetch = true;
+!window.tabUrlFetch &&
+  (() => {
+    window.tabUrlFetch = true;
 
-  chrome.runtime.onMessage.addListener((message: FetchMessage, _sender: chrome.runtime.MessageSender, response: (result: { result?: FetchResult; error?: unknown }) => void) => {
-    let promise: Promise<FetchResult> | null = null;
+    chrome.runtime.onMessage.addListener(
+      (
+        message: FetchMessage,
+        _sender: chrome.runtime.MessageSender,
+        response: (result: { result?: FetchResult; error?: unknown }) => void
+      ) => {
+        let promise: Promise<FetchResult> | null = null;
 
-    switch (message && message.action) {
-      case 'fetchUrl': {
-        if (!message.url) {
-          promise = Promise.reject(new Error('URL is required'));
-        } else {
-          promise = closeLockWrap(fetchUrl(message.url));
+        switch (message && message.action) {
+          case 'fetchUrl': {
+            if (!message.url) {
+              promise = Promise.reject(new Error('URL is required'));
+            } else {
+              promise = closeLockWrap(fetchUrl(message.url));
+            }
+            break;
+          }
+          default: {
+            promise = Promise.reject(new Error('Unknown request'));
+          }
         }
-        break;
+
+        if (promise) {
+          promise
+            .then(
+              (result) => {
+                response({ result });
+              },
+              (err) => {
+                response({ error: serializeError(err) });
+              }
+            )
+            .catch((err) => {
+              logger.error('Send response error', err);
+            });
+          return true;
+        }
       }
-      default: {
-        promise = Promise.reject(new Error('Unknown request'));
-      }
+    );
+
+    function fetchUrl(url: string): Promise<FetchResult> {
+      return fetch(url).then((response) => {
+        if (!response.ok) {
+          throw new ErrorWithCode(
+            `${response.status}: ${response.statusText}`,
+            `RESPONSE_IS_NOT_OK`
+          );
+        }
+
+        const contentLength = response.headers.get('Content-Length');
+        if (contentLength && parseInt(contentLength, 10) > MAX_FETCH_SIZE) {
+          throw new ErrorWithCode(`Size is more then 10mb`, 'FILE_SIZE_EXCEEDED');
+        }
+
+        const safeResponse = {
+          ok: response.ok,
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          type: response.type,
+          redirected: response.redirected,
+          headers: Array.from(response.headers.entries()) as [string, string][],
+        };
+
+        return response.arrayBuffer().then((arrayBuffer) => {
+          return { response: safeResponse, base64: arrayBufferToBase64(arrayBuffer) };
+        });
+      });
     }
 
-    if (promise) {
-      promise.then((result) => {
-        response({ result });
-      }, (err) => {
-        response({ error: serializeError(err) });
-      }).catch((err) => {
-        logger.error('Send response error', err);
+    let lockCount = 0;
+    function closeLockWrap<T>(promise: Promise<T>): Promise<T> {
+      lockCount++;
+      window.onbeforeunload = () => true;
+      return promise.finally(() => {
+        if (--lockCount === 0) {
+          window.onbeforeunload = null;
+        }
       });
-      return true;
     }
-  });
-
-  function fetchUrl(url: string): Promise<FetchResult> {
-    return fetch(url).then((response) => {
-      if (!response.ok) {
-        throw new ErrorWithCode(`${response.status}: ${response.statusText}`, `RESPONSE_IS_NOT_OK`);
-      }
-
-      const contentLength = response.headers.get('Content-Length');
-      if (contentLength && parseInt(contentLength, 10) > MAX_FETCH_SIZE) {
-        throw new ErrorWithCode(`Size is more then 10mb`, 'FILE_SIZE_EXCEEDED');
-      }
-
-      const safeResponse = {
-        ok: response.ok,
-        status: response.status,
-        statusText: response.statusText,
-        url: response.url,
-        type: response.type,
-        redirected: response.redirected,
-        headers: Array.from(response.headers.entries()) as [string, string][],
-      };
-
-      return response.arrayBuffer().then((arrayBuffer) => {
-        return { response: safeResponse, base64: arrayBufferToBase64(arrayBuffer) };
-      });
-    });
-  }
-
-  let lockCount = 0;
-  function closeLockWrap<T>(promise: Promise<T>): Promise<T> {
-    lockCount++;
-    window.onbeforeunload = () => true;
-    return promise.finally(() => {
-      if (--lockCount === 0) {
-        window.onbeforeunload = null;
-      }
-    });
-  }
-})();
+  })();

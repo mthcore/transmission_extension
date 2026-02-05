@@ -1,30 +1,37 @@
-import React, { useContext, ReactNode } from "react";
-import * as ContextMenu from "@radix-ui/react-context-menu";
-import { observer } from "mobx-react";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useContextMenuSelection } from "../hooks/useContextMenuSelection";
+import React, { useContext, ReactNode } from 'react';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { observer } from 'mobx-react';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useContextMenuSelection } from '../hooks/useContextMenuSelection';
 
 interface TorrentContextMenuProps {
   children: ReactNode;
   torrentId: number;
 }
 
-const TorrentContextMenu: React.FC<TorrentContextMenuProps> = observer(({ children, torrentId }) => {
-  const rootStore = useContext(RootStoreCtx);
-  const torrentListStore = rootStore?.torrentList;
-  const handleOpenChange = useContextMenuSelection(torrentListStore as unknown as { selectedIds: (string | number)[]; resetSelectedIds: () => void; addSelectedId: (id: string | number) => void }, torrentId);
+const TorrentContextMenu: React.FC<TorrentContextMenuProps> = observer(
+  ({ children, torrentId }) => {
+    const rootStore = useContext(RootStoreCtx);
+    const torrentListStore = rootStore?.torrentList;
+    const handleOpenChange = useContextMenuSelection(
+      torrentListStore as unknown as {
+        selectedIds: (string | number)[];
+        resetSelectedIds: () => void;
+        addSelectedId: (id: string | number) => void;
+      },
+      torrentId
+    );
 
-  return (
-    <ContextMenu.Root onOpenChange={handleOpenChange}>
-      <ContextMenu.Trigger asChild>
-        {children}
-      </ContextMenu.Trigger>
-      <ContextMenu.Portal>
-        <TorrentMenuContent />
-      </ContextMenu.Portal>
-    </ContextMenu.Root>
-  );
-});
+    return (
+      <ContextMenu.Root onOpenChange={handleOpenChange}>
+        <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
+        <ContextMenu.Portal>
+          <TorrentMenuContent />
+        </ContextMenu.Portal>
+      </ContextMenu.Root>
+    );
+  }
+);
 
 interface Torrent {
   name: string;
@@ -38,13 +45,12 @@ const TorrentMenuContent: React.FC = observer(() => {
   const rootStore = React.useContext(RootStoreCtx);
   const torrentListStore = rootStore?.torrentList;
   const client = rootStore?.client;
-  const selectedIds = torrentListStore?.selectedIds as number[] || [];
+  const selectedIds = (torrentListStore?.selectedIds as number[]) || [];
 
   if (!selectedIds.length || !rootStore || !client) return null;
 
-  const firstTorrent = selectedIds.length > 0
-    ? (client.torrents.get(selectedIds[0]) as Torrent | undefined)
-    : null;
+  const firstTorrent =
+    selectedIds.length > 0 ? (client.torrents.get(selectedIds[0]) as Torrent | undefined) : null;
 
   // Collect available actions from selected torrents
   const actions: string[] = ['_', 'remove', 'remove_with', 'extra', 'order', 'torrent_files'];
@@ -78,7 +84,7 @@ const TorrentMenuContent: React.FC = observer(() => {
   const handleRemove = (): void => {
     rootStore.createDialog({
       type: 'removeConfirm',
-      torrentIds: selectedIds.slice(0)
+      torrentIds: selectedIds.slice(0),
     });
   };
 
@@ -86,7 +92,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'removeConfirm',
       torrentIds: selectedIds.slice(0),
-      deleteData: false
+      deleteData: false,
     });
   };
 
@@ -94,7 +100,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'removeConfirm',
       torrentIds: selectedIds.slice(0),
-      deleteData: true
+      deleteData: true,
     });
   };
 
@@ -103,7 +109,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'rename',
       path: firstTorrent.name,
-      torrentIds: selectedIds.slice(0)
+      torrentIds: selectedIds.slice(0),
     });
   };
 
@@ -112,7 +118,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'copyMagnetUrl',
       magnetLink: firstTorrent.magnetLink,
-      torrentIds: selectedIds.slice(0)
+      torrentIds: selectedIds.slice(0),
     });
   };
 
@@ -131,7 +137,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'move',
       directory: firstTorrent.directory,
-      torrentIds: selectedIds.slice(0)
+      torrentIds: selectedIds.slice(0),
     });
   };
 
@@ -165,7 +171,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     if (selectedIds.length) {
       rootStore.createDialog({
         type: 'torrentDetails',
-        torrentId: selectedIds[0]
+        torrentId: selectedIds[0],
       });
     }
   };

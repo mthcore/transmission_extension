@@ -8,7 +8,11 @@ interface SpinnerProps {
 const Spinner: React.FC<SpinnerProps> = ({ size = 'small', className = '' }) => {
   const sizeClass = `spinner--${size}`;
   return (
-    <span className={`spinner ${sizeClass} ${className}`.trim()} aria-label="Loading" role="status" />
+    <span
+      className={`spinner ${sizeClass} ${className}`.trim()}
+      aria-label="Loading"
+      role="status"
+    />
   );
 };
 

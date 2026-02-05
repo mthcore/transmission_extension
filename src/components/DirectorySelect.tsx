@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from "react";
-import { CUSTOM_PATH_INDEX, DEFAULT_PATH_INDEX } from "../constants";
+import React, { ChangeEvent } from 'react';
+import { CUSTOM_PATH_INDEX, DEFAULT_PATH_INDEX } from '../constants';
 
 interface Folder {
   name?: string;
@@ -17,7 +17,7 @@ interface DirectorySelectProps {
 
 const DirectorySelect: React.FC<DirectorySelectProps> = ({
   folders,
-  name = "directory",
+  name = 'directory',
   defaultValue = DEFAULT_PATH_INDEX,
   showCustomOption = false,
   onChange,
@@ -31,7 +31,7 @@ const DirectorySelect: React.FC<DirectorySelectProps> = ({
     <div className="nf-subItem">
       <label>{label || chrome.i18n.getMessage('path')}</label>
       <select name={name} defaultValue={defaultValue} onChange={onChange}>
-        {showCustomOption && <option value={CUSTOM_PATH_INDEX}/>}
+        {showCustomOption && <option value={CUSTOM_PATH_INDEX} />}
         <option value={DEFAULT_PATH_INDEX}>{chrome.i18n.getMessage('defaultPath')}</option>
         {folders.map((folder, index) => (
           <option key={`option-${index}`} value={index}>

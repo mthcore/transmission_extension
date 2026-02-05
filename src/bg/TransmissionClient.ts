@@ -1,10 +1,10 @@
-import getLogger from "../tools/getLogger";
-import ErrorWithCode from "../tools/ErrorWithCode";
-import readBlobAsArrayBuffer from "../tools/readBlobAsArrayBuffer";
-import arrayBufferToBase64 from "../tools/arrayBufferToBase64";
-import arrayDifferent from "../tools/arrayDifferent";
-import splitByPart from "../tools/splitByPart";
-import downloadFileFromUrl from "../tools/downloadFileFromUrl";
+import getLogger from '../tools/getLogger';
+import ErrorWithCode from '../tools/ErrorWithCode';
+import readBlobAsArrayBuffer from '../tools/readBlobAsArrayBuffer';
+import arrayBufferToBase64 from '../tools/arrayBufferToBase64';
+import arrayDifferent from '../tools/arrayDifferent';
+import splitByPart from '../tools/splitByPart';
+import downloadFileFromUrl from '../tools/downloadFileFromUrl';
 
 const logger = getLogger('TransmissionClient');
 
@@ -131,26 +131,46 @@ class TransmissionClient {
       isRecently = true;
     }
 
-    return this.sendAction({
-      method: 'torrent-get',
-      arguments: {
-        fields: [
-          'id', 'name', 'totalSize',
-          'percentDone', 'downloadedEver', 'uploadedEver',
-          'rateUpload', 'rateDownload', 'eta',
-          'peersSendingToUs', 'peersGettingFromUs', 'queuePosition',
-          'addedDate', 'doneDate', 'downloadDir',
-          'recheckProgress', 'status', 'error',
-          'errorString', 'trackerStats', 'magnetLink'
-        ],
-        ids: isRecently ? 'recently-active' : undefined
-      }
-    }, safeParser).then((response) => {
+    return this.sendAction(
+      {
+        method: 'torrent-get',
+        arguments: {
+          fields: [
+            'id',
+            'name',
+            'totalSize',
+            'percentDone',
+            'downloadedEver',
+            'uploadedEver',
+            'rateUpload',
+            'rateDownload',
+            'eta',
+            'peersSendingToUs',
+            'peersGettingFromUs',
+            'queuePosition',
+            'addedDate',
+            'doneDate',
+            'downloadDir',
+            'recheckProgress',
+            'status',
+            'error',
+            'errorString',
+            'trackerStats',
+            'magnetLink',
+          ],
+          ids: isRecently ? 'recently-active' : undefined,
+        },
+      },
+      safeParser
+    ).then((response) => {
       this.torrentsResponseTime = now;
       const previousActiveTorrentIds = this.bgStore.client.activeTorrentIds;
 
       if (isRecently) {
-        const { removed, torrents } = response.arguments as { removed: number[]; torrents: Record<string, unknown>[] };
+        const { removed, torrents } = response.arguments as {
+          removed: number[];
+          torrents: Record<string, unknown>[];
+        };
 
         this.bgStore.client.removeTorrentByIds(removed);
 
@@ -182,7 +202,12 @@ class TransmissionClient {
       try {
         return JSON.parse(text);
       } catch {
-        return JSON.parse(text.replace(/"(announce|scrape|lastAnnounceResult|lastScrapeResult)":"([^"]+)"/g, safeValue));
+        return JSON.parse(
+          text.replace(
+            /"(announce|scrape|lastAnnounceResult|lastScrapeResult)":"([^"]+)"/g,
+            safeValue
+          )
+        );
       }
     }
 
@@ -200,9 +225,9 @@ class TransmissionClient {
     return this.sendAction({
       method: 'torrent-get',
       arguments: {
-        fields: ["id", 'files', 'fileStats'],
-        ids: [id]
-      }
+        fields: ['id', 'files', 'fileStats'],
+        ids: [id],
+      },
     }).then((response) => {
       let files: NormalizedFile[] | null = null;
       type TorrentFiles = {
@@ -220,7 +245,7 @@ class TransmissionClient {
       });
 
       if (!files) {
-        throw new ErrorWithCode('Files don\'t received');
+        throw new ErrorWithCode("Files don't received");
       }
       return files;
     });
@@ -237,14 +262,16 @@ class TransmissionClient {
 
   updateSettings(): Promise<void> {
     return this.sendAction({ method: 'session-get' }).then((response) => {
-      this.bgStore.client.setSettings(this.normalizeSettings(response.arguments as Record<string, unknown>));
+      this.bgStore.client.setSettings(
+        this.normalizeSettings(response.arguments as Record<string, unknown>)
+      );
     });
   }
 
   getFreeSpace(path: string): Promise<{ path: string; sizeBytes: number }> {
     return this.sendAction({
-      method: "free-space",
-      arguments: { path }
+      method: 'free-space',
+      arguments: { path },
     }).then((response) => {
       const args = response.arguments as { path: string; 'size-bytes': number };
       return {
@@ -254,18 +281,27 @@ class TransmissionClient {
     });
   }
 
-  sendAction(body: Record<string, unknown>, customParser?: (text: string) => TransmissionResponse): Promise<TransmissionResponse> {
+  sendAction(
+    body: Record<string, unknown>,
+    customParser?: (text: string) => TransmissionResponse
+  ): Promise<TransmissionResponse> {
     return this.retryIfTokenInvalid(() => {
-      return fetch(this.url, this.sign({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Transmission-Session-Id': this.token || ''
-        },
-        body: JSON.stringify(body),
-      })).then((response) => {
+      return fetch(
+        this.url,
+        this.sign({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Transmission-Session-Id': this.token || '',
+          },
+          body: JSON.stringify(body),
+        })
+      ).then((response) => {
         if (!response.ok) {
-          const error = new ErrorWithCode(`${response.status}: ${response.statusText}`, `RESPONSE_IS_NOT_OK`) as ErrorWithToken;
+          const error = new ErrorWithCode(
+            `${response.status}: ${response.statusText}`,
+            `RESPONSE_IS_NOT_OK`
+          ) as ErrorWithToken;
           error.status = response.status;
           error.statusText = response.statusText;
           if (error.status === 409) {
@@ -280,7 +316,7 @@ class TransmissionClient {
         }
 
         if (customParser) {
-          return response.text().then(text => customParser(text));
+          return response.text().then((text) => customParser(text));
         } else {
           return response.json() as Promise<TransmissionResponse>;
         }
@@ -295,36 +331,47 @@ class TransmissionClient {
   }
 
   sendFile(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<TransmissionResponse> {
-    return Promise.resolve().then(() => {
-      if (data.url) {
-        return this.sendAction(putDirectory({
-          method: 'torrent-add',
-          arguments: {
-            filename: data.url
-          }
-        }));
-      } else if (data.blob) {
-        return readBlobAsArrayBuffer(data.blob).then(ab => arrayBufferToBase64(ab)).then((base64) => {
-          return this.sendAction(putDirectory({
-            method: 'torrent-add',
-            arguments: {
-              metainfo: base64
-            }
-          }));
-        });
-      } else {
-        throw new Error('No URL or blob provided');
-      }
-    }).catch((err) => {
-      if (err.code === 'TRANSMISSION_ERROR') {
-        this.bg.torrentErrorNotify(err.message);
-      } else {
-        this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
-      }
-      throw err;
-    });
+    return Promise.resolve()
+      .then(() => {
+        if (data.url) {
+          return this.sendAction(
+            putDirectory({
+              method: 'torrent-add',
+              arguments: {
+                filename: data.url,
+              },
+            })
+          );
+        } else if (data.blob) {
+          return readBlobAsArrayBuffer(data.blob)
+            .then((ab) => arrayBufferToBase64(ab))
+            .then((base64) => {
+              return this.sendAction(
+                putDirectory({
+                  method: 'torrent-add',
+                  arguments: {
+                    metainfo: base64,
+                  },
+                })
+              );
+            });
+        } else {
+          throw new Error('No URL or blob provided');
+        }
+      })
+      .catch((err) => {
+        if (err.code === 'TRANSMISSION_ERROR') {
+          this.bg.torrentErrorNotify(err.message);
+        } else {
+          this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
+        }
+        throw err;
+      });
 
-    function putDirectory(query: { method: string; arguments: Record<string, unknown> }): { method: string; arguments: Record<string, unknown> } {
+    function putDirectory(query: { method: string; arguments: Record<string, unknown> }): {
+      method: string;
+      arguments: Record<string, unknown>;
+    } {
       if (directory) {
         query.arguments['download-dir'] = directory.path;
       }
@@ -333,25 +380,31 @@ class TransmissionClient {
   }
 
   putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void> {
-    return this.sendFile(data, directory).then((response) => {
-      const args = response.arguments as { 'torrent-added'?: { id: number; name: string }; 'torrent-duplicate'?: { id: number; name: string } };
-      const torrentAdded = args['torrent-added'];
-      const torrentDuplicate = args['torrent-duplicate'];
-      if (torrentAdded) {
-        this.bg.torrentAddedNotify(torrentAdded);
-      }
+    return this.sendFile(data, directory).then(
+      (response) => {
+        const args = response.arguments as {
+          'torrent-added'?: { id: number; name: string };
+          'torrent-duplicate'?: { id: number; name: string };
+        };
+        const torrentAdded = args['torrent-added'];
+        const torrentDuplicate = args['torrent-duplicate'];
+        if (torrentAdded) {
+          this.bg.torrentAddedNotify(torrentAdded);
+        }
 
-      if (torrentDuplicate) {
-        this.bg.torrentIsExistsNotify(torrentDuplicate);
+        if (torrentDuplicate) {
+          this.bg.torrentIsExistsNotify(torrentDuplicate);
+        }
+      },
+      (err) => {
+        if (err.code === 'TRANSMISSION_ERROR') {
+          this.bg.torrentErrorNotify(err.message);
+        } else {
+          this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
+        }
+        throw err;
       }
-    }, (err) => {
-      if (err.code === 'TRANSMISSION_ERROR') {
-        this.bg.torrentErrorNotify(err.message);
-      } else {
-        this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
-      }
-      throw err;
-    });
+    );
   }
 
   start(ids: number[]): Promise<TransmissionResponse> {
@@ -359,7 +412,7 @@ class TransmissionClient {
       method: 'torrent-start',
       arguments: {
         ids,
-      }
+      },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -368,7 +421,7 @@ class TransmissionClient {
       method: 'torrent-start-now',
       arguments: {
         ids,
-      }
+      },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -377,7 +430,7 @@ class TransmissionClient {
       method: 'torrent-stop',
       arguments: {
         ids,
-      }
+      },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -386,7 +439,7 @@ class TransmissionClient {
       method: 'torrent-verify',
       arguments: {
         ids,
-      }
+      },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -395,7 +448,7 @@ class TransmissionClient {
       method: 'torrent-remove',
       arguments: {
         ids,
-      }
+      },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -404,15 +457,15 @@ class TransmissionClient {
       method: 'torrent-remove',
       arguments: {
         ids,
-        'delete-local-data': true
-      }
+        'delete-local-data': true,
+      },
     }).then(this.thenUpdateTorrents);
   }
 
   rename(ids: number[], path: string, name: string): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'torrent-rename-path',
-      arguments: { ids, path, name }
+      arguments: { ids, path, name },
     }).then(this.thenUpdateTorrents);
   }
 
@@ -422,84 +475,86 @@ class TransmissionClient {
       arguments: {
         ids,
         location,
-        move: true
-      }
+        move: true,
+      },
     }).then(this.thenUpdateTorrents);
   }
 
   reannounce(ids: number[]): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'torrent-reannounce',
-      arguments: { ids }
+      arguments: { ids },
     });
   }
 
   queueTop(ids: number[]): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'queue-move-top',
-      arguments: { ids }
+      arguments: { ids },
     }).then(this.thenUpdateTorrents);
   }
 
   queueUp(ids: number[]): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'queue-move-up',
-      arguments: { ids }
+      arguments: { ids },
     }).then(this.thenUpdateTorrents);
   }
 
   queueDown(ids: number[]): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'queue-move-down',
-      arguments: { ids }
+      arguments: { ids },
     }).then(this.thenUpdateTorrents);
   }
 
   queueBottom(ids: number[]): Promise<TransmissionResponse> {
     return this.sendAction({
       method: 'queue-move-bottom',
-      arguments: { ids }
+      arguments: { ids },
     }).then(this.thenUpdateTorrents);
   }
 
   setPriority(id: number, level: number, idxs: number[]): Promise<unknown[]> {
-    return Promise.all(splitByPart(idxs, 250).map((partIdxs) => {
-      const args: Record<string, unknown> = {
-        ids: [id]
-      };
+    return Promise.all(
+      splitByPart(idxs, 250).map((partIdxs) => {
+        const args: Record<string, unknown> = {
+          ids: [id],
+        };
 
-      if (level === 0) {
-        args['files-unwanted'] = partIdxs;
-      } else {
-        args['files-wanted'] = partIdxs;
-        switch (level) {
-          case 1: {
-            args['priority-low'] = partIdxs;
-            break;
-          }
-          case 2: {
-            args['priority-normal'] = partIdxs;
-            break;
-          }
-          case 3: {
-            args['priority-high'] = partIdxs;
-            break;
+        if (level === 0) {
+          args['files-unwanted'] = partIdxs;
+        } else {
+          args['files-wanted'] = partIdxs;
+          switch (level) {
+            case 1: {
+              args['priority-low'] = partIdxs;
+              break;
+            }
+            case 2: {
+              args['priority-normal'] = partIdxs;
+              break;
+            }
+            case 3: {
+              args['priority-high'] = partIdxs;
+              break;
+            }
           }
         }
-      }
 
-      return this.sendAction({
-        method: 'torrent-set',
-        arguments: args
-      });
-    }));
+        return this.sendAction({
+          method: 'torrent-set',
+          arguments: args,
+        });
+      })
+    );
   }
 
   // Speed limit methods - factorized using helper
   private setSessionSetting(args: Record<string, unknown>): Promise<void> {
     return this.sendAction({
       method: 'session-set',
-      arguments: args
+      arguments: args,
     }).then(this.thenUpdateSettingsVoid);
   }
 
@@ -525,29 +580,37 @@ class TransmissionClient {
     this.setSessionSetting({ 'alt-speed-enabled': true, 'alt-speed-up': speed });
 
   sendFiles(urls: string[], directory?: Folder): Promise<TransmissionResponse> {
-    return Promise.all(urls.map((url) => {
-      return downloadFileFromUrl(url).catch((err) => {
-        if (err.code === 'FILE_SIZE_EXCEEDED') {
-          this.bg.torrentErrorNotify(chrome.i18n.getMessage('fileSizeError'));
-          throw err;
-        }
-        if (!/^https?:/.test(url)) {
-          this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
-          throw err;
-        }
-        if (err.code !== 'LINK_IS_NOT_SUPPORTED') {
-          logger.error('sendFiles: downloadFileFromUrl error, fallback to url', err);
-        }
-        return { url };
-      }).then((data) => {
-        return this.putTorrent(data, directory);
-      }).then(() => {
-        return { result: true };
-      }, (err) => {
-        logger.error('sendFile error', url, err);
-        return { error: err };
-      });
-    })).then(() => this.thenUpdateTorrents({} as TransmissionResponse));
+    return Promise.all(
+      urls.map((url) => {
+        return downloadFileFromUrl(url)
+          .catch((err) => {
+            if (err.code === 'FILE_SIZE_EXCEEDED') {
+              this.bg.torrentErrorNotify(chrome.i18n.getMessage('fileSizeError'));
+              throw err;
+            }
+            if (!/^https?:/.test(url)) {
+              this.bg.torrentErrorNotify(chrome.i18n.getMessage('unexpectedError'));
+              throw err;
+            }
+            if (err.code !== 'LINK_IS_NOT_SUPPORTED') {
+              logger.error('sendFiles: downloadFileFromUrl error, fallback to url', err);
+            }
+            return { url };
+          })
+          .then((data) => {
+            return this.putTorrent(data, directory);
+          })
+          .then(
+            () => {
+              return { result: true };
+            },
+            (err) => {
+              logger.error('sendFile error', url, err);
+              return { error: err };
+            }
+          );
+      })
+    ).then(() => this.thenUpdateTorrents({} as TransmissionResponse));
   }
 
   retryIfTokenInvalid<T>(callback: () => Promise<T>): Promise<T> {
@@ -566,7 +629,8 @@ class TransmissionClient {
       if (!fetchOptions.headers) {
         fetchOptions.headers = {};
       }
-      (fetchOptions.headers as Record<string, string>).Authorization = 'Basic ' + btoa([this.bgStore.config.login, this.bgStore.config.password].join(':'));
+      (fetchOptions.headers as Record<string, string>).Authorization =
+        'Basic ' + btoa([this.bgStore.config.login, this.bgStore.config.password].join(':'));
     }
     return fetchOptions;
   }
@@ -583,14 +647,16 @@ class TransmissionClient {
     const recheckProgress = torrent.recheckProgress as number;
     const downloaded = torrent.downloadedEver as number;
     const uploaded = torrent.uploadedEver as number;
-    const shared = downloaded > 0 ? Math.round(uploaded / downloaded * 1000) : 0;
+    const shared = downloaded > 0 ? Math.round((uploaded / downloaded) * 1000) : 0;
     const uploadSpeed = torrent.rateUpload as number;
     const downloadSpeed = torrent.rateDownload as number;
     const eta = (torrent.eta as number) < 0 ? 0 : (torrent.eta as number);
 
     let _peers = 0;
     let _seeds = 0;
-    const trackerStats = torrent.trackerStats as Array<{ leecherCount: number; seederCount: number }> | undefined;
+    const trackerStats = torrent.trackerStats as
+      | Array<{ leecherCount: number; seederCount: number }>
+      | undefined;
     if (Array.isArray(trackerStats)) {
       trackerStats.forEach((tracker) => {
         if (tracker.leecherCount > 0) {
@@ -614,17 +680,36 @@ class TransmissionClient {
     const magnetLink = torrent.magnetLink as string;
 
     return {
-      id, statusCode, errorCode, errorString,
-      name, size, percentDone,
-      recheckProgress, downloaded, uploaded, shared,
-      uploadSpeed, downloadSpeed, eta,
-      activePeers, peers, activeSeeds, seeds,
-      order, addedTime, completedTime, directory,
-      magnetLink
+      id,
+      statusCode,
+      errorCode,
+      errorString,
+      name,
+      size,
+      percentDone,
+      recheckProgress,
+      downloaded,
+      uploaded,
+      shared,
+      uploadSpeed,
+      downloadSpeed,
+      eta,
+      activePeers,
+      peers,
+      activeSeeds,
+      seeds,
+      order,
+      addedTime,
+      completedTime,
+      directory,
+      magnetLink,
     };
   };
 
-  normalizeFiles = (torrent: { files: Array<{ name: string; length: number; bytesCompleted: number }>; fileStats: Array<{ wanted: boolean; priority: number }> }): NormalizedFile[] => {
+  normalizeFiles = (torrent: {
+    files: Array<{ name: string; length: number; bytesCompleted: number }>;
+    fileStats: Array<{ wanted: boolean; priority: number }>;
+  }): NormalizedFile[] => {
     return torrent.files.map((file, index) => {
       const state = torrent.fileStats[index];
 

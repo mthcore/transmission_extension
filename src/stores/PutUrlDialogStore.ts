@@ -1,5 +1,5 @@
-import { types, Instance } from "mobx-state-tree";
-import BaseDialogStore from "./BaseDialogStore";
+import { types, Instance } from 'mobx-state-tree';
+import BaseDialogStore from './BaseDialogStore';
 
 const PutUrlDialogStore = types.compose(
   'PutUrlDialogStore',

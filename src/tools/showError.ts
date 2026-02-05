@@ -1,4 +1,4 @@
-import getLogger from "./getLogger";
+import getLogger from './getLogger';
 
 const logger = getLogger('showError');
 
@@ -13,7 +13,7 @@ export function showError(message: string, error?: Error): void {
       type: 'basic',
       iconUrl: 'assets/icons/icon_48.png',
       title: chrome.i18n.getMessage('unexpectedError') || 'Error',
-      message: message
+      message: message,
     });
   }
 }

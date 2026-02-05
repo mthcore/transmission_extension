@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import getLogger from "../../tools/getLogger";
-import storageGet from "../../tools/storageGet";
-import storageSet from "../../tools/storageSet";
-import storageRemove from "../../tools/storageRemove";
-import { migrateConfig } from "../../tools/loadConfig";
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import getLogger from '../../tools/getLogger';
+import storageGet from '../../tools/storageGet';
+import storageSet from '../../tools/storageSet';
+import storageRemove from '../../tools/storageRemove';
+import { migrateConfig } from '../../tools/loadConfig';
 
 const logger = getLogger('BackupRestoreOptions');
 
@@ -91,7 +91,9 @@ const BackupRestoreOptions: React.FC = () => {
 
   const handleClearCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const confirmMessage = chrome.i18n.getMessage('confirmClearCloud') || 'Are you sure you want to clear the cloud backup?';
+    const confirmMessage =
+      chrome.i18n.getMessage('confirmClearCloud') ||
+      'Are you sure you want to clear the cloud backup?';
     if (!window.confirm(confirmMessage)) return;
     try {
       await storageRemove(['backup'], 'sync');
@@ -104,11 +106,16 @@ const BackupRestoreOptions: React.FC = () => {
 
   const handleRestore = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const confirmMessage = chrome.i18n.getMessage('confirmRestore') || 'Are you sure you want to restore this configuration? This will overwrite all current settings.';
+    const confirmMessage =
+      chrome.i18n.getMessage('confirmRestore') ||
+      'Are you sure you want to restore this configuration? This will overwrite all current settings.';
     if (!window.confirm(confirmMessage)) return;
     setRestoreState('pending');
     try {
-      const config: StorageData = { configVersion: 1, ...JSON.parse(refData.current?.value || '{}') };
+      const config: StorageData = {
+        configVersion: 1,
+        ...JSON.parse(refData.current?.value || '{}'),
+      };
       if (config.configVersion !== 2) {
         config.configVersion = 2;
         migrateConfig(config as Record<string, unknown>, config as Record<string, unknown>);
@@ -138,8 +145,16 @@ const BackupRestoreOptions: React.FC = () => {
           <button type="button" onClick={handleLoadConfig} disabled={loadState === 'pending'}>
             {loadState === 'pending' ? '...' : chrome.i18n.getMessage('loadCurrentConfig')}
           </button>
-          <button type="button" onClick={handleSaveToCloud} disabled={loadState !== 'done' || saveState === 'pending'}>
-            {saveState === 'pending' ? '...' : saveState === 'done' ? '✓' : chrome.i18n.getMessage('optSaveInCloud')}
+          <button
+            type="button"
+            onClick={handleSaveToCloud}
+            disabled={loadState !== 'done' || saveState === 'pending'}
+          >
+            {saveState === 'pending'
+              ? '...'
+              : saveState === 'done'
+                ? '✓'
+                : chrome.i18n.getMessage('optSaveInCloud')}
           </button>
         </div>
       </div>
@@ -161,8 +176,16 @@ const BackupRestoreOptions: React.FC = () => {
         <h3>{chrome.i18n.getMessage('restore')}</h3>
         <p className="section-hint">{chrome.i18n.getMessage('restoreHint')}</p>
         <div className="backup-actions">
-          <button type="button" onClick={handleRestore} disabled={loadState !== 'done' || restoreState === 'pending'}>
-            {restoreState === 'pending' ? '...' : restoreState === 'done' ? '✓' : chrome.i18n.getMessage('toRestore')}
+          <button
+            type="button"
+            onClick={handleRestore}
+            disabled={loadState !== 'done' || restoreState === 'pending'}
+          >
+            {restoreState === 'pending'
+              ? '...'
+              : restoreState === 'done'
+                ? '✓'
+                : chrome.i18n.getMessage('toRestore')}
           </button>
           <button type="button" onClick={handleLoadFromCloud} disabled={!hasCloudData}>
             {chrome.i18n.getMessage('optGetFromCloud')}

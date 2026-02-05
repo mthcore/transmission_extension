@@ -1,8 +1,8 @@
-import React, { useContext, ReactNode } from "react";
-import * as ContextMenu from "@radix-ui/react-context-menu";
-import { observer } from "mobx-react";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useContextMenuSelection } from "../hooks/useContextMenuSelection";
+import React, { useContext, ReactNode } from 'react';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { observer } from 'mobx-react';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useContextMenuSelection } from '../hooks/useContextMenuSelection';
 
 interface FileContextMenuProps {
   children: ReactNode;
@@ -26,13 +26,18 @@ interface FileListStore {
 const FileContextMenu: React.FC<FileContextMenuProps> = observer(({ children, fileId }) => {
   const rootStore = useContext(RootStoreCtx);
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
-  const handleOpenChange = useContextMenuSelection(fileListStore as { selectedIds: (string | number)[]; resetSelectedIds: () => void; addSelectedId: (id: string | number) => void }, fileId);
+  const handleOpenChange = useContextMenuSelection(
+    fileListStore as {
+      selectedIds: (string | number)[];
+      resetSelectedIds: () => void;
+      addSelectedId: (id: string | number) => void;
+    },
+    fileId
+  );
 
   return (
     <ContextMenu.Root onOpenChange={handleOpenChange}>
-      <ContextMenu.Trigger asChild>
-        {children}
-      </ContextMenu.Trigger>
+      <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
         <FileMenuContent />
       </ContextMenu.Portal>
@@ -44,7 +49,7 @@ const FileMenuContent: React.FC = observer(() => {
   const rootStore = React.useContext(RootStoreCtx);
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
   const client = rootStore?.client;
-  const selectedIds = fileListStore?.selectedIds as string[] || [];
+  const selectedIds = (fileListStore?.selectedIds as string[]) || [];
 
   if (!selectedIds.length || !rootStore || !fileListStore || !client) return null;
 
@@ -65,9 +70,7 @@ const FileMenuContent: React.FC = observer(() => {
     currentPriority = lastPriority;
   }
 
-  const firstFile = selectedIds.length > 0
-    ? fileListStore.getFileById(selectedIds[0])
-    : null;
+  const firstFile = selectedIds.length > 0 ? fileListStore.getFileById(selectedIds[0]) : null;
 
   const handleSetPriority = (priority: number): void => {
     const id = fileListStore.id;
@@ -82,7 +85,7 @@ const FileMenuContent: React.FC = observer(() => {
     rootStore.createDialog({
       type: 'rename',
       path: firstFile.name,
-      torrentIds: [id]
+      torrentIds: [id],
     });
   };
 

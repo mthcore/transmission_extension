@@ -1,9 +1,9 @@
-import React, { useContext, useCallback, FormEvent, MouseEvent } from "react";
-import { observer } from "mobx-react";
-import Dialog from "./Dialog";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import showError from "../tools/showError";
-import { useDialogClose } from "../hooks/useDialogClose";
+import React, { useContext, useCallback, FormEvent, MouseEvent } from 'react';
+import { observer } from 'mobx-react';
+import Dialog from './Dialog';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import showError from '../tools/showError';
+import { useDialogClose } from '../hooks/useDialogClose';
 
 interface RemoveConfirmDialogStore {
   close: () => void;
@@ -20,21 +20,24 @@ const RemoveConfirmDialog: React.FC<RemoveConfirmDialogProps> = observer(({ dial
   const client = rootStore?.client;
   const handleClose = useDialogClose(dialogStore);
 
-  const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!client) return;
+      if (!client) return;
 
-    const removeMethod = dialogStore.deleteData
-      ? client.torrentsRemoveTorrentFiles
-      : client.torrentsRemoveTorrent;
+      const removeMethod = dialogStore.deleteData
+        ? client.torrentsRemoveTorrentFiles
+        : client.torrentsRemoveTorrent;
 
-    removeMethod(dialogStore.torrentIds).catch((err) => {
-      showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to remove torrent', err);
-    });
+      removeMethod(dialogStore.torrentIds).catch((err) => {
+        showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to remove torrent', err);
+      });
 
-    dialogStore.close();
-  }, [client, dialogStore]);
+      dialogStore.close();
+    },
+    [client, dialogStore]
+  );
 
   let label: React.ReactNode = null;
   let filename: React.ReactNode = null;
@@ -46,20 +49,16 @@ const RemoveConfirmDialog: React.FC<RemoveConfirmDialogProps> = observer(({ dial
     const id = dialogStore.torrentIds[0];
     const torrent = client?.torrents.get(id);
     if (torrent) {
-      filename = (
-        <span className="fileName">{torrent.name}</span>
-      );
+      filename = <span className="fileName">{torrent.name}</span>;
     }
 
     const messageKey = deleteData ? 'OV_CONFIRM_DELETE_DATA_ONE' : 'OV_CONFIRM_DELETE_ONE';
-    label = (
-      <label>{chrome.i18n.getMessage(messageKey)}</label>
-    );
+    label = <label>{chrome.i18n.getMessage(messageKey)}</label>;
   } else {
-    const messageKey = deleteData ? 'OV_CONFIRM_DELETE_DATA_MULTIPLE' : 'OV_CONFIRM_DELETE_MULTIPLE';
-    label = (
-      <label>{chrome.i18n.getMessage(messageKey).replace('%d', String(count))}</label>
-    );
+    const messageKey = deleteData
+      ? 'OV_CONFIRM_DELETE_DATA_MULTIPLE'
+      : 'OV_CONFIRM_DELETE_MULTIPLE';
+    label = <label>{chrome.i18n.getMessage(messageKey).replace('%d', String(count))}</label>;
   }
 
   return (
@@ -71,8 +70,13 @@ const RemoveConfirmDialog: React.FC<RemoveConfirmDialogProps> = observer(({ dial
             {filename}
           </div>
           <div className="nf-subItem">
-            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_YES')}/>
-            <input onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void} autoFocus type="button" value={chrome.i18n.getMessage('DLG_BTN_NO')}/>
+            <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_YES')} />
+            <input
+              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              autoFocus
+              type="button"
+              value={chrome.i18n.getMessage('DLG_BTN_NO')}
+            />
           </div>
         </form>
       </div>

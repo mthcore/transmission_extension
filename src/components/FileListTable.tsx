@@ -1,13 +1,21 @@
-import React, { useContext, useRef, useEffect, useCallback, useMemo, MouseEvent, ChangeEvent } from "react";
-import { observer } from "mobx-react";
-import { Column } from "./TableHeadColumn";
-import FileListTableItem from "./FileListTableItem";
-import FileColumnContextMenu from "./FileColumnMenu";
-import Interval from "./Interval";
-import getLogger from "../tools/getLogger";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useScrollSync } from "../hooks/useScrollSync";
-import { useTableHeadColumn } from "../hooks/useTableHeadColumn";
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  MouseEvent,
+  ChangeEvent,
+} from 'react';
+import { observer } from 'mobx-react';
+import { Column } from './TableHeadColumn';
+import FileListTableItem from './FileListTableItem';
+import FileColumnContextMenu from './FileColumnMenu';
+import Interval from './Interval';
+import getLogger from '../tools/getLogger';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useScrollSync } from '../hooks/useScrollSync';
+import { useTableHeadColumn } from '../hooks/useTableHeadColumn';
 
 const logger = getLogger('FileListTable');
 
@@ -59,7 +67,10 @@ const FileListTable: React.FC = observer(() => {
   const fileListStore = rootStore?.fileList;
   const refFixedHead = useRef<HTMLTableElement>(null);
   const scrollSyncOptions = useMemo(() => ({ withWidthCheck: true }), []);
-  const handleScroll = useScrollSync(refFixedHead as React.RefObject<HTMLElement>, scrollSyncOptions);
+  const handleScroll = useScrollSync(
+    refFixedHead as React.RefObject<HTMLElement>,
+    scrollSyncOptions
+  );
 
   useEffect(() => {
     if (!rootStore || !fileListStore) return;
@@ -69,15 +80,21 @@ const FileListTable: React.FC = observer(() => {
     rootStore.torrentList.addSelectedId(fileListStore.id, true);
   }, [rootStore, fileListStore]);
 
-  const handleClose = useCallback((e?: MouseEvent) => {
-    e?.preventDefault();
-    rootStore?.destroyFileList();
-  }, [rootStore]);
+  const handleClose = useCallback(
+    (e?: MouseEvent) => {
+      e?.preventDefault();
+      rootStore?.destroyFileList();
+    },
+    [rootStore]
+  );
 
-  const handleUpdate = useCallback((e: MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    fileListStore?.fetchFiles();
-  }, [fileListStore]);
+  const handleUpdate = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      fileListStore?.fetchFiles();
+    },
+    [fileListStore]
+  );
 
   const onIntervalFire = useCallback(() => {
     fileListStore?.fetchFiles().catch((err) => {
@@ -90,23 +107,17 @@ const FileListTable: React.FC = observer(() => {
   const torrent = fileListStore.torrent;
 
   if (!torrent) {
-    return (
-      <DoCloseFileList onClose={handleClose}/>
-    );
+    return <DoCloseFileList onClose={handleClose} />;
   }
 
   let spinner: React.ReactNode = null;
   if (fileListStore.isLoading) {
-    spinner = (
-      <div className="loading"/>
-    );
+    spinner = <div className="loading" />;
   }
 
   let directory: React.ReactNode = null;
   if (fileListStore.joinedDirectory) {
-    directory = (
-      <input type="text" value={fileListStore.joinedDirectory} readOnly/>
-    );
+    directory = <input type="text" value={fileListStore.joinedDirectory} readOnly />;
   }
 
   const uiUpdateInterval = rootStore.config.uiUpdateInterval;
@@ -115,28 +126,47 @@ const FileListTable: React.FC = observer(() => {
     <>
       <div className="file-list-warpper">
         <div className="file-list">
-          <Interval interval={uiUpdateInterval} onFire={onIntervalFire}/>
+          <Interval interval={uiUpdateInterval} onFire={onIntervalFire} />
           <div onScroll={handleScroll} className="fl-layer">
             {spinner}
             <FileColumnContextMenu>
-              <table ref={refFixedHead} className="fl-table-head" border={0} cellSpacing={0} cellPadding={0}>
-                <FileListTableHead withStyle={true}/>
+              <table
+                ref={refFixedHead}
+                className="fl-table-head"
+                border={0}
+                cellSpacing={0}
+                cellPadding={0}
+              >
+                <FileListTableHead withStyle={true} />
               </table>
             </FileColumnContextMenu>
             <table className="fl-table-body" border={0} cellSpacing={0} cellPadding={0}>
-              <FileListTableHead/>
-              <FileListTableFiles/>
+              <FileListTableHead />
+              <FileListTableFiles />
             </table>
           </div>
           <div className="bottom-menu">
             {directory}
-            <div className="space"/>
-            <a onClick={handleUpdate} className="update" title={chrome.i18n.getMessage('refresh')} aria-label={chrome.i18n.getMessage('refresh')}/>
-            <a onClick={handleClose as (e: MouseEvent<HTMLAnchorElement>) => void} className="close" title={chrome.i18n.getMessage('DLG_BTN_CLOSE')} aria-label={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
+            <div className="space" />
+            <a
+              onClick={handleUpdate}
+              className="update"
+              title={chrome.i18n.getMessage('refresh')}
+              aria-label={chrome.i18n.getMessage('refresh')}
+            />
+            <a
+              onClick={handleClose as (e: MouseEvent<HTMLAnchorElement>) => void}
+              className="close"
+              title={chrome.i18n.getMessage('DLG_BTN_CLOSE')}
+              aria-label={chrome.i18n.getMessage('DLG_BTN_CLOSE')}
+            />
           </div>
         </div>
       </div>
-      <div onClick={handleClose as unknown as (e: MouseEvent<HTMLDivElement>) => void} className="file-list-layer-temp"/>
+      <div
+        onClick={handleClose as unknown as (e: MouseEvent<HTMLDivElement>) => void}
+        className="file-list-layer-temp"
+      />
     </>
   );
 });
@@ -159,13 +189,19 @@ interface FileListTableHeadProps {
 const FileListTableHead: React.FC<FileListTableHeadProps> = observer(({ withStyle }) => {
   const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
 
-  const handleSort = useCallback((column: string, direction: number): void => {
-    rootStore?.config.setFilesSort(column, direction);
-  }, [rootStore]);
+  const handleSort = useCallback(
+    (column: string, direction: number): void => {
+      rootStore?.config.setFilesSort(column, direction);
+    },
+    [rootStore]
+  );
 
-  const handleMoveColumn = useCallback((from: string, to: string): void => {
-    rootStore?.config.moveFilesColumn(from, to);
-  }, [rootStore]);
+  const handleMoveColumn = useCallback(
+    (from: string, to: string): void => {
+      rootStore?.config.moveFilesColumn(from, to);
+    },
+    [rootStore]
+  );
 
   const handleSaveColumns = useCallback((): void => {
     rootStore?.config.saveFilesColumns();
@@ -231,9 +267,12 @@ const FileListTableHeadColumn: React.FC<FileListTableHeadColumnProps> = observer
     sortDirection,
   });
 
-  const handleSelectAll = useCallback((_e: ChangeEvent<HTMLInputElement>): void => {
-    fileListStore?.toggleSelectAll();
-  }, [fileListStore]);
+  const handleSelectAll = useCallback(
+    (_e: ChangeEvent<HTMLInputElement>): void => {
+      fileListStore?.toggleSelectAll();
+    },
+    [fileListStore]
+  );
 
   const classList = [column.column];
   if (isSorted) {
@@ -248,7 +287,7 @@ const FileListTableHeadColumn: React.FC<FileListTableHeadColumnProps> = observer
   if (column.column === 'checkbox') {
     body = (
       <div>
-        <input checked={fileListStore?.isSelectedAll} onChange={handleSelectAll} type="checkbox"/>
+        <input checked={fileListStore?.isSelectedAll} onChange={handleSelectAll} type="checkbox" />
       </div>
     );
   } else {
@@ -264,17 +303,16 @@ const FileListTableHeadColumn: React.FC<FileListTableHeadColumnProps> = observer
     const styleText = `.fl-layer th.${column.column}, .fl-layer td.${column.column} {
       min-width: ${column.width}px;
       max-width: ${column.width}px;
-    }`.split(/\r?\n/).map(line => line.trim()).join('');
-    style = (
-      <style>{styleText}</style>
-    );
+    }`
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .join('');
+    style = <style>{styleText}</style>;
   }
 
   let arrow: React.ReactNode = null;
   if (column.order !== 0) {
-    arrow = (
-      <i className="arrow"/>
-    );
+    arrow = <i className="arrow" />;
   }
 
   const onClick = column.order ? handleSort : undefined;
@@ -315,7 +353,7 @@ const FileListTableFiles: React.FC = observer(() => {
   return (
     <tbody>
       {rootStore.fileList.sortedFiles.map((file) => (
-        <FileListTableItem key={file.name} file={file as FileItem}/>
+        <FileListTableItem key={file.name} file={file as FileItem} />
       ))}
     </tbody>
   );

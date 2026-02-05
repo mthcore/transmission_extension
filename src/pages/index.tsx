@@ -1,19 +1,19 @@
-import "rc-select/assets/index.css";
-import "../assets/css/stylesheet.scss";
-import React from "react";
-import Menu from "../components/Menu";
-import { observer } from "mobx-react";
-import { reaction } from "mobx";
-import { createRoot } from "react-dom/client";
-import RootStore from "../stores/RootStore";
-import TorrentListTable from "../components/TorrentListTable";
-import FileListTable from "../components/FileListTable";
-import Footer from "../components/Footer";
-import Interval from "../components/Interval";
-import getLogger from "../tools/getLogger";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useTheme } from "../hooks/useTheme";
-import DialogLoader from "../components/DialogLoader";
+import 'rc-select/assets/index.css';
+import '../assets/css/stylesheet.scss';
+import React from 'react';
+import Menu from '../components/Menu';
+import { observer } from 'mobx-react';
+import { reaction } from 'mobx';
+import { createRoot } from 'react-dom/client';
+import RootStore from '../stores/RootStore';
+import TorrentListTable from '../components/TorrentListTable';
+import FileListTable from '../components/FileListTable';
+import Footer from '../components/Footer';
+import Interval from '../components/Interval';
+import getLogger from '../tools/getLogger';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useTheme } from '../hooks/useTheme';
+import DialogLoader from '../components/DialogLoader';
 
 const logger = getLogger('Index');
 
@@ -119,7 +119,7 @@ const Index: React.FC = observer(() => {
       if (e.key === 'Delete' && rootStore.torrentList.selectedIds.length) {
         rootStore.createDialog({
           type: 'removeConfirm',
-          torrentIds: rootStore.torrentList.selectedIds.slice(0)
+          torrentIds: rootStore.torrentList.selectedIds.slice(0),
         });
         return;
       }
@@ -152,7 +152,7 @@ const Index: React.FC = observer(() => {
           rootStore.createDialog({
             type: 'rename',
             path: torrent.name,
-            torrentIds: [id]
+            torrentIds: [id],
           });
         }
         return;
@@ -167,7 +167,7 @@ const Index: React.FC = observer(() => {
           rootStore.createDialog({
             type: 'move',
             directory: torrent?.directory,
-            torrentIds: rootStore.torrentList.selectedIds.slice(0)
+            torrentIds: rootStore.torrentList.selectedIds.slice(0),
           });
         }
         return;
@@ -179,7 +179,7 @@ const Index: React.FC = observer(() => {
         if (rootStore.torrentList.selectedIds.length === 1) {
           rootStore.createDialog({
             type: 'torrentDetails',
-            torrentId: rootStore.torrentList.selectedIds[0]
+            torrentId: rootStore.torrentList.selectedIds[0],
           });
         }
         return;
@@ -207,16 +207,19 @@ const Index: React.FC = observer(() => {
   // Theme application
   useTheme(rootStore.config);
 
-  const onIntervalFire = React.useCallback((isInit: boolean) => {
-    if (isInit) {
-      rootStore.client.updateSettings().catch((err) => {
-        logger.error('onIntervalFire updateSettings error', err);
+  const onIntervalFire = React.useCallback(
+    (isInit: boolean) => {
+      if (isInit) {
+        rootStore.client.updateSettings().catch((err) => {
+          logger.error('onIntervalFire updateSettings error', err);
+        });
+      }
+      rootStore.client.updateTorrentList(isInit).catch((err) => {
+        logger.error('onIntervalFire updateTorrentList error', err);
       });
-    }
-    rootStore.client.updateTorrentList(isInit).catch((err) => {
-      logger.error('onIntervalFire updateTorrentList error', err);
-    });
-  }, [rootStore]);
+    },
+    [rootStore]
+  );
 
   if (['idle', 'pending'].includes(rootStore.state)) {
     return (
@@ -232,18 +235,14 @@ const Index: React.FC = observer(() => {
 
   let fileList: React.ReactNode = null;
   if (rootStore.fileList) {
-    fileList = (
-      <FileListTable key={rootStore.fileList.id} />
-    );
+    fileList = <FileListTable key={rootStore.fileList.id} />;
   }
 
   const uiUpdateInterval = rootStore.config.uiUpdateInterval;
 
   let goInOptions: React.ReactNode = null;
   if (rootStore.config.hostname === '') {
-    goInOptions = (
-      <GoInOptions isPopup={rootStore.isPopup} />
-    );
+    goInOptions = <GoInOptions isPopup={rootStore.isPopup} />;
   }
 
   return (
@@ -269,13 +268,7 @@ const Dialogs: React.FC = observer(() => {
         if (dialog.type === 'putFiles' && !dialog.isReady) {
           return null;
         }
-        return (
-          <DialogLoader
-            key={dialog.id}
-            type={dialog.type}
-            dialogStore={dialog}
-          />
-        );
+        return <DialogLoader key={dialog.id} type={dialog.type} dialogStore={dialog} />;
       })}
     </>
   );
@@ -304,9 +297,7 @@ const GoInOptions = React.memo<GoInOptionsProps>(({ isPopup }) => {
         <div className="go-in-options-content">
           <h2>{chrome.i18n.getMessage('configureClient')}</h2>
           <p>{chrome.i18n.getMessage('configureClientHint')}</p>
-          <button onClick={handleOpenOptions}>
-            {chrome.i18n.getMessage('openOptions')}
-          </button>
+          <button onClick={handleOpenOptions}>{chrome.i18n.getMessage('openOptions')}</button>
         </div>
       </div>
     );
@@ -321,7 +312,7 @@ declare global {
   }
 }
 
-const rootStore = window.rootStore = RootStore.create();
+const rootStore = (window.rootStore = RootStore.create());
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element not found');

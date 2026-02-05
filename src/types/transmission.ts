@@ -13,7 +13,7 @@ export const TorrentStatus = {
   SEED: 6,
 } as const;
 
-export type TorrentStatusCode = typeof TorrentStatus[keyof typeof TorrentStatus];
+export type TorrentStatusCode = (typeof TorrentStatus)[keyof typeof TorrentStatus];
 
 // Priority levels for files
 export const FilePriority = {
@@ -23,7 +23,7 @@ export const FilePriority = {
   HIGH: 3,
 } as const;
 
-export type FilePriorityLevel = typeof FilePriority[keyof typeof FilePriority];
+export type FilePriorityLevel = (typeof FilePriority)[keyof typeof FilePriority];
 
 // Raw torrent data from Transmission API
 export interface RawTorrent {
@@ -91,7 +91,7 @@ export interface SessionSettings {
   'download-dir-free-space': number;
   'download-queue-enabled': boolean;
   'download-queue-size': number;
-  'encryption': string;
+  encryption: string;
   'idle-seeding-limit': number;
   'idle-seeding-limit-enabled': boolean;
   'incomplete-dir': string;
@@ -112,15 +112,15 @@ export interface SessionSettings {
   'script-torrent-done-filename': string;
   'seed-queue-enabled': boolean;
   'seed-queue-size': number;
-  'seedRatioLimit': number;
-  'seedRatioLimited': boolean;
+  seedRatioLimit: number;
+  seedRatioLimited: boolean;
   'speed-limit-down': number;
   'speed-limit-down-enabled': boolean;
   'speed-limit-up': number;
   'speed-limit-up-enabled': boolean;
   'start-added-torrents': boolean;
   'trash-original-torrent-files': boolean;
-  'units': {
+  units: {
     'memory-bytes': number;
     'memory-units': string[];
     'size-bytes': number;
@@ -129,7 +129,7 @@ export interface SessionSettings {
     'speed-units': string[];
   };
   'utp-enabled': boolean;
-  'version': string;
+  version: string;
 }
 
 // RPC Request/Response types

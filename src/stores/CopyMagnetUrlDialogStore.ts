@@ -1,5 +1,5 @@
-import { types, Instance } from "mobx-state-tree";
-import BaseDialogStore from "./BaseDialogStore";
+import { types, Instance } from 'mobx-state-tree';
+import BaseDialogStore from './BaseDialogStore';
 
 const CopyMagnetUrlDialogStore = types.compose(
   'CopyMagnetUrlDialogStore',
@@ -7,7 +7,7 @@ const CopyMagnetUrlDialogStore = types.compose(
   types.model({
     type: types.literal('copyMagnetUrl'),
     magnetLink: types.string,
-    torrentIds: types.array(types.number)
+    torrentIds: types.array(types.number),
   })
 );
 

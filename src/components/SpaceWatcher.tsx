@@ -1,8 +1,8 @@
-import { observer } from "mobx-react";
-import React, { useContext, useEffect, useCallback, MouseEvent } from "react";
-import Interval from "./Interval";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { SPACE_WATCHER_INTERVAL } from "../constants";
+import { observer } from 'mobx-react';
+import React, { useContext, useEffect, useCallback, MouseEvent } from 'react';
+import Interval from './Interval';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { SPACE_WATCHER_INTERVAL } from '../constants';
 
 const SpaceWatcher = observer(() => {
   const rootStore = useContext(RootStoreCtx);
@@ -17,10 +17,13 @@ const SpaceWatcher = observer(() => {
     spaceWatcherStore?.fetchDownloadDirs();
   }, [spaceWatcherStore]);
 
-  const handleUpdate = useCallback((e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    onIntervalFire();
-  }, [onIntervalFire]);
+  const handleUpdate = useCallback(
+    (e: MouseEvent<HTMLSpanElement>) => {
+      e.preventDefault();
+      onIntervalFire();
+    },
+    [onIntervalFire]
+  );
 
   if (!spaceWatcherStore) return null;
 
@@ -37,17 +40,17 @@ const SpaceWatcher = observer(() => {
     const status = [`${chrome.i18n.getMessage('freeSpace')}:`];
     body = spaceWatcherStore.downloadDirs.map((directory) => {
       status.push(`${directory.availableStr} (${directory.path})`);
-      return (
-        <span key={directory.path}>{directory.availableStr} </span>
-      );
+      return <span key={directory.path}>{directory.availableStr} </span>;
     });
     title = status.join('\n');
   }
 
   return (
     <>
-      <span className="space disk" onClick={handleUpdate} title={title || undefined}>{body}</span>
-      <Interval interval={SPACE_WATCHER_INTERVAL} onFire={onIntervalFire}/>
+      <span className="space disk" onClick={handleUpdate} title={title || undefined}>
+        {body}
+      </span>
+      <Interval interval={SPACE_WATCHER_INTERVAL} onFire={onIntervalFire} />
     </>
   );
 });

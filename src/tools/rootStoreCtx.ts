@@ -1,5 +1,5 @@
-import React from "react";
-import type { IRootStore } from "../stores/RootStore";
+import React from 'react';
+import type { IRootStore } from '../stores/RootStore';
 
 const RootStoreCtx = React.createContext<IRootStore | undefined>(undefined);
 RootStoreCtx.displayName = 'RootStoreCtx';

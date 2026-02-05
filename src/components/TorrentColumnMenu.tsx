@@ -1,8 +1,8 @@
-import React, { useContext, useCallback, ReactNode } from "react";
-import * as ContextMenu from "@radix-ui/react-context-menu";
-import { observer } from "mobx-react";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useColumnToggle } from "../hooks/useColumnToggle";
+import React, { useContext, useCallback, ReactNode } from 'react';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { observer } from 'mobx-react';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useColumnToggle } from '../hooks/useColumnToggle';
 
 interface Column {
   column: string;
@@ -15,18 +15,18 @@ interface TorrentColumnContextMenuProps {
   children: ReactNode;
 }
 
-const TorrentColumnContextMenu: React.FC<TorrentColumnContextMenuProps> = observer(({ children }) => {
-  return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger asChild>
-        {children}
-      </ContextMenu.Trigger>
-      <ContextMenu.Portal>
-        <TorrentColumnMenuContent />
-      </ContextMenu.Portal>
-    </ContextMenu.Root>
-  );
-});
+const TorrentColumnContextMenu: React.FC<TorrentColumnContextMenuProps> = observer(
+  ({ children }) => {
+    return (
+      <ContextMenu.Root>
+        <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
+        <ContextMenu.Portal>
+          <TorrentColumnMenuContent />
+        </ContextMenu.Portal>
+      </ContextMenu.Root>
+    );
+  }
+);
 
 const TorrentColumnMenuContent: React.FC = observer(() => {
   const rootStore = useContext(RootStoreCtx);

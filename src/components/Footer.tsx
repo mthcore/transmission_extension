@@ -1,33 +1,39 @@
-import React, { useContext, useCallback, MouseEvent } from "react";
-import { observer } from "mobx-react";
-import SpeedContextMenu from "./SpeedMenu";
-import SpaceWatcher from "./SpaceWatcher";
-import RootStoreCtx from "../tools/rootStoreCtx";
+import React, { useContext, useCallback, MouseEvent } from 'react';
+import { observer } from 'mobx-react';
+import SpeedContextMenu from './SpeedMenu';
+import SpaceWatcher from './SpaceWatcher';
+import RootStoreCtx from '../tools/rootStoreCtx';
 
 const Footer: React.FC = observer(() => {
   const rootStore = useContext(RootStoreCtx);
 
-  const handleResetDownloadSpeed = useCallback((e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    const client = rootStore?.client;
-    if (!client) return;
-    if (client.settings?.altSpeedEnabled) {
-      client.setAltSpeedEnabled(false);
-    } else {
-      client.setDownloadSpeedLimitEnabled(false);
-    }
-  }, [rootStore]);
+  const handleResetDownloadSpeed = useCallback(
+    (e: MouseEvent<HTMLSpanElement>) => {
+      e.preventDefault();
+      const client = rootStore?.client;
+      if (!client) return;
+      if (client.settings?.altSpeedEnabled) {
+        client.setAltSpeedEnabled(false);
+      } else {
+        client.setDownloadSpeedLimitEnabled(false);
+      }
+    },
+    [rootStore]
+  );
 
-  const handleResetUploadSpeed = useCallback((e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    const client = rootStore?.client;
-    if (!client) return;
-    if (client.settings?.altSpeedEnabled) {
-      client.setAltSpeedEnabled(false);
-    } else {
-      client.setUploadSpeedLimitEnabled(false);
-    }
-  }, [rootStore]);
+  const handleResetUploadSpeed = useCallback(
+    (e: MouseEvent<HTMLSpanElement>) => {
+      e.preventDefault();
+      const client = rootStore?.client;
+      if (!client) return;
+      if (client.settings?.altSpeedEnabled) {
+        client.setAltSpeedEnabled(false);
+      } else {
+        client.setUploadSpeedLimitEnabled(false);
+      }
+    },
+    [rootStore]
+  );
 
   const handleOpenTab = useCallback((e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -39,8 +45,14 @@ const Footer: React.FC = observer(() => {
   const client = rootStore.client;
   const config = rootStore.config;
 
-  const { downloadSpeedStr, uploadSpeedStr } = client.currentSpeedStr ?? { downloadSpeedStr: '', uploadSpeedStr: '' };
-  const { downloadedStr, uploadedStr } = client.sessionTotalsStr ?? { downloadedStr: '', uploadedStr: '' };
+  const { downloadSpeedStr, uploadSpeedStr } = client.currentSpeedStr ?? {
+    downloadSpeedStr: '',
+    uploadSpeedStr: '',
+  };
+  const { downloadedStr, uploadedStr } = client.sessionTotalsStr ?? {
+    downloadedStr: '',
+    uploadedStr: '',
+  };
 
   let downloadLimit: React.ReactNode = null;
   let uploadLimit: React.ReactNode = null;
@@ -52,7 +64,9 @@ const Footer: React.FC = observer(() => {
         ? settings.altDownloadSpeedLimitStr
         : settings.downloadSpeedLimitStr;
       downloadLimit = (
-        <span onClick={handleResetDownloadSpeed} className="limit dl">{speedStr}</span>
+        <span onClick={handleResetDownloadSpeed} className="limit dl">
+          {speedStr}
+        </span>
       );
     }
     if (settings.altSpeedEnabled || settings.uploadSpeedLimitEnabled) {
@@ -60,7 +74,9 @@ const Footer: React.FC = observer(() => {
         ? settings.altUploadSpeedLimitStr
         : settings.uploadSpeedLimitStr;
       uploadLimit = (
-        <span onClick={handleResetUploadSpeed} className="limit up">{speedStr}</span>
+        <span onClick={handleResetUploadSpeed} className="limit up">
+          {speedStr}
+        </span>
       );
     }
   }
@@ -68,15 +84,17 @@ const Footer: React.FC = observer(() => {
   let openInTab: React.ReactNode = null;
   if (rootStore.isPopup) {
     openInTab = (
-      <div onClick={handleOpenTab} className="openInTab" title={chrome.i18n.getMessage('openInTab')}/>
+      <div
+        onClick={handleOpenTab}
+        className="openInTab"
+        title={chrome.i18n.getMessage('openInTab')}
+      />
     );
   }
 
   let spaceWatcher: React.ReactNode = null;
   if (config.showFreeSpace) {
-    spaceWatcher = (
-      <SpaceWatcher/>
-    );
+    spaceWatcher = <SpaceWatcher />;
   }
 
   return (
@@ -87,10 +105,16 @@ const Footer: React.FC = observer(() => {
         <span className="total-up">{uploadedStr}</span>
       </span>
       <SpeedContextMenu type="download">
-        <span className="speed download">{downloadSpeedStr}{downloadLimit}</span>
+        <span className="speed download">
+          {downloadSpeedStr}
+          {downloadLimit}
+        </span>
       </SpeedContextMenu>
       <SpeedContextMenu type="upload">
-        <span className="speed upload">{uploadSpeedStr}{uploadLimit}</span>
+        <span className="speed upload">
+          {uploadSpeedStr}
+          {uploadLimit}
+        </span>
       </SpeedContextMenu>
       <span className="status">{client.lastErrorMessage}</span>
       {openInTab}

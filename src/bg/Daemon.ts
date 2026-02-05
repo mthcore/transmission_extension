@@ -1,5 +1,5 @@
-import getLogger from "../tools/getLogger";
-import type { IBgForDaemon } from "../types";
+import getLogger from '../tools/getLogger';
+import type { IBgForDaemon } from '../types';
 
 const logger = getLogger('Daemon');
 
@@ -28,17 +28,23 @@ class Daemon {
     if (this.inProgress) return;
     this.inProgress = true;
 
-    this.bg.client?.updateTorrents().then(() => {
-      this.retryCount = 0;
-    }, (err) => {
-      logger.error('updateTorrents error', err);
-      if (++this.retryCount > 3) {
-        logger.warn('Daemon stopped, cause', err);
-        this.stop();
-      }
-    }).finally(() => {
-      this.inProgress = false;
-    });
+    this.bg.client
+      ?.updateTorrents()
+      .then(
+        () => {
+          this.retryCount = 0;
+        },
+        (err) => {
+          logger.error('updateTorrents error', err);
+          if (++this.retryCount > 3) {
+            logger.warn('Daemon stopped, cause', err);
+            this.stop();
+          }
+        }
+      )
+      .finally(() => {
+        this.inProgress = false;
+      });
   }
 
   start(): void {

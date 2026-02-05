@@ -1,5 +1,5 @@
-import { types, Instance } from "mobx-state-tree";
-import BaseDialogStore from "./BaseDialogStore";
+import { types, Instance } from 'mobx-state-tree';
+import BaseDialogStore from './BaseDialogStore';
 
 const MoveDialogStore = types.compose(
   'MoveDialogStore',
@@ -7,7 +7,7 @@ const MoveDialogStore = types.compose(
   types.model({
     type: types.literal('move'),
     directory: types.string,
-    torrentIds: types.array(types.number)
+    torrentIds: types.array(types.number),
   })
 );
 

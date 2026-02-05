@@ -1,4 +1,4 @@
-import { getRoot, types, Instance } from "mobx-state-tree";
+import { getRoot, types, Instance } from 'mobx-state-tree';
 
 /**
  * Base model for all dialog stores.
@@ -11,14 +11,16 @@ interface RootStoreWithDialog {
   destroyDialog: (id: string) => void;
 }
 
-const BaseDialogStore = types.model('BaseDialogStore', {
-  id: types.identifier,
-}).views((self) => ({
-  close() {
-    const rootStore = getRoot<RootStoreWithDialog>(self);
-    rootStore.destroyDialog(self.id);
-  }
-}));
+const BaseDialogStore = types
+  .model('BaseDialogStore', {
+    id: types.identifier,
+  })
+  .views((self) => ({
+    close() {
+      const rootStore = getRoot<RootStoreWithDialog>(self);
+      rootStore.destroyDialog(self.id);
+    },
+  }));
 
 export type IBaseDialogStore = Instance<typeof BaseDialogStore>;
 export default BaseDialogStore;

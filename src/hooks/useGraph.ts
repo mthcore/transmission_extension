@@ -29,11 +29,17 @@ function createScale(): Scale {
     const [d0, d1] = domain;
     const [r0, r1] = range;
     if (d1 === d0) return r0;
-    return r0 + (value - d0) * (r1 - r0) / (d1 - d0);
+    return r0 + ((value - d0) * (r1 - r0)) / (d1 - d0);
   };
 
-  scale.domain = (d: [number, number]): Scale => { domain = d; return scale; };
-  scale.range = (r: [number, number]): Scale => { range = r; return scale; };
+  scale.domain = (d: [number, number]): Scale => {
+    domain = d;
+    return scale;
+  };
+  scale.range = (r: [number, number]): Scale => {
+    range = r;
+    return scale;
+  };
 
   return scale;
 }

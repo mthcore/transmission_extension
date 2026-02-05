@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
 interface ListStore {
   selectedIds: (string | number)[];
@@ -10,10 +10,13 @@ export function useContextMenuSelection(
   listStore: ListStore,
   itemId: string | number
 ): (open: boolean) => void {
-  return useCallback((open: boolean) => {
-    if (open && !listStore.selectedIds.includes(itemId)) {
-      listStore.resetSelectedIds();
-      listStore.addSelectedId(itemId);
-    }
-  }, [listStore, itemId]);
+  return useCallback(
+    (open: boolean) => {
+      if (open && !listStore.selectedIds.includes(itemId)) {
+        listStore.resetSelectedIds();
+        listStore.addSelectedId(itemId);
+      }
+    },
+    [listStore, itemId]
+  );
 }

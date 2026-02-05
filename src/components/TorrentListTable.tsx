@@ -1,11 +1,11 @@
-import React, { useContext, useRef, useEffect, useCallback, ChangeEvent } from "react";
-import { observer } from "mobx-react";
-import { Column } from "./TableHeadColumn";
-import TorrentListTableItem from "./TorrentListTableItem";
-import TorrentColumnContextMenu from "./TorrentColumnMenu";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { useScrollSync } from "../hooks/useScrollSync";
-import { useTableHeadColumn } from "../hooks/useTableHeadColumn";
+import React, { useContext, useRef, useEffect, useCallback, ChangeEvent } from 'react';
+import { observer } from 'mobx-react';
+import { Column } from './TableHeadColumn';
+import TorrentListTableItem from './TorrentListTableItem';
+import TorrentColumnContextMenu from './TorrentColumnMenu';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { useScrollSync } from '../hooks/useScrollSync';
+import { useTableHeadColumn } from '../hooks/useTableHeadColumn';
 
 interface TorrentItem {
   id: number;
@@ -70,13 +70,19 @@ const TorrentListTable: React.FC = observer(() => {
         </div>
       )}
       <TorrentColumnContextMenu>
-        <table ref={refFixedHead} className="torrent-table-head" border={0} cellSpacing={0} cellPadding={0}>
-          <TorrentListTableHead withStyle={true}/>
+        <table
+          ref={refFixedHead}
+          className="torrent-table-head"
+          border={0}
+          cellSpacing={0}
+          cellPadding={0}
+        >
+          <TorrentListTableHead withStyle={true} />
         </table>
       </TorrentColumnContextMenu>
       <table className="torrent-table-body" border={0} cellSpacing={0} cellPadding={0}>
-        <TorrentListTableHead/>
-        <TorrentListTableTorrents/>
+        <TorrentListTableHead />
+        <TorrentListTableTorrents />
       </table>
     </div>
   );
@@ -89,13 +95,19 @@ interface TorrentListTableHeadProps {
 const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ withStyle }) => {
   const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
 
-  const handleSort = useCallback((column: string, direction: number): void => {
-    rootStore?.config.setTorrentsSort(column, direction);
-  }, [rootStore]);
+  const handleSort = useCallback(
+    (column: string, direction: number): void => {
+      rootStore?.config.setTorrentsSort(column, direction);
+    },
+    [rootStore]
+  );
 
-  const handleMoveColumn = useCallback((from: string, to: string): void => {
-    rootStore?.config.moveTorrentsColumn(from, to);
-  }, [rootStore]);
+  const handleMoveColumn = useCallback(
+    (from: string, to: string): void => {
+      rootStore?.config.moveTorrentsColumn(from, to);
+    },
+    [rootStore]
+  );
 
   const handleSaveColumns = useCallback((): void => {
     rootStore?.config.saveTorrentsColumns();
@@ -159,9 +171,12 @@ const TorrentListTableHeadColumn: React.FC<TorrentListTableHeadColumnProps> = ob
     sortDirection,
   });
 
-  const handleSelectAll = useCallback((_e: ChangeEvent<HTMLInputElement>): void => {
-    torrentListStore?.toggleSelectAll();
-  }, [torrentListStore]);
+  const handleSelectAll = useCallback(
+    (_e: ChangeEvent<HTMLInputElement>): void => {
+      torrentListStore?.toggleSelectAll();
+    },
+    [torrentListStore]
+  );
 
   const classList = [column.column];
   if (isSorted) {
@@ -176,11 +191,15 @@ const TorrentListTableHeadColumn: React.FC<TorrentListTableHeadColumnProps> = ob
   if (column.column === 'checkbox') {
     body = (
       <div>
-        <input checked={torrentListStore?.isSelectedAll} onChange={handleSelectAll} type="checkbox"/>
+        <input
+          checked={torrentListStore?.isSelectedAll}
+          onChange={handleSelectAll}
+          type="checkbox"
+        />
       </div>
     );
   } else if (column.column === 'actions') {
-    body = <div/>;
+    body = <div />;
   } else {
     body = (
       <div>
@@ -191,20 +210,20 @@ const TorrentListTableHeadColumn: React.FC<TorrentListTableHeadColumnProps> = ob
 
   let style: React.ReactNode = null;
   if (withStyle) {
-    const styleText = `.torrent-list-layer th.${column.column}, .torrent-list-layer td.${column.column} {
+    const styleText =
+      `.torrent-list-layer th.${column.column}, .torrent-list-layer td.${column.column} {
       min-width: ${column.width}px;
       max-width: ${column.width}px;
-    }`.split(/\r?\n/).map(line => line.trim()).join('');
-    style = (
-      <style>{styleText}</style>
-    );
+    }`
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .join('');
+    style = <style>{styleText}</style>;
   }
 
   let arrow: React.ReactNode = null;
   if (column.order !== 0) {
-    arrow = (
-      <i className="arrow"/>
-    );
+    arrow = <i className="arrow" />;
   }
 
   const onClick = column.order ? handleSort : undefined;
@@ -246,7 +265,7 @@ const TorrentListTableTorrents: React.FC = observer(() => {
   return (
     <tbody>
       {torrentListStore.sortedTorrents.map((torrent) => (
-        <TorrentListTableItem key={torrent.id} torrent={torrent as TorrentItem}/>
+        <TorrentListTableItem key={torrent.id} torrent={torrent as TorrentItem} />
       ))}
     </tbody>
   );

@@ -1,6 +1,6 @@
-import React, { useRef, useCallback } from "react";
-import { observer } from "mobx-react";
-import { useOptionsPage } from "../../hooks/useOptionsPage";
+import React, { useRef, useCallback } from 'react';
+import { observer } from 'mobx-react';
+import { useOptionsPage } from '../../hooks/useOptionsPage';
 
 interface Folder {
   path: string;
@@ -42,35 +42,47 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
     });
   }, [configStore]);
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback((e) => {
-    e.preventDefault();
-    const form = e.currentTarget as CtxOptionsDirsFormElement;
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      const form = e.currentTarget as CtxOptionsDirsFormElement;
 
-    const path = form.elements.path.value.trim();
-    const name = form.elements.name.value.trim();
-    if (!path) return;
+      const path = form.elements.path.value.trim();
+      const name = form.elements.name.value.trim();
+      if (!path) return;
 
-    if (!configStore.hasFolder(path)) {
-      configStore.addFolder(path, name);
-      form.elements.path.value = '';
-      form.elements.name.value = '';
-    }
-  }, [configStore]);
+      if (!configStore.hasFolder(path)) {
+        configStore.addFolder(path, name);
+        form.elements.path.value = '';
+        form.elements.name.value = '';
+      }
+    },
+    [configStore]
+  );
 
-  const handleRemove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    configStore.removeFolders(getSelectedDirectories());
-  }, [configStore, getSelectedDirectories]);
+  const handleRemove = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      configStore.removeFolders(getSelectedDirectories());
+    },
+    [configStore, getSelectedDirectories]
+  );
 
-  const handleMoveUp = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    configStore.moveFolders(getSelectedDirectories(), -1);
-  }, [configStore, getSelectedDirectories]);
+  const handleMoveUp = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      configStore.moveFolders(getSelectedDirectories(), -1);
+    },
+    [configStore, getSelectedDirectories]
+  );
 
-  const handleMoveDown = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    configStore.moveFolders(getSelectedDirectories(), 1);
-  }, [configStore, getSelectedDirectories]);
+  const handleMoveDown = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      configStore.moveFolders(getSelectedDirectories(), 1);
+    },
+    [configStore, getSelectedDirectories]
+  );
 
   const directories = configStore.folders.map((folder: Folder, index: number) => {
     let name = folder.path;
@@ -78,7 +90,9 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
       name = `${folder.name} (${name})`;
     }
     return (
-      <option key={JSON.stringify(folder)} value={index}>{name}</option>
+      <option key={JSON.stringify(folder)} value={index}>
+        {name}
+      </option>
     );
   });
 
@@ -98,30 +112,55 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
           {directories}
         </select>
         <div className="dir-list-actions">
-          <button type="button" onClick={handleMoveUp} title={chrome.i18n.getMessage('up')}>▲</button>
-          <button type="button" onClick={handleMoveDown} title={chrome.i18n.getMessage('down')}>▼</button>
-          <button type="button" onClick={handleRemove} title={chrome.i18n.getMessage('deleteSelected')}>✕</button>
+          <button type="button" onClick={handleMoveUp} title={chrome.i18n.getMessage('up')}>
+            ▲
+          </button>
+          <button type="button" onClick={handleMoveDown} title={chrome.i18n.getMessage('down')}>
+            ▼
+          </button>
+          <button
+            type="button"
+            onClick={handleRemove}
+            title={chrome.i18n.getMessage('deleteSelected')}
+          >
+            ✕
+          </button>
         </div>
       </div>
       <h3>{chrome.i18n.getMessage('options')}</h3>
       <label>
         <span>{chrome.i18n.getMessage('treeViewContextMenu')}</span>
         <span className="toggle-switch">
-          <input onChange={handleChange} defaultChecked={configStore.treeViewContextMenu} type="checkbox" name="treeViewContextMenu" />
+          <input
+            onChange={handleChange}
+            defaultChecked={configStore.treeViewContextMenu}
+            type="checkbox"
+            name="treeViewContextMenu"
+          />
           <span className="toggle-slider"></span>
         </span>
       </label>
       <label>
         <span>{chrome.i18n.getMessage('showDefaultFolderContextMenuItem')}</span>
         <span className="toggle-switch">
-          <input onChange={handleChange} defaultChecked={configStore.putDefaultPathInContextMenu} type="checkbox" name="putDefaultPathInContextMenu" />
+          <input
+            onChange={handleChange}
+            defaultChecked={configStore.putDefaultPathInContextMenu}
+            type="checkbox"
+            name="putDefaultPathInContextMenu"
+          />
           <span className="toggle-slider"></span>
         </span>
       </label>
       <label>
         <span>{chrome.i18n.getMessage('selectDownloadCategoryOnAddItemFromContextMenu')}</span>
         <span className="toggle-switch">
-          <input onChange={handleChange} defaultChecked={configStore.selectDownloadCategoryAfterPutTorrentFromContextMenu} type="checkbox" name="selectDownloadCategoryAfterPutTorrentFromContextMenu" />
+          <input
+            onChange={handleChange}
+            defaultChecked={configStore.selectDownloadCategoryAfterPutTorrentFromContextMenu}
+            type="checkbox"
+            name="selectDownloadCategoryAfterPutTorrentFromContextMenu"
+          />
           <span className="toggle-slider"></span>
         </span>
       </label>
@@ -135,7 +174,10 @@ const CtxOptions: React.FC = observer(() => {
   return (
     <div className="page ctx">
       <h2>{chrome.i18n.getMessage('optCtx')}</h2>
-      <CtxOptionsDirs configStore={configStore as unknown as ConfigStore} handleChange={handleChange} />
+      <CtxOptionsDirs
+        configStore={configStore as unknown as ConfigStore}
+        handleChange={handleChange}
+      />
     </div>
   );
 });

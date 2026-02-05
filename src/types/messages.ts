@@ -94,9 +94,7 @@ export interface GetFileListMessage {
 }
 
 // Speed limit settings
-type SpeedLimitEnabledAction =
-  | 'setDownloadSpeedLimitEnabled'
-  | 'setUploadSpeedLimitEnabled';
+type SpeedLimitEnabledAction = 'setDownloadSpeedLimitEnabled' | 'setUploadSpeedLimitEnabled';
 
 export interface SpeedLimitEnabledMessage {
   action: SpeedLimitEnabledAction;

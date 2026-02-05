@@ -1,7 +1,7 @@
-import React, { useContext, useState, useCallback, useRef } from "react";
-import { observer } from "mobx-react";
-import { useLocation } from "react-router-dom";
-import RootStoreCtx from "../../tools/rootStoreCtx";
+import React, { useContext, useState, useCallback, useRef } from 'react';
+import { observer } from 'mobx-react';
+import { useLocation } from 'react-router-dom';
+import RootStoreCtx from '../../tools/rootStoreCtx';
 
 interface ConfigStore {
   login: string;
@@ -48,43 +48,53 @@ const ClientOptions = observer(() => {
   const [clientStatus, setClientStatus] = useState<ClientStatus>(null);
   const [clientStatusText, setClientStatusText] = useState('');
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(async (e) => {
-    e.preventDefault();
-    const form = e.currentTarget as ClientFormElement;
-    const login = form.elements.login.value;
-    const password = form.elements.password.value;
-    const hostname = form.elements.hostname.value.trim();
-    const port = parseInt(form.elements.port.value, 10);
-    const ssl = form.elements.ssl.checked;
-    const pathname = form.elements.pathname.value.trim();
-    const webPathname = form.elements.webPathname.value.trim();
-    const authenticationRequired = form.elements.authenticationRequired.checked;
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget as ClientFormElement;
+      const login = form.elements.login.value;
+      const password = form.elements.password.value;
+      const hostname = form.elements.hostname.value.trim();
+      const port = parseInt(form.elements.port.value, 10);
+      const ssl = form.elements.ssl.checked;
+      const pathname = form.elements.pathname.value.trim();
+      const webPathname = form.elements.webPathname.value.trim();
+      const authenticationRequired = form.elements.authenticationRequired.checked;
 
-    setClientStatus('pending');
-    try {
-      if (!Number.isFinite(port)) {
-        throw new Error(chrome.i18n.getMessage('portIncorrect'));
-      }
-      await configStore.setOptions({
-        login, password, hostname, port, ssl, pathname, webPathname, authenticationRequired
-      });
-      if (!refPage.current) return;
-      await rootStore.client.updateSettings();
-      if (!refPage.current) return;
-      setClientStatus('done');
+      setClientStatus('pending');
+      try {
+        if (!Number.isFinite(port)) {
+          throw new Error(chrome.i18n.getMessage('portIncorrect'));
+        }
+        await configStore.setOptions({
+          login,
+          password,
+          hostname,
+          port,
+          ssl,
+          pathname,
+          webPathname,
+          authenticationRequired,
+        });
+        if (!refPage.current) return;
+        await rootStore.client.updateSettings();
+        if (!refPage.current) return;
+        setClientStatus('done');
 
-      if (location.hash === '#redirect') {
-        window.location.href = '/index.html';
-      } else if (location.hash === '#redirectPopup') {
-        window.location.href = '/index.html#popup';
+        if (location.hash === '#redirect') {
+          window.location.href = '/index.html';
+        } else if (location.hash === '#redirectPopup') {
+          window.location.href = '/index.html#popup';
+        }
+      } catch (err) {
+        if (!refPage.current) return;
+        setClientStatus('error');
+        const error = err as Error;
+        setClientStatusText(`${error.name}: ${error.message}`);
       }
-    } catch (err) {
-      if (!refPage.current) return;
-      setClientStatus('error');
-      const error = err as Error;
-      setClientStatusText(`${error.name}: ${error.message}`);
-    }
-  }, [rootStore, configStore, location]);
+    },
+    [rootStore, configStore, location]
+  );
 
   let status: React.ReactNode = null;
   if (clientStatus) {
@@ -130,7 +140,13 @@ const ClientOptions = observer(() => {
         </label>
         <label>
           <span>{chrome.i18n.getMessage('PRS_COL_IP')}</span>
-          <input name="hostname" type="text" defaultValue={configStore.hostname} placeholder="127.0.0.1" required />
+          <input
+            name="hostname"
+            type="text"
+            defaultValue={configStore.hostname}
+            placeholder="127.0.0.1"
+            required
+          />
         </label>
         <label>
           <span>{chrome.i18n.getMessage('PRS_COL_PORT')}</span>
@@ -140,7 +156,11 @@ const ClientOptions = observer(() => {
         <label>
           <span>{chrome.i18n.getMessage('requireAuthentication')}</span>
           <span className="toggle-switch">
-            <input type="checkbox" name="authenticationRequired" defaultChecked={configStore.authenticationRequired} />
+            <input
+              type="checkbox"
+              name="authenticationRequired"
+              defaultChecked={configStore.authenticationRequired}
+            />
             <span className="toggle-slider"></span>
           </span>
         </label>

@@ -1,9 +1,9 @@
-import React, { ReactNode } from "react";
-import * as ContextMenu from "@radix-ui/react-context-menu";
-import { observer } from "mobx-react";
-import speedToStr from "../tools/speedToStr";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import { SPEED_ARRAY_COUNT, DEFAULT_SPEED_LIMIT } from "../constants";
+import React, { ReactNode } from 'react';
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { observer } from 'mobx-react';
+import speedToStr from '../tools/speedToStr';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import { SPEED_ARRAY_COUNT, DEFAULT_SPEED_LIMIT } from '../constants';
 
 type SpeedType = 'download' | 'upload';
 
@@ -15,9 +15,7 @@ interface SpeedContextMenuProps {
 const SpeedContextMenu: React.FC<SpeedContextMenuProps> = observer(({ children, type }) => {
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger asChild>
-        {children}
-      </ContextMenu.Trigger>
+      <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
         <SpeedMenuContent type={type} />
       </ContextMenu.Portal>
@@ -142,7 +140,7 @@ function getSpeedArray(currentLimit: number, count: number, maybeZero: boolean):
   }
   const arr: number[] = new Array(count);
   for (let i = 0; i < count; i++) {
-    arr[i] = Math.round((i + 1) / middle * middleSpeed);
+    arr[i] = Math.round(((i + 1) / middle) * middleSpeed);
   }
   if (limit === 0) {
     arr.pop();

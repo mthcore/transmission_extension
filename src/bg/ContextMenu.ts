@@ -1,9 +1,9 @@
-import "whatwg-fetch";
-import getLogger from "../tools/getLogger";
-import downloadFileFromTab from "../tools/downloadFileFromTab";
-import isFirefox from "../tools/isFirefox";
-import downloadFileFromUrl from "../tools/downloadFileFromUrl";
-import type { IBgForContextMenu, Folder } from "../types";
+import 'whatwg-fetch';
+import getLogger from '../tools/getLogger';
+import downloadFileFromTab from '../tools/downloadFileFromTab';
+import isFirefox from '../tools/isFirefox';
+import downloadFileFromUrl from '../tools/downloadFileFromUrl';
+import type { IBgForContextMenu, Folder } from '../types';
 
 const path = require('path');
 const promiseLimit = require('promise-limit');
@@ -58,7 +58,12 @@ class ContextMenu {
     }
   }
 
-  async onSendLink(url: string, tabId: number, frameId: number | undefined, directory?: Folder): Promise<void> {
+  async onSendLink(
+    url: string,
+    tabId: number,
+    frameId: number | undefined,
+    directory?: Folder
+  ): Promise<void> {
     try {
       let data: { blob?: Blob; url?: string };
       try {
@@ -66,7 +71,10 @@ class ContextMenu {
       } catch (err: unknown) {
         const error = err as { code?: string };
         if (!['FILE_SIZE_EXCEEDED', 'LINK_IS_NOT_SUPPORTED'].includes(error.code ?? '')) {
-          logger.error('onSendLink: downloadFileFromTab error, fallback to downloadFileFromUrl', err);
+          logger.error(
+            'onSendLink: downloadFileFromTab error, fallback to downloadFileFromUrl',
+            err
+          );
           data = await downloadFileFromUrl(url);
         } else {
           throw err;
@@ -104,7 +112,10 @@ class ContextMenu {
     }
   }
 
-  handleClick = async (info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab): Promise<void> => {
+  handleClick = async (
+    info: chrome.contextMenus.OnClickData,
+    tab?: chrome.tabs.Tab
+  ): Promise<void> => {
     const { menuItemId, linkUrl, frameId } = info;
     let itemInfo: MenuItemInfo;
     try {
@@ -151,7 +162,7 @@ class ContextMenu {
       await contextMenusCreate({
         id: menuId,
         title: chrome.i18n.getMessage('addInTorrentClient'),
-        contexts: ['link']
+        contexts: ['link'],
       });
       await this.createFolderMenu(menuId);
     });
@@ -160,27 +171,31 @@ class ContextMenu {
   async createFolderMenu(parentId: string): Promise<void> {
     const folders = this.bgStore.config.folders;
     if (this.bgStore.config.treeViewContextMenu) {
-      await Promise.all(transformFoldersToTree(folders).map((menuItem) => {
-        let name = menuItem.name;
-        if (name === './') {
-          name = chrome.i18n.getMessage('currentDirectory');
-        }
-        return contextMenusCreate({
-          id: menuItem.id,
-          parentId: menuItem.parentId || parentId,
-          title: name,
-          contexts: ['link']
-        });
-      }));
+      await Promise.all(
+        transformFoldersToTree(folders).map((menuItem) => {
+          let name = menuItem.name;
+          if (name === './') {
+            name = chrome.i18n.getMessage('currentDirectory');
+          }
+          return contextMenusCreate({
+            id: menuItem.id,
+            parentId: menuItem.parentId || parentId,
+            title: name,
+            contexts: ['link'],
+          });
+        })
+      );
     } else {
-      await Promise.all(folders.map((folder, index) => {
-        return contextMenusCreate({
-          id: JSON.stringify({ type: 'folder', index }),
-          parentId: parentId,
-          title: folder.name || folder.path,
-          contexts: ['link']
-        });
-      }));
+      await Promise.all(
+        folders.map((folder, index) => {
+          return contextMenusCreate({
+            id: JSON.stringify({ type: 'folder', index }),
+            parentId: parentId,
+            title: folder.name || folder.path,
+            contexts: ['link'],
+          });
+        })
+      );
     }
 
     if (folders.length) {
@@ -189,7 +204,7 @@ class ContextMenu {
           id: JSON.stringify({ type: 'action', name: 'default', source: 'folder' }),
           parentId: parentId,
           title: chrome.i18n.getMessage('defaultPath'),
-          contexts: ['link']
+          contexts: ['link'],
         });
       }
 
@@ -197,7 +212,7 @@ class ContextMenu {
         id: JSON.stringify({ type: 'action', name: 'createFolder' }),
         parentId: parentId,
         title: chrome.i18n.getMessage('add') + '...',
-        contexts: ['link']
+        contexts: ['link'],
       });
     }
   }
@@ -244,7 +259,10 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
 
     let parentThree: Record<string, unknown> = tree;
     parts.forEach((part, index) => {
-      const lowPart = parts.slice(0, index + 1).join('/').toLowerCase();
+      const lowPart = parts
+        .slice(0, index + 1)
+        .join('/')
+        .toLowerCase();
       let caseKey = lowKeyMap[lowPart];
       if (!caseKey) {
         caseKey = lowKeyMap[lowPart] = part;
@@ -294,7 +312,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
         menus.push({
           name: name,
           id,
-          parentId
+          parentId,
         });
         makeMenuItems(branch, id);
       } else {
@@ -304,7 +322,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
         menus.push({
           name,
           id,
-          parentId
+          parentId,
         });
       }
     });

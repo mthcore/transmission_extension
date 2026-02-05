@@ -1,4 +1,4 @@
-import copyData from "./copyData";
+import copyData from './copyData';
 import type { ChromeMessage, ChromeResponse } from '../types';
 
 interface ExtendedError extends Error {

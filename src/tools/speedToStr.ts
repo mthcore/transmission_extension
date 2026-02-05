@@ -1,4 +1,4 @@
-import formatSpeed from "./formatSpeed";
+import formatSpeed from './formatSpeed';
 
 function speedToStr(speed: number): string {
   if (!Number.isFinite(speed)) {

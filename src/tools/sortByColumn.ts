@@ -51,12 +51,10 @@ export function createColumnSorter<T extends Sortable>(
 }
 
 // Special handler for ETA column (-1 means infinite)
-export const etaHandler: SpecialHandler = (value) =>
-  value === -1 ? Infinity : value;
+export const etaHandler: SpecialHandler = (value) => (value === -1 ? Infinity : value);
 
 // Special handler for date columns (0/null/undefined means infinite)
-export const dateHandler: SpecialHandler = (value) =>
-  !value ? Infinity : value;
+export const dateHandler: SpecialHandler = (value) => (!value ? Infinity : value);
 
 // Pre-configured sorter for torrents
 export const torrentColumnMap: ColumnMap = {

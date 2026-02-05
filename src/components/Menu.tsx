@@ -1,11 +1,19 @@
-import React, { useContext, useCallback, useState, useRef, useEffect, DragEvent, ChangeEvent } from "react";
-import { observer } from "mobx-react";
-import ComponentLoader from "./ComponentLoader";
-import showError from "../tools/showError";
-import VisiblePage from "./VisiblePage";
-import RootStoreCtx from "../tools/rootStoreCtx";
-import SearchBox from "./SearchBox";
-import LabelSelect from "./LabelSelect";
+import React, {
+  useContext,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+  DragEvent,
+  ChangeEvent,
+} from 'react';
+import { observer } from 'mobx-react';
+import ComponentLoader from './ComponentLoader';
+import showError from '../tools/showError';
+import VisiblePage from './VisiblePage';
+import RootStoreCtx from '../tools/rootStoreCtx';
+import SearchBox from './SearchBox';
+import LabelSelect from './LabelSelect';
 
 const Menu: React.FC = observer(() => {
   const rootStore = useContext(RootStoreCtx);
@@ -17,16 +25,20 @@ const Menu: React.FC = observer(() => {
   const config = rootStore?.config;
   const isRefreshing = rootStore?.isRefreshing ?? false;
 
-  const onPutFiles = useCallback((files: FileList) => {
-    if (!files.length || !rootStore) return;
+  const onPutFiles = useCallback(
+    (files: FileList) => {
+      if (!files.length || !rootStore) return;
 
-    const dialog = rootStore.createDialog({
-      type: 'putFiles'
-    });
+      const dialog = rootStore.createDialog({
+        type: 'putFiles',
+      });
 
-    (dialog as unknown as { files: File[]; setReady: (ready: boolean) => void }).files = Array.from(files);
-    (dialog as unknown as { setReady: (ready: boolean) => void }).setReady(true);
-  }, [rootStore]);
+      (dialog as unknown as { files: File[]; setReady: (ready: boolean) => void }).files =
+        Array.from(files);
+      (dialog as unknown as { setReady: (ready: boolean) => void }).setReady(true);
+    },
+    [rootStore]
+  );
 
   const handleDropOver = useCallback((e: DragEvent<HTMLBodyElement> | globalThis.DragEvent) => {
     if (e.dataTransfer?.types.length === 2) return;
@@ -44,13 +56,16 @@ const Menu: React.FC = observer(() => {
     }, 300);
   }, []);
 
-  const handleDrop = useCallback((e: DragEvent<HTMLBodyElement> | globalThis.DragEvent) => {
-    e.preventDefault();
-    setIsDropped(true);
-    if (e.dataTransfer?.files) {
-      onPutFiles(e.dataTransfer.files);
-    }
-  }, [onPutFiles]);
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLBodyElement> | globalThis.DragEvent) => {
+      e.preventDefault();
+      setIsDropped(true);
+      if (e.dataTransfer?.files) {
+        onPutFiles(e.dataTransfer.files);
+      }
+    },
+    [onPutFiles]
+  );
 
   useEffect(() => {
     const dropOverHandler = (e: globalThis.DragEvent) => handleDropOver(e);
@@ -78,7 +93,7 @@ const Menu: React.FC = observer(() => {
         }),
         client?.updateSettings().catch((err) => {
           showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to update settings', err);
-        })
+        }),
       ]);
     } finally {
       rootStore.setRefreshing(false);
@@ -91,7 +106,7 @@ const Menu: React.FC = observer(() => {
 
   const handleAddUrl = useCallback(() => {
     rootStore?.createDialog({
-      type: 'putUrl'
+      type: 'putUrl',
     });
   }, [rootStore]);
 
@@ -115,12 +130,15 @@ const Menu: React.FC = observer(() => {
     }
   }, [client]);
 
-  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (refFileInput.current?.files) {
-      onPutFiles(refFileInput.current.files);
-    }
-    e.currentTarget.value = '';
-  }, [onPutFiles]);
+  const handleFileChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (refFileInput.current?.files) {
+        onPutFiles(refFileInput.current.files);
+      }
+      e.currentTarget.value = '';
+    },
+    [onPutFiles]
+  );
 
   if (!rootStore || !config) return null;
 
@@ -130,16 +148,14 @@ const Menu: React.FC = observer(() => {
     if (isDropped) {
       classList.push('dropped');
     }
-    dropLayer = (
-      <div className={classList.join(' ')}/>
-    );
+    dropLayer = <div className={classList.join(' ')} />;
   }
 
   let graph: React.ReactNode = null;
   if (config.showSpeedGraph && client) {
     graph = (
       <VisiblePage>
-        <ComponentLoader load-page={'graph'}/>
+        <ComponentLoader load-page={'graph'} />
       </VisiblePage>
     );
   }
@@ -155,44 +171,84 @@ const Menu: React.FC = observer(() => {
     <>
       <ul className="menu">
         <li>
-          <button onClick={handleRefresh} title={chrome.i18n.getMessage('refresh')}
-             className="btn refresh"
-             aria-label={chrome.i18n.getMessage('refresh')} type="button" disabled={isRefreshing}/>
+          <button
+            onClick={handleRefresh}
+            title={chrome.i18n.getMessage('refresh')}
+            className="btn refresh"
+            aria-label={chrome.i18n.getMessage('refresh')}
+            type="button"
+            disabled={isRefreshing}
+          />
         </li>
         <li>
-          <a href={config.webUiUrl} target="_blank" rel="noopener noreferrer" title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
-             aria-label={chrome.i18n.getMessage('ST_CAPT_WEBUI')} className="btn wui"/>
+          <a
+            href={config.webUiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
+            aria-label={chrome.i18n.getMessage('ST_CAPT_WEBUI')}
+            className="btn wui"
+          />
         </li>
-        <li className="separate"/>
+        <li className="separate" />
         <li>
-          <button onClick={handleAddFile} title={chrome.i18n.getMessage('Open_file')} className="btn add_file"
-             aria-label={chrome.i18n.getMessage('Open_file')} type="button"/>
-          <input ref={refFileInput} onChange={handleFileChange} type="file"
-                 accept="application/x-bittorrent" multiple style={{ display: 'none' }}/>
+          <button
+            onClick={handleAddFile}
+            title={chrome.i18n.getMessage('Open_file')}
+            className="btn add_file"
+            aria-label={chrome.i18n.getMessage('Open_file')}
+            type="button"
+          />
+          <input
+            ref={refFileInput}
+            onChange={handleFileChange}
+            type="file"
+            accept="application/x-bittorrent"
+            multiple
+            style={{ display: 'none' }}
+          />
         </li>
         <li>
-          <button onClick={handleAddUrl} title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
-             aria-label={chrome.i18n.getMessage('MM_FILE_ADD_URL')} className="btn add_magnet" type="button"/>
+          <button
+            onClick={handleAddUrl}
+            title={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
+            aria-label={chrome.i18n.getMessage('MM_FILE_ADD_URL')}
+            className="btn add_magnet"
+            type="button"
+          />
         </li>
-        <li className="separate"/>
+        <li className="separate" />
         <li>
-          <button onClick={handleToggleAltSpeed} title={chrome.i18n.getMessage('altSpeedEnable')}
-             aria-label={chrome.i18n.getMessage('altSpeedEnable')} className={altSpeedClassList.join(' ')} type="button"/>
+          <button
+            onClick={handleToggleAltSpeed}
+            title={chrome.i18n.getMessage('altSpeedEnable')}
+            aria-label={chrome.i18n.getMessage('altSpeedEnable')}
+            className={altSpeedClassList.join(' ')}
+            type="button"
+          />
         </li>
-        <li className="separate"/>
+        <li className="separate" />
         <li>
-          <button onClick={handleStartAll} title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
-             aria-label={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')} className="btn start_all" type="button"/>
+          <button
+            onClick={handleStartAll}
+            title={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
+            aria-label={chrome.i18n.getMessage('STM_TORRENTS_RESUMEALL')}
+            className="btn start_all"
+            type="button"
+          />
         </li>
         <li>
-          <button onClick={handleStopAll} title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
-             aria-label={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')} className="btn pause_all" type="button"/>
+          <button
+            onClick={handleStopAll}
+            title={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
+            aria-label={chrome.i18n.getMessage('STM_TORRENTS_PAUSEALL')}
+            className="btn pause_all"
+            type="button"
+          />
         </li>
-        <li className="graph">
-          {graph}
-        </li>
-        <SearchBox/>
-        <LabelSelect/>
+        <li className="graph">{graph}</li>
+        <SearchBox />
+        <LabelSelect />
       </ul>
 
       {dropLayer}

@@ -3,11 +3,14 @@ import type { ColumnConfig } from '../types';
 function mergeColumns(columns: ColumnConfig[], defColumns: ColumnConfig[]): ColumnConfig[] {
   const defIdIndex: Record<string, number> = {};
 
-  const defIdColumn = defColumns.reduce((result, item, index) => {
-    defIdIndex[item.column] = index;
-    result[item.column] = item;
-    return result;
-  }, {} as Record<string, ColumnConfig>);
+  const defIdColumn = defColumns.reduce(
+    (result, item, index) => {
+      defIdIndex[item.column] = index;
+      result[item.column] = item;
+      return result;
+    },
+    {} as Record<string, ColumnConfig>
+  );
 
   const removedIds = Object.keys(defIdColumn);
   const unknownColumns: ColumnConfig[] = [];

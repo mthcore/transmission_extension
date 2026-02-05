@@ -1,16 +1,19 @@
-import React, { useCallback, useContext } from "react";
-import { observer } from "mobx-react";
-import Select, { Option } from "rc-select";
-import RootStoreCtx from "../tools/rootStoreCtx";
+import React, { useCallback, useContext } from 'react';
+import { observer } from 'mobx-react';
+import Select, { Option } from 'rc-select';
+import RootStoreCtx from '../tools/rootStoreCtx';
 
 const LabelSelect: React.FC = observer(() => {
   const rootStore = useContext(RootStoreCtx);
   const config = rootStore?.config;
 
-  const handleChange = useCallback((value: string) => {
-    const selectedLabel = JSON.parse(value) as { label: string; custom: boolean };
-    config?.setSelectedLabel(selectedLabel.label, selectedLabel.custom);
-  }, [config]);
+  const handleChange = useCallback(
+    (value: string) => {
+      const selectedLabel = JSON.parse(value) as { label: string; custom: boolean };
+      config?.setSelectedLabel(selectedLabel.label, selectedLabel.custom);
+    },
+    [config]
+  );
 
   if (!rootStore || !config) return null;
 
@@ -35,9 +38,7 @@ const LabelSelect: React.FC = observer(() => {
     let image: React.ReactNode = null;
     if (isCustom) {
       dataImage = label;
-      image = (
-        <span className="image" data-image={dataImage}/>
-      );
+      image = <span className="image" data-image={dataImage} />;
     }
 
     if (selectedLabel.id === id) {
@@ -54,11 +55,13 @@ const LabelSelect: React.FC = observer(() => {
 
   return (
     <li className="select">
-      <Select defaultValue={defaultValue || undefined} onChange={handleChange}
-              showSearch={false}
-              optionLabelProp="children"
-              virtual={false}
-              listHeight={500}
+      <Select
+        defaultValue={defaultValue || undefined}
+        onChange={handleChange}
+        showSearch={false}
+        optionLabelProp="children"
+        virtual={false}
+        listHeight={500}
       >
         {options}
       </Select>

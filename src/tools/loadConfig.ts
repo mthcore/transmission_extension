@@ -1,5 +1,5 @@
-import storageGet from "./storageGet";
-import storageSet from "./storageSet";
+import storageGet from './storageGet';
+import storageSet from './storageSet';
 
 // OldFolder is a tuple: [unknown, path: string, label: string]
 type OldFolder = [unknown, string, string];
@@ -37,7 +37,8 @@ const oldConfigMap: Record<string, string> = {
   popupUpdateInterval: 'uiUpdateInterval',
   hideSeedStatusItem: 'hideSeedingTorrents',
   hideFinishStatusItem: 'hideFinishedTorrents',
-  selectDownloadCategoryOnAddItemFromContextMenu: 'selectDownloadCategoryAfterPutTorrentFromContextMenu',
+  selectDownloadCategoryOnAddItemFromContextMenu:
+    'selectDownloadCategoryAfterPutTorrentFromContextMenu',
   showDefaultFolderContextMenuItem: 'putDefaultPathInContextMenu',
   folderList: 'folders',
   torrentListColumnList: 'torrentColumns',
@@ -47,31 +48,35 @@ const oldConfigMap: Record<string, string> = {
 const oldConfigDefaults = Object.keys(oldConfigMap);
 
 const loadConfig = (keys: string | string[] | null): Promise<Config> => {
-  return storageGet<Config>(keys).then((config) => {
-    if (config.configVersion !== 2) {
-      return storageGet<Record<string, unknown>>(oldConfigDefaults).then((oldConfig) => {
-        return migrateConfig(oldConfig, config);
-      }).then((config) => {
-        config.configVersion = 2;
-        return storageSet(config as Record<string, unknown>).then(() => config);
+  return storageGet<Config>(keys)
+    .then((config) => {
+      if (config.configVersion !== 2) {
+        return storageGet<Record<string, unknown>>(oldConfigDefaults)
+          .then((oldConfig) => {
+            return migrateConfig(oldConfig, config);
+          })
+          .then((config) => {
+            config.configVersion = 2;
+            return storageSet(config as Record<string, unknown>).then(() => config);
+          });
+      }
+      return config;
+    })
+    .then((config) => {
+      if (config.selectedLabel) {
+        if (typeof config.selectedLabel.custom === 'number') {
+          config.selectedLabel.custom = !!config.selectedLabel.custom;
+        }
+      }
+
+      (['showSpeedGraph', 'treeViewContextMenu', 'showFreeSpace'] as const).forEach((key) => {
+        if (typeof config[key] === 'number') {
+          (config as Record<string, unknown>)[key] = !!config[key];
+        }
       });
-    }
-    return config;
-  }).then((config) => {
-    if (config.selectedLabel) {
-      if (typeof config.selectedLabel.custom === "number") {
-        config.selectedLabel.custom = !!config.selectedLabel.custom;
-      }
-    }
 
-    (['showSpeedGraph', 'treeViewContextMenu', 'showFreeSpace'] as const).forEach((key) => {
-      if (typeof config[key] === 'number') {
-        (config as Record<string, unknown>)[key] = !!config[key];
-      }
+      return config;
     });
-
-    return config;
-  });
 };
 
 function migrateConfig(oldConfig: Record<string, unknown>, config: Config): Config {
@@ -109,7 +114,7 @@ function migrateConfig(oldConfig: Record<string, unknown>, config: Config): Conf
     return (value as OldFolder[]).map(([, path, label]) => {
       return {
         path,
-        name: label || ''
+        name: label || '',
       };
     });
   }
@@ -118,7 +123,7 @@ function migrateConfig(oldConfig: Record<string, unknown>, config: Config): Conf
     const v = value as OldSelectedLabel;
     return {
       label: v.label,
-      custom: !!v.custom
+      custom: !!v.custom,
     };
   }
 

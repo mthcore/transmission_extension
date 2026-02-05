@@ -1,7 +1,7 @@
-import React, { MouseEvent } from "react";
-import { observer } from "mobx-react";
-import Dialog from "./Dialog";
-import { useDialogClose } from "../hooks/useDialogClose";
+import React, { MouseEvent } from 'react';
+import { observer } from 'mobx-react';
+import Dialog from './Dialog';
+import { useDialogClose } from '../hooks/useDialogClose';
 
 interface Torrent {
   name: string;
@@ -42,9 +42,12 @@ const TorrentDetailsDialog: React.FC<TorrentDetailsDialogProps> = observer(({ di
     return null;
   }
 
-  const ratio = torrent.downloaded > 0
-    ? (torrent.uploaded / torrent.downloaded).toFixed(3)
-    : torrent.uploaded > 0 ? '∞' : '0.000';
+  const ratio =
+    torrent.downloaded > 0
+      ? (torrent.uploaded / torrent.downloaded).toFixed(3)
+      : torrent.uploaded > 0
+        ? '∞'
+        : '0.000';
 
   return (
     <Dialog onClose={handleClose} className="torrent-details-dialog">
@@ -81,12 +84,16 @@ const TorrentDetailsDialog: React.FC<TorrentDetailsDialogProps> = observer(({ di
 
           <div className="nf-subItem">
             <label>{chrome.i18n.getMessage('OV_COL_SEEDS')}</label>
-            <span>{torrent.activeSeeds} / {torrent.seeds}</span>
+            <span>
+              {torrent.activeSeeds} / {torrent.seeds}
+            </span>
           </div>
 
           <div className="nf-subItem">
             <label>{chrome.i18n.getMessage('OV_COL_PEERS')}</label>
-            <span>{torrent.activePeers} / {torrent.peers}</span>
+            <span>
+              {torrent.activePeers} / {torrent.peers}
+            </span>
           </div>
 
           <div className="nf-subItem">
@@ -135,7 +142,11 @@ const TorrentDetailsDialog: React.FC<TorrentDetailsDialogProps> = observer(({ di
         </div>
 
         <div className="nf-subItem">
-          <input onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void} type="button" value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}/>
+          <input
+            onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+            type="button"
+            value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}
+          />
         </div>
       </div>
     </Dialog>

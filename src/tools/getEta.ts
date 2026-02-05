@@ -7,7 +7,7 @@ const getEta = (eta: number): string => {
     const week = Math.floor(day / 7);
     const hour = Math.floor((eta - day * 60 * 60 * 24) / 60 / 60);
     const minutes = Math.floor((eta - day * 60 * 60 * 24 - hour * 60 * 60) / 60);
-    const seconds = Math.floor((eta - day * 60 * 60 * 24 - hour * 60 * 60 - minutes * 60));
+    const seconds = Math.floor(eta - day * 60 * 60 * 24 - hour * 60 * 60 - minutes * 60);
     day = Math.floor(eta / 60 / 60 / 24 - 7 * week);
     if (week > 10) {
       // pass
