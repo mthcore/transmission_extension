@@ -155,7 +155,7 @@ const ConfigStore = types
         by: types.string,
         direction: types.optional(types.number, 1),
       }),
-      { by: 'done' }
+      { by: 'added', direction: -1 }
     ),
 
     filesSort: types.optional(
