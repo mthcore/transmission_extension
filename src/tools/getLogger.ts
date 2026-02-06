@@ -104,6 +104,21 @@ function selectColor(namespace: string): string {
   return colors[Math.abs(hash) % colors.length];
 }
 
+/**
+ * Serializes arguments to ensure error objects are logged correctly
+ */
+function serializeArgs(...args: unknown[]): unknown[] {
+  return args.map((arg) => {
+    if (arg instanceof Error) {
+      return `${arg.name}: ${arg.message}`;
+    }
+    if (arg && typeof arg === 'object' && 'message' in arg) {
+      return (arg as { message?: string }).message || String(arg);
+    }
+    return arg;
+  });
+}
+
 const getLogger = (name: string): Logger => {
   let fn: Logger;
   if (typeof BUILD_ENV !== 'undefined' && BUILD_ENV.FLAG_ENABLE_LOGGER) {
@@ -113,12 +128,12 @@ const getLogger = (name: string): Logger => {
     } else {
       colorArgs.push(name);
     }
-    fn = console.log.bind(console, ...colorArgs) as Logger;
+    fn = ((...args: unknown[]) => console.log(...colorArgs, ...serializeArgs(...args))) as Logger;
     fn.log = fn;
-    fn.info = console.info.bind(console, ...colorArgs);
-    fn.warn = console.warn.bind(console, ...colorArgs);
-    fn.error = console.error.bind(console, ...colorArgs);
-    fn.debug = console.debug.bind(console, ...colorArgs);
+    fn.info = (...args: unknown[]) => console.info(...colorArgs, ...serializeArgs(...args));
+    fn.warn = (...args: unknown[]) => console.warn(...colorArgs, ...serializeArgs(...args));
+    fn.error = (...args: unknown[]) => console.error(...colorArgs, ...serializeArgs(...args));
+    fn.debug = (...args: unknown[]) => console.debug(...colorArgs, ...serializeArgs(...args));
   } else {
     const noop = () => {};
     fn = noop as Logger;

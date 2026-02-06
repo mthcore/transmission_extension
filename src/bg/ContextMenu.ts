@@ -69,11 +69,11 @@ class ContextMenu {
       try {
         data = await downloadFileFromTab(url, tabId, frameId);
       } catch (err: unknown) {
-        const error = err as { code?: string };
+        const error = err as { code?: string; message?: string };
         if (!['FILE_SIZE_EXCEEDED', 'LINK_IS_NOT_SUPPORTED'].includes(error.code ?? '')) {
           logger.error(
             'onSendLink: downloadFileFromTab error, fallback to downloadFileFromUrl',
-            err
+            error.message || String(err)
           );
           data = await downloadFileFromUrl(url);
         } else {
@@ -104,7 +104,9 @@ class ContextMenu {
           if (!this.bg.client) throw new Error('Client not initialized');
           await this.bg.client.updateTorrents();
         } catch (fallbackErr) {
-          logger.error('onSendLink error', fallbackErr);
+          const error = fallbackErr as { message?: string };
+          logger.error('onSendLink error:', error.message || String(fallbackErr));
+          this.bg.torrentErrorNotify(error.message || 'Failed to add torrent');
         }
         return;
       }
