@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useEffect, useRef, FormEvent, MouseEvent } from 'react';
+import React, { useContext, useCallback, useEffect, useRef, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import DirectorySelect from './DirectorySelect';
@@ -76,7 +76,7 @@ const PutFilesDialog: React.FC<PutFilesDialogProps> = observer(({ dialogStore })
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')} autoFocus />
             <input
-              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              onClick={handleClose}
               type="button"
               value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}
             />

@@ -1,5 +1,6 @@
 import getLogger from '../tools/getLogger';
 import type { IBgForDaemon } from '../types';
+import { DAEMON_MAX_RETRIES } from '../constants';
 
 const logger = getLogger('Daemon');
 
@@ -39,8 +40,8 @@ class Daemon {
         },
         (err) => {
           logger.error('updateTorrents error', err);
-          if (++this.retryCount > 3) {
-            logger.warn('Daemon stopped after 3 retries, cause', err);
+          if (++this.retryCount > DAEMON_MAX_RETRIES) {
+            logger.warn(`Daemon stopped after ${DAEMON_MAX_RETRIES} retries, cause`, err);
             this.stop();
           }
         }

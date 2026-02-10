@@ -1,4 +1,4 @@
-import React, { useCallback, FormEvent, MouseEvent } from 'react';
+import React, { useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import { useDialogClose } from '../hooks/useDialogClose';
@@ -40,7 +40,7 @@ const CopyMagnetUrlDialog: React.FC<CopyMagnetUrlDialogProps> = observer(({ dial
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('copy')} autoFocus />
             <input
-              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              onClick={handleClose}
               type="button"
               value={chrome.i18n.getMessage('DLG_BTN_CLOSE')}
             />

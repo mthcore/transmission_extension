@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, FormEvent, MouseEvent } from 'react';
+import React, { useContext, useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import DirectorySelect from './DirectorySelect';
@@ -68,7 +68,7 @@ const PutUrlDialog: React.FC<PutUrlDialogProps> = observer(({ dialogStore }) => 
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_OK')} />
             <input
-              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              onClick={handleClose}
               type="button"
               value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}
             />

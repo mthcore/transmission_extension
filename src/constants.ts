@@ -25,3 +25,14 @@ export const UI_UPDATE_INTERVAL = 1000; // 1 second
 
 // File size limits
 export const MAX_FETCH_SIZE = 1024 * 1024 * 10; // 10 MB
+
+// Messaging
+export const MESSAGE_TIMEOUT = 15_000; // 15 seconds
+export const FETCH_TIMEOUT = 30_000; // 30 seconds
+
+// Daemon
+export const DAEMON_MAX_RETRIES = 3;
+
+// TransmissionClient
+export const RECENTLY_ACTIVE_THRESHOLD = 60; // seconds
+export const FILE_PRIORITY_CHUNK_SIZE = 250;

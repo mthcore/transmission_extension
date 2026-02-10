@@ -10,7 +10,14 @@ const Graph: React.FC = observer(() => {
 
   useGraph(refChart as React.RefObject<HTMLElement>, speedRoll);
 
-  return <div ref={refChart} style={{ width: '100%', height: '30px' }} />;
+  return (
+    <div
+      ref={refChart}
+      style={{ width: '100%', height: '30px' }}
+      role="img"
+      aria-label={chrome.i18n.getMessage('speedGraph') || 'Speed graph'}
+    />
+  );
 });
 
 export default Graph;

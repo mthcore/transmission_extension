@@ -1,11 +1,11 @@
-import React, { useContext, useRef, useEffect, useCallback, ChangeEvent } from 'react';
+import React, { useContext, useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Column } from './TableHeadColumn';
 import TorrentListTableItem from './TorrentListTableItem';
 import TorrentColumnContextMenu from './TorrentColumnMenu';
+import TableHeadColumnRenderer from './TableHeadColumnRenderer';
 import RootStoreCtx from '../tools/rootStoreCtx';
 import { useScrollSync } from '../hooks/useScrollSync';
-import { useTableHeadColumn } from '../hooks/useTableHeadColumn';
 
 interface TorrentItem {
   id: number;
@@ -62,8 +62,13 @@ const TorrentListTable: React.FC = observer(() => {
 
   if (!rootStore) return null;
 
+  const columnVars: Record<string, string> = {};
+  rootStore.config.visibleTorrentColumns.forEach((col) => {
+    columnVars[`--col-${col.column}-w`] = `${col.width}px`;
+  });
+
   return (
-    <div onScroll={handleScroll} className="torrent-list-layer">
+    <div onScroll={handleScroll} className="torrent-list-layer" style={columnVars}>
       {rootStore.isRefreshing && (
         <div className="torrent-list-loading">
           <div className="spinner spinner--large" />
@@ -77,7 +82,7 @@ const TorrentListTable: React.FC = observer(() => {
           cellSpacing={0}
           cellPadding={0}
         >
-          <TorrentListTableHead withStyle={true} />
+          <TorrentListTableHead />
         </table>
       </TorrentColumnContextMenu>
       <table className="torrent-table-body" border={0} cellSpacing={0} cellPadding={0}>
@@ -88,12 +93,11 @@ const TorrentListTable: React.FC = observer(() => {
   );
 });
 
-interface TorrentListTableHeadProps {
-  withStyle?: boolean;
-}
+const TORRENT_FIXED_COLUMNS = ['checkbox', 'actions'];
 
-const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ withStyle }) => {
+const TorrentListTableHead: React.FC = observer(() => {
   const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+  const torrentListStore = rootStore?.torrentList;
 
   const handleSort = useCallback(
     (column: string, direction: number): void => {
@@ -113,7 +117,11 @@ const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ wi
     rootStore?.config.saveTorrentsColumns();
   }, [rootStore]);
 
-  if (!rootStore) return null;
+  const handleToggleSelectAll = useCallback((): void => {
+    torrentListStore?.toggleSelectAll();
+  }, [torrentListStore]);
+
+  if (!rootStore || !torrentListStore) return null;
 
   const torrentsSort = rootStore.config.torrentsSort;
   const torrentColumns = rootStore.config.visibleTorrentColumns;
@@ -122,7 +130,7 @@ const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ wi
     <thead>
       <tr>
         {torrentColumns.map((column) => (
-          <TorrentListTableHeadColumn
+          <TableHeadColumnRenderer
             key={column.column}
             column={column}
             isSorted={torrentsSort.by === column.column}
@@ -130,129 +138,14 @@ const TorrentListTableHead: React.FC<TorrentListTableHeadProps> = observer(({ wi
             onMoveColumn={handleMoveColumn}
             onSort={handleSort}
             onSaveColumns={handleSaveColumns}
-            withStyle={withStyle}
+            type="tr"
+            fixedColumns={TORRENT_FIXED_COLUMNS}
+            isSelectedAll={torrentListStore.isSelectedAll}
+            onToggleSelectAll={handleToggleSelectAll}
           />
         ))}
       </tr>
     </thead>
-  );
-});
-
-interface TorrentListTableHeadColumnProps {
-  column: Column;
-  isSorted: boolean;
-  sortDirection: number;
-  onMoveColumn: (from: string, to: string) => void;
-  onSort: (column: string, direction: number) => void;
-  onSaveColumns: () => void;
-  withStyle?: boolean;
-}
-
-const TorrentListTableHeadColumn: React.FC<TorrentListTableHeadColumnProps> = observer((props) => {
-  const { column, isSorted, sortDirection, onMoveColumn, onSort, onSaveColumns, withStyle } = props;
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
-  const torrentListStore = rootStore?.torrentList;
-
-  const {
-    refTh,
-    handleDragStart,
-    handleDragOver,
-    handleDrop,
-    handleResizeClick,
-    handleResizeMouseDown,
-    handleSort,
-  } = useTableHeadColumn({
-    type: 'tr',
-    column,
-    onMoveColumn,
-    onSaveColumns,
-    onSort,
-    isSorted,
-    sortDirection,
-  });
-
-  const handleSelectAll = useCallback(
-    (_e: ChangeEvent<HTMLInputElement>): void => {
-      torrentListStore?.toggleSelectAll();
-    },
-    [torrentListStore]
-  );
-
-  const classList = [column.column];
-  if (isSorted) {
-    if (sortDirection === 1) {
-      classList.push('sortDown');
-    } else {
-      classList.push('sortUp');
-    }
-  }
-
-  let body: React.ReactNode = null;
-  if (column.column === 'checkbox') {
-    body = (
-      <div>
-        <input
-          checked={torrentListStore?.isSelectedAll}
-          onChange={handleSelectAll}
-          type="checkbox"
-        />
-      </div>
-    );
-  } else if (column.column === 'actions') {
-    body = <div />;
-  } else {
-    body = (
-      <div>
-        {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
-      </div>
-    );
-  }
-
-  let style: React.ReactNode = null;
-  if (withStyle) {
-    const styleText =
-      `.torrent-list-layer th.${column.column}, .torrent-list-layer td.${column.column} {
-      min-width: ${column.width}px;
-      max-width: ${column.width}px;
-    }`
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .join('');
-    style = <style>{styleText}</style>;
-  }
-
-  let arrow: React.ReactNode = null;
-  if (column.order !== 0) {
-    arrow = <i className="arrow" />;
-  }
-
-  const onClick = column.order ? handleSort : undefined;
-  const isFixedColumn = column.column === 'checkbox' || column.column === 'actions';
-  const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
-
-  return (
-    <th
-      ref={refTh}
-      onClick={onClick}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      className={classList.join(' ')}
-      title={title}
-      draggable={true}
-    >
-      {body}
-      {!isFixedColumn && (
-        <div
-          className="resize-el"
-          draggable={false}
-          onClick={handleResizeClick}
-          onMouseDown={handleResizeMouseDown}
-        />
-      )}
-      {arrow}
-      {style}
-    </th>
   );
 });
 

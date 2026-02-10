@@ -10,9 +10,7 @@ interface TableHeadColumnRendererProps {
   onMoveColumn: (from: string, to: string) => void;
   onSort: (column: string, direction: number) => void;
   onSaveColumns: () => void;
-  withStyle?: boolean;
   type: 'tr' | 'fl';
-  styleLayerClass: string;
   fixedColumns: string[];
   isSelectedAll?: boolean;
   onToggleSelectAll?: () => void;
@@ -26,9 +24,7 @@ const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer
     onMoveColumn,
     onSort,
     onSaveColumns,
-    withStyle,
     type,
-    styleLayerClass,
     fixedColumns,
     isSelectedAll,
     onToggleSelectAll,
@@ -56,7 +52,7 @@ const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer
     (_e: ChangeEvent<HTMLInputElement>): void => {
       onToggleSelectAll?.();
     },
-    [onToggleSelectAll],
+    [onToggleSelectAll]
   );
 
   const classList = [column.column];
@@ -86,13 +82,6 @@ const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer
         {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
       </div>
     );
-  }
-
-  let style: React.ReactNode = null;
-  if (withStyle) {
-    const styleText =
-      `.${styleLayerClass} th.${column.column}, .${styleLayerClass} td.${column.column} { min-width: ${column.width}px; max-width: ${column.width}px; }`;
-    style = <style>{styleText}</style>;
   }
 
   let arrow: React.ReactNode = null;
@@ -134,7 +123,6 @@ const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer
         />
       )}
       {arrow}
-      {style}
     </th>
   );
 });

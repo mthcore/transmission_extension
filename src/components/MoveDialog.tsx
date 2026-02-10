@@ -4,7 +4,6 @@ import React, {
   useState,
   FormEvent,
   ChangeEvent,
-  MouseEvent,
 } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
@@ -99,7 +98,7 @@ const MoveDialog: React.FC<MoveDialogProps> = observer(({ dialogStore }) => {
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_APPLY')} />
             <input
-              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              onClick={handleClose}
               type="button"
               value={chrome.i18n.getMessage('DLG_BTN_CANCEL')}
             />

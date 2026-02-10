@@ -5,6 +5,10 @@
 @use "variables" as *;
 @use "mixins" as *;
 
+// Column widths via CSS custom properties (set on container via JS)
+$torrent-columns: checkbox, name, order, size, remaining, done, status, seeds, peers,
+  seeds_peers, downspd, upspd, eta, upped, downloaded, shared, added, completed, actions;
+
 .torrent-list-layer {
   position: relative;
   overflow-x: auto;
@@ -15,6 +19,14 @@
 
   table {
     width: max-content;
+  }
+
+  @each $col in $torrent-columns {
+    th.#{$col},
+    td.#{$col} {
+      min-width: var(--col-#{$col}-w);
+      max-width: var(--col-#{$col}-w);
+    }
   }
 }
 

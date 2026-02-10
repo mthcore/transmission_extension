@@ -288,13 +288,15 @@ class Bg {
 
   handleAlarm = (alarm: chrome.alarms.Alarm): void => {
     if (alarm.name !== ALARM_NAME) return;
-    this.whenReady().then(() => {
-      if (this.daemon?.isActive) {
-        this.daemon.handleFire();
-      }
-    }).catch((err) => {
-      logger.error('handleAlarm error', err);
-    });
+    this.whenReady()
+      .then(() => {
+        if (this.daemon?.isActive) {
+          this.daemon.handleFire();
+        }
+      })
+      .catch((err) => {
+        logger.error('handleAlarm error', err);
+      });
   };
 
   torrentAddedNotify(torrent: TorrentInfo): void {

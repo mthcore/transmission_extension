@@ -90,7 +90,7 @@ const FileName: React.FC<FileNameProps> = React.memo(({ fileStore, fileListStore
       const filter = fileStore.nameParts.slice(0, targetLevel).join('/');
       fileListStore.setFilter(filter);
     },
-    [fileStore, fileListStore],
+    [fileStore, fileListStore]
   );
 
   const parts: string[] = [];
@@ -114,7 +114,7 @@ const FileName: React.FC<FileNameProps> = React.memo(({ fileStore, fileListStore
   if (filterLevel > 0) {
     const name = '\u2190';
     links.unshift(
-      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel} name={name} />,
+      <FileNamePart key={name} onSetFilter={handleSetFilter} level={filterLevel} name={name} />
     );
   }
 

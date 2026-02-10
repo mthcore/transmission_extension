@@ -1,11 +1,10 @@
 import ErrorWithCode from './ErrorWithCode';
-
-const DEFAULT_TIMEOUT_MS = 30_000;
+import { FETCH_TIMEOUT } from '../constants';
 
 async function fetchWithTimeout(
   input: RequestInfo | URL,
   init?: RequestInit,
-  timeoutMs: number = DEFAULT_TIMEOUT_MS,
+  timeoutMs: number = FETCH_TIMEOUT
 ): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -17,10 +16,7 @@ async function fetchWithTimeout(
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') {
-      throw new ErrorWithCode(
-        `Request timed out after ${timeoutMs}ms`,
-        'FETCH_TIMEOUT',
-      );
+      throw new ErrorWithCode(`Request timed out after ${timeoutMs}ms`, 'FETCH_TIMEOUT');
     }
     throw err;
   } finally {

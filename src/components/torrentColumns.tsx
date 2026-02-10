@@ -93,7 +93,9 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
     let errorIcon: React.ReactNode = null;
     const errorMessage = torrent.errorMessage;
     if (errorMessage) {
-      errorIcon = <i className="error_icon" title={errorMessage} role="img" aria-label={errorMessage} />;
+      errorIcon = (
+        <i className="error_icon" title={errorMessage} role="img" aria-label={errorMessage} />
+      );
     }
     return (
       <td key="status" className="status">

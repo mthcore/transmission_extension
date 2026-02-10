@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, FormEvent, MouseEvent } from 'react';
+import React, { useContext, useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import RootStoreCtx from '../tools/rootStoreCtx';
@@ -72,7 +72,7 @@ const RemoveConfirmDialog: React.FC<RemoveConfirmDialogProps> = observer(({ dial
           <div className="nf-subItem">
             <input type="submit" value={chrome.i18n.getMessage('DLG_BTN_YES')} />
             <input
-              onClick={handleClose as unknown as (e: MouseEvent<HTMLInputElement>) => void}
+              onClick={handleClose}
               autoFocus
               type="button"
               value={chrome.i18n.getMessage('DLG_BTN_NO')}

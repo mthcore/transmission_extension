@@ -22,7 +22,11 @@
     "_releaseCh": "npm run type-check && npm run build && npm run _compress -- --BROWSER chrome",
     "_releaseFf": "npm run type-check && npm run build:firefox && npm run _compress -- --BROWSER firefox && npm run _compressSource -- --BROWSER firefox",
     "_releaseOp": "npm run type-check && npm run build:opera && npm run _compress -- --BROWSER opera && npm run _compressSource -- --BROWSER opera",
-    "release": "npm run _releaseCh && npm run _releaseFf && npm run _releaseOp"
+    "release": "npm run _releaseCh && npm run _releaseFf && npm run _releaseOp",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-context-menu": "^2.2.16",
@@ -76,6 +80,12 @@
     "url": "^0.11.4",
     "util": "^0.12.5",
     "webpack": "^5.105.0",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "vitest": "^3.1.1",
+    "jsdom": "^26.1.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.6.3"
   }
 }

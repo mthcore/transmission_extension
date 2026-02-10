@@ -1,8 +1,7 @@
 import copyData from './copyData';
 import ErrorWithCode from './ErrorWithCode';
 import type { ChromeMessage, ChromeResponse } from '../types';
-
-const MESSAGE_TIMEOUT = 15000;
+import { MESSAGE_TIMEOUT } from '../constants';
 
 const callApi = <T = unknown>(message: ChromeMessage): Promise<T> => {
   return new Promise<ChromeResponse<T>>((resolve, reject) => {

@@ -599,5 +599,14 @@
     },
     "clearSearch": {
         "message": "Clear search"
+    },
+    "errorRetry": {
+        "message": "Retry"
+    },
+    "errorDetails": {
+        "message": "Details"
+    },
+    "speedGraph": {
+        "message": "Speed graph"
     }
 }

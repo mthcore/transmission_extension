@@ -245,3 +245,53 @@ div.loading {
     }
   }
 }
+
+// Error boundary
+.error-boundary {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-color);
+
+  &__message {
+    margin-bottom: 12px;
+    font-size: $font-size-base;
+    color: $error-color;
+  }
+
+  &__details {
+    margin-bottom: 12px;
+    text-align: left;
+
+    summary {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: $font-size-sm;
+    }
+
+    pre {
+      margin-top: 8px;
+      padding: 8px;
+      background-color: var(--bg-color);
+      border-radius: $radius-sm;
+      font-size: $font-size-sm;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+
+  &__retry {
+    @include button-base;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: $radius;
+    cursor: pointer;
+    transition: background-color $transition-base;
+
+    &:hover {
+      background-color: var(--primary-hover);
+    }
+  }
+}

@@ -595,5 +595,14 @@
     },
     "clearSearch": {
         "message": "Effacer la recherche"
+    },
+    "errorRetry": {
+        "message": "Réessayer"
+    },
+    "errorDetails": {
+        "message": "Détails"
+    },
+    "speedGraph": {
+        "message": "Graphique de vitesse"
     }
 }

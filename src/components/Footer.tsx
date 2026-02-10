@@ -98,25 +98,27 @@ const Footer: React.FC = observer(() => {
   }
 
   return (
-    <div className="status-panel">
+    <div className="status-panel" role="contentinfo">
       {spaceWatcher}
       <span className="session-totals" title={chrome.i18n.getMessage('sessionTotals')}>
         <span className="total-dl">{downloadedStr}</span>
         <span className="total-up">{uploadedStr}</span>
       </span>
       <SpeedContextMenu type="download">
-        <span className="speed download">
+        <span className="speed download" aria-live="polite">
           {downloadSpeedStr}
           {downloadLimit}
         </span>
       </SpeedContextMenu>
       <SpeedContextMenu type="upload">
-        <span className="speed upload">
+        <span className="speed upload" aria-live="polite">
           {uploadSpeedStr}
           {uploadLimit}
         </span>
       </SpeedContextMenu>
-      <span className="status">{client.lastErrorMessage}</span>
+      <span className="status" role="status" aria-live="assertive">
+        {client.lastErrorMessage}
+      </span>
       {openInTab}
     </div>
   );

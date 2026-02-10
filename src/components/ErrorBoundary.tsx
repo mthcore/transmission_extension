@@ -21,8 +21,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error('ErrorBoundary caught an error:', error.message, error.stack, errorInfo.componentStack);
+    console.error(
+      'ErrorBoundary caught an error:',
+      error.message,
+      error.stack,
+      errorInfo.componentStack
+    );
   }
+
+  handleRetry = (): void => {
+    this.setState({ hasError: false, error: null });
+  };
 
   render(): ReactNode {
     if (this.state.hasError) {
@@ -30,8 +39,19 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         return this.props.fallback;
       }
       return (
-        <div className="error-boundary">
-          <p>{chrome.i18n.getMessage('OV_FL_ERROR') || 'An error occurred'}</p>
+        <div className="error-boundary" role="alert">
+          <p className="error-boundary__message">
+            {chrome.i18n.getMessage('OV_FL_ERROR') || 'An error occurred'}
+          </p>
+          {this.state.error && (
+            <details className="error-boundary__details">
+              <summary>{chrome.i18n.getMessage('errorDetails') || 'Details'}</summary>
+              <pre>{this.state.error.message}</pre>
+            </details>
+          )}
+          <button className="error-boundary__retry" onClick={this.handleRetry} type="button">
+            {chrome.i18n.getMessage('errorRetry') || 'Retry'}
+          </button>
         </div>
       );
     }
