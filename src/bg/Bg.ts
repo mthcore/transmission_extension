@@ -1,5 +1,5 @@
 import getLogger from '../tools/getLogger';
-import Daemon from './Daemon';
+import Daemon, { ALARM_NAME } from './Daemon';
 import ContextMenu from './ContextMenu';
 import BgStore, { IBgStore } from '../stores/BgStore';
 import { autorun } from 'mobx';
@@ -50,6 +50,8 @@ class Bg {
 
   init(): Promise<void> {
     chrome.runtime.onMessage.addListener(this.handleMessage);
+    // chrome.alarms listener must be registered synchronously at SW startup
+    chrome.alarms.onAlarm.addListener(this.handleAlarm);
     // Cast needed because MST types with 'maybe' are complex
     this.daemon = new Daemon(this as unknown as IBgForDaemon);
     this.contextMenu = new ContextMenu(this as unknown as IBgForContextMenu);
@@ -284,6 +286,17 @@ class Bg {
     }
   };
 
+  handleAlarm = (alarm: chrome.alarms.Alarm): void => {
+    if (alarm.name !== ALARM_NAME) return;
+    this.whenReady().then(() => {
+      if (this.daemon?.isActive) {
+        this.daemon.handleFire();
+      }
+    }).catch((err) => {
+      logger.error('handleAlarm error', err);
+    });
+  };
+
   torrentAddedNotify(torrent: TorrentInfo): void {
     const icon = notificationIcons.add;
     const statusText = chrome.i18n.getMessage('torrentAdded');
@@ -315,7 +328,10 @@ class Bg {
   }
 }
 
+let lastBadgeText: string | null = null;
 function setBadgeText(text: string): void {
+  if (text === lastBadgeText) return;
+  lastBadgeText = text;
   chrome.action.setBadgeText({ text: text });
 }
 
@@ -328,7 +344,10 @@ function showNotification(id: string, iconUrl: string, title = '', message = '')
   });
 }
 
+let lastBadgeColor: string | null = null;
 function setBadgeBackgroundColor(color: string): void {
+  if (color === lastBadgeColor) return;
+  lastBadgeColor = color;
   const colors = color.split(',').map((i) => parseFloat(i));
   if (colors.length === 4) {
     const alpha = colors.pop();

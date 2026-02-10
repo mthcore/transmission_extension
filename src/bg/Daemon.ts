@@ -3,11 +3,12 @@ import type { IBgForDaemon } from '../types';
 
 const logger = getLogger('Daemon');
 
+const ALARM_NAME = 'transmissionDaemon';
+
 class Daemon {
   bg: IBgForDaemon;
   isActive: boolean;
   retryCount: number;
-  intervalId: ReturnType<typeof setInterval> | null;
   inProgress: boolean;
 
   constructor(bg: IBgForDaemon) {
@@ -15,7 +16,6 @@ class Daemon {
 
     this.isActive = false;
     this.retryCount = 0;
-    this.intervalId = null;
     this.inProgress = false;
   }
 
@@ -26,10 +26,13 @@ class Daemon {
   handleFire(): void {
     logger.info('Fire');
     if (this.inProgress) return;
-    this.inProgress = true;
 
-    this.bg.client
-      ?.updateTorrents()
+    const client = this.bg.client;
+    if (!client) return;
+
+    this.inProgress = true;
+    client
+      .updateTorrents()
       .then(
         () => {
           this.retryCount = 0;
@@ -37,7 +40,7 @@ class Daemon {
         (err) => {
           logger.error('updateTorrents error', err);
           if (++this.retryCount > 3) {
-            logger.warn('Daemon stopped, cause', err);
+            logger.warn('Daemon stopped after 3 retries, cause', err);
             this.stop();
           }
         }
@@ -49,14 +52,21 @@ class Daemon {
 
   start(): void {
     logger.info('Start');
-    this.stop(true);
+    // chrome.alarms.create replaces any existing alarm with the same name,
+    // so no need to clear first (chrome.alarms.clear is async and would race)
+    this.isActive = true;
+    this.retryCount = 0;
 
-    if (this.bgStore.config.backgroundUpdateInterval >= 1000) {
-      this.isActive = true;
-      this.retryCount = 0;
-      this.intervalId = setInterval(() => {
-        this.handleFire();
-      }, this.bgStore.config.backgroundUpdateInterval);
+    const intervalMs = this.bgStore.config.backgroundUpdateInterval;
+    if (intervalMs >= 1000) {
+      // chrome.alarms survives service worker termination (MV3)
+      // Minimum period is 1 minute
+      const periodInMinutes = Math.max(1, intervalMs / 60000);
+      chrome.alarms.create(ALARM_NAME, {
+        delayInMinutes: periodInMinutes,
+        periodInMinutes,
+      });
+      logger.info('Alarm created, period:', periodInMinutes, 'min');
     }
   }
 
@@ -65,9 +75,7 @@ class Daemon {
       logger.info('Stop');
     }
     this.isActive = false;
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    chrome.alarms.clear(ALARM_NAME);
   }
 
   destroy(): void {
@@ -76,4 +84,5 @@ class Daemon {
   }
 }
 
+export { ALARM_NAME };
 export default Daemon;

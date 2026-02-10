@@ -2,7 +2,6 @@ import getLogger from '../tools/getLogger';
 import ErrorWithCode from '../tools/ErrorWithCode';
 import readBlobAsArrayBuffer from '../tools/readBlobAsArrayBuffer';
 import arrayBufferToBase64 from '../tools/arrayBufferToBase64';
-import arrayDifferent from '../tools/arrayDifferent';
 import splitByPart from '../tools/splitByPart';
 import downloadFileFromUrl from '../tools/downloadFileFromUrl';
 
@@ -23,6 +22,7 @@ interface BgStore {
   };
   client: {
     activeTorrentIds: number[];
+    torrentIds: number[];
     removeTorrentByIds: (ids: number[]) => void;
     syncChanges: (torrents: NormalizedTorrent[]) => void;
     sync: (torrents: NormalizedTorrent[]) => void;
@@ -106,6 +106,7 @@ class TransmissionClient {
   torrentsResponseTime: number;
   token: string | null;
   url: string;
+  private _notifiedIdsPromise: Promise<number[] | null>;
 
   constructor(bg: Bg) {
     this.bg = bg;
@@ -113,6 +114,13 @@ class TransmissionClient {
     this.torrentsResponseTime = 0;
     this.token = null;
     this.url = this.bgStore.config.url;
+
+    // Load notified completion IDs for detection across SW restarts.
+    // null = never initialized (first run); [] = initialized but empty.
+    this._notifiedIdsPromise = chrome.storage.local
+      .get('_notifiedIds')
+      .then((data) => (data._notifiedIds as number[] | undefined) ?? null);
+    chrome.storage.local.remove('_activeIds');
   }
 
   get bgStore(): BgStore {
@@ -131,7 +139,7 @@ class TransmissionClient {
       isRecently = true;
     }
 
-    return this.sendAction(
+    const requestPromise = this.sendAction(
       {
         method: 'torrent-get',
         arguments: {
@@ -162,41 +170,56 @@ class TransmissionClient {
         },
       },
       safeParser
-    ).then((response) => {
-      this.torrentsResponseTime = now;
-      const previousActiveTorrentIds = this.bgStore.client.activeTorrentIds;
+    );
 
-      if (isRecently) {
-        const { removed, torrents } = response.arguments as {
-          removed: number[];
-          torrents: Record<string, unknown>[];
-        };
+    // Load notified IDs in parallel with the HTTP request
+    return Promise.all([requestPromise, this._notifiedIdsPromise]).then(
+      ([response, previousNotifiedIds]) => {
+        this.torrentsResponseTime = now;
 
-        this.bgStore.client.removeTorrentByIds(removed);
+        if (isRecently) {
+          const { removed, torrents } = response.arguments as {
+            removed: number[];
+            torrents: Record<string, unknown>[];
+          };
 
-        this.bgStore.client.syncChanges(torrents.map(this.normalizeTorrent));
-      } else {
-        const { torrents } = response.arguments as { torrents: Record<string, unknown>[] };
+          this.bgStore.client.removeTorrentByIds(removed);
 
-        this.bgStore.client.sync(torrents.map(this.normalizeTorrent));
-      }
+          this.bgStore.client.syncChanges(torrents.map(this.normalizeTorrent));
+        } else {
+          const { torrents } = response.arguments as { torrents: Record<string, unknown>[] };
 
-      if (this.bgStore.config.showDownloadCompleteNotifications) {
-        const activeTorrentIds = this.bgStore.client.activeTorrentIds;
-        arrayDifferent(previousActiveTorrentIds, activeTorrentIds).forEach((torrentId) => {
-          // not active anymore
-          const torrent = this.bgStore.client.torrents.get(torrentId);
-          if (torrent) {
-            this.bg.torrentCompleteNotify(torrent);
+          this.bgStore.client.sync(torrents.map(this.normalizeTorrent));
+        }
+
+        // Completion detection via persisted notified set
+        const activeSet = new Set(this.bgStore.client.activeTorrentIds);
+        const completedIds = this.bgStore.client.torrentIds.filter((id) => !activeSet.has(id));
+
+        if (
+          this.bgStore.config.showDownloadCompleteNotifications &&
+          previousNotifiedIds !== null
+        ) {
+          const notifiedSet = new Set(previousNotifiedIds);
+          for (const id of completedIds) {
+            if (!notifiedSet.has(id)) {
+              const torrent = this.bgStore.client.torrents.get(id);
+              if (torrent) {
+                this.bg.torrentCompleteNotify(torrent);
+              }
+            }
           }
-        });
+        }
+
+        this._notifiedIdsPromise = Promise.resolve(completedIds);
+        chrome.storage.local.set({ _notifiedIds: completedIds });
+
+        const { downloadSpeed, uploadSpeed } = this.bgStore.client.currentSpeed;
+        this.bgStore.client.speedRoll.add(downloadSpeed, uploadSpeed);
+
+        return response;
       }
-
-      const { downloadSpeed, uploadSpeed } = this.bgStore.client.currentSpeed;
-      this.bgStore.client.speedRoll.add(downloadSpeed, uploadSpeed);
-
-      return response;
-    });
+    );
 
     function safeParser(text: string): TransmissionResponse {
       try {

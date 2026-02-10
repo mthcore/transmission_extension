@@ -1,0 +1,142 @@
+import React, { useCallback, ChangeEvent } from 'react';
+import { observer } from 'mobx-react';
+import { Column } from './TableHeadColumn';
+import { useTableHeadColumn } from '../hooks/useTableHeadColumn';
+
+interface TableHeadColumnRendererProps {
+  column: Column;
+  isSorted: boolean;
+  sortDirection: number;
+  onMoveColumn: (from: string, to: string) => void;
+  onSort: (column: string, direction: number) => void;
+  onSaveColumns: () => void;
+  withStyle?: boolean;
+  type: 'tr' | 'fl';
+  styleLayerClass: string;
+  fixedColumns: string[];
+  isSelectedAll?: boolean;
+  onToggleSelectAll?: () => void;
+}
+
+const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer((props) => {
+  const {
+    column,
+    isSorted,
+    sortDirection,
+    onMoveColumn,
+    onSort,
+    onSaveColumns,
+    withStyle,
+    type,
+    styleLayerClass,
+    fixedColumns,
+    isSelectedAll,
+    onToggleSelectAll,
+  } = props;
+
+  const {
+    refTh,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleResizeClick,
+    handleResizeMouseDown,
+    handleSort,
+  } = useTableHeadColumn({
+    type,
+    column,
+    onMoveColumn,
+    onSaveColumns,
+    onSort,
+    isSorted,
+    sortDirection,
+  });
+
+  const handleSelectAll = useCallback(
+    (_e: ChangeEvent<HTMLInputElement>): void => {
+      onToggleSelectAll?.();
+    },
+    [onToggleSelectAll],
+  );
+
+  const classList = [column.column];
+  if (isSorted) {
+    classList.push(sortDirection === 1 ? 'sortDown' : 'sortUp');
+  }
+
+  const isFixedColumn = fixedColumns.includes(column.column);
+
+  let body: React.ReactNode = null;
+  if (column.column === 'checkbox') {
+    body = (
+      <div>
+        <input
+          checked={isSelectedAll}
+          onChange={handleSelectAll}
+          type="checkbox"
+          aria-label={chrome.i18n.getMessage('selectAll')}
+        />
+      </div>
+    );
+  } else if (isFixedColumn) {
+    body = <div />;
+  } else {
+    body = (
+      <div>
+        {chrome.i18n.getMessage(column.lang + '_SHORT') || chrome.i18n.getMessage(column.lang)}
+      </div>
+    );
+  }
+
+  let style: React.ReactNode = null;
+  if (withStyle) {
+    const styleText =
+      `.${styleLayerClass} th.${column.column}, .${styleLayerClass} td.${column.column} { min-width: ${column.width}px; max-width: ${column.width}px; }`;
+    style = <style>{styleText}</style>;
+  }
+
+  let arrow: React.ReactNode = null;
+  if (column.order !== 0) {
+    arrow = <i className="arrow" />;
+  }
+
+  const onClick = column.order ? handleSort : undefined;
+  const title = isFixedColumn ? '' : chrome.i18n.getMessage(column.lang);
+
+  let ariaSort: 'ascending' | 'descending' | 'none' | undefined;
+  if (column.order !== 0) {
+    ariaSort = isSorted ? (sortDirection === 1 ? 'descending' : 'ascending') : 'none';
+  }
+
+  return (
+    <th
+      ref={refTh}
+      scope="col"
+      onClick={onClick}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className={classList.join(' ')}
+      title={title}
+      draggable={true}
+      aria-sort={ariaSort}
+      aria-label={isFixedColumn ? column.column : undefined}
+    >
+      {body}
+      {!isFixedColumn && (
+        <div
+          className="resize-el"
+          role="separator"
+          aria-orientation="vertical"
+          draggable={false}
+          onClick={handleResizeClick}
+          onMouseDown={handleResizeMouseDown}
+        />
+      )}
+      {arrow}
+      {style}
+    </th>
+  );
+});
+
+export default TableHeadColumnRenderer;
