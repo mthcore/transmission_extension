@@ -1,29 +1,16 @@
-import React, { useContext, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import { Column } from './TableHeadColumn';
 import FileListTableItem from './FileListTableItem';
-import FileColumnContextMenu from './FileColumnMenu';
+import ColumnContextMenu from './ColumnContextMenu';
 import TableHeadColumnRenderer from './TableHeadColumnRenderer';
-import Interval from './Interval';
-import getLogger from '../tools/getLogger';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import { useScrollSync } from '../hooks/useScrollSync';
+import Interval from '../Interval';
+import getLogger from '../../tools/getLogger';
+import useRootStore from '../../hooks/useRootStore';
+import { useScrollSync } from '../../hooks/useScrollSync';
+import type { FileEntry } from '../../types/stores';
 
 const logger = getLogger('FileListTable');
-
-interface FileItem {
-  name: string;
-  selected: boolean;
-  sizeStr: string;
-  downloadedStr: string;
-  progressStr: string;
-  priorityStr: string;
-  size: number;
-  downloaded: number;
-  priority: number;
-  shortName: string;
-  nameParts: string[];
-}
 
 interface FileListStore {
   id: number;
@@ -32,7 +19,7 @@ interface FileListStore {
   joinedDirectory: string;
   setRemoveSelectOnHide: (value: boolean) => void;
   fetchFiles: () => Promise<void>;
-  sortedFiles: FileItem[];
+  sortedFiles: FileEntry[];
   isSelectedAll: boolean;
   toggleSelectAll: () => void;
 }
@@ -48,15 +35,16 @@ interface RootStore {
     uiUpdateInterval: number;
     filesSort: { by: string; direction: number };
     visibleFileColumns: Column[];
+    filesColumns: Column[];
     setFilesSort: (column: string, direction: number) => void;
     moveFilesColumn: (from: string, to: string) => void;
     saveFilesColumns: () => void;
   };
 }
 
-const FileListTable: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
-  const fileListStore = rootStore?.fileList;
+const FileListTable = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
+  const fileListStore = rootStore.fileList;
   const refFixedHead = useRef<HTMLTableElement>(null);
   const scrollSyncOptions = useMemo(() => ({ withWidthCheck: true }), []);
   const handleScroll = useScrollSync(
@@ -65,7 +53,7 @@ const FileListTable: React.FC = observer(() => {
   );
 
   useEffect(() => {
-    if (!rootStore || !fileListStore) return;
+    if (!fileListStore) return;
     if (!rootStore.torrentList.isSelectedId(fileListStore.id)) {
       fileListStore.setRemoveSelectOnHide(true);
     }
@@ -75,7 +63,7 @@ const FileListTable: React.FC = observer(() => {
   const handleClose = useCallback(
     (e?: React.MouseEvent<HTMLElement>) => {
       e?.preventDefault();
-      rootStore?.destroyFileList();
+      rootStore.destroyFileList();
     },
     [rootStore]
   );
@@ -94,7 +82,7 @@ const FileListTable: React.FC = observer(() => {
     });
   }, [fileListStore]);
 
-  if (!rootStore || !fileListStore) return null;
+  if (!fileListStore) return null;
 
   const torrent = fileListStore.torrent;
 
@@ -128,7 +116,10 @@ const FileListTable: React.FC = observer(() => {
           <Interval interval={uiUpdateInterval} onFire={onIntervalFire} />
           <div onScroll={handleScroll} className="fl-layer" style={columnVars}>
             {spinner}
-            <FileColumnContextMenu>
+            <ColumnContextMenu
+              columns={rootStore.config.filesColumns}
+              onSave={() => rootStore.config.saveFilesColumns()}
+            >
               <table
                 ref={refFixedHead}
                 className="fl-table-head"
@@ -138,7 +129,7 @@ const FileListTable: React.FC = observer(() => {
               >
                 <FileListTableHead />
               </table>
-            </FileColumnContextMenu>
+            </ColumnContextMenu>
             <table className="fl-table-body" border={0} cellSpacing={0} cellPadding={0}>
               <FileListTableHead />
               <FileListTableFiles />
@@ -183,33 +174,33 @@ const DoCloseFileList = React.memo<DoCloseFileListProps>(({ onClose }) => {
 
 const FILE_FIXED_COLUMNS = ['checkbox'];
 
-const FileListTableHead: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
-  const fileListStore = rootStore?.fileList;
+const FileListTableHead = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
+  const fileListStore = rootStore.fileList;
 
   const handleSort = useCallback(
-    (column: string, direction: number): void => {
-      rootStore?.config.setFilesSort(column, direction);
+    (column: string, direction: number) => {
+      rootStore.config.setFilesSort(column, direction);
     },
     [rootStore]
   );
 
   const handleMoveColumn = useCallback(
-    (from: string, to: string): void => {
-      rootStore?.config.moveFilesColumn(from, to);
+    (from: string, to: string) => {
+      rootStore.config.moveFilesColumn(from, to);
     },
     [rootStore]
   );
 
-  const handleSaveColumns = useCallback((): void => {
-    rootStore?.config.saveFilesColumns();
+  const handleSaveColumns = useCallback(() => {
+    rootStore.config.saveFilesColumns();
   }, [rootStore]);
 
-  const handleToggleSelectAll = useCallback((): void => {
+  const handleToggleSelectAll = useCallback(() => {
     fileListStore?.toggleSelectAll();
   }, [fileListStore]);
 
-  if (!rootStore || !fileListStore) return null;
+  if (!fileListStore) return null;
 
   const sort = rootStore.config.filesSort;
   const fileColumns = rootStore.config.visibleFileColumns;
@@ -239,15 +230,15 @@ const FileListTableHead: React.FC = observer(() => {
   );
 });
 
-const FileListTableFiles: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+const FileListTableFiles = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
 
-  if (!rootStore?.fileList) return null;
+  if (!rootStore.fileList) return null;
 
   return (
     <tbody>
       {rootStore.fileList.sortedFiles.map((file) => (
-        <FileListTableItem key={file.name} file={file as FileItem} />
+        <FileListTableItem key={file.name} file={file as FileEntry} />
       ))}
     </tbody>
   );

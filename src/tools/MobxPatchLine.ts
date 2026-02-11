@@ -125,7 +125,7 @@ class MobxPatchLine {
     this.patchDisposer = onPatch(this.store as never, this.handlePath);
   }
 
-  handlePath = (patch: IJsonPatch): void => {
+  handlePath = (patch: IJsonPatch) => {
     if (this.branchesRe) {
       if (!this.branchesRe.test(patch.path)) return;
       patch = { ...patch, path: '.' + patch.path };

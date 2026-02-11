@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, type MouseEvent } from 'react';
 import getLogger from '../../tools/getLogger';
-import storageGet from '../../tools/storageGet';
-import storageSet from '../../tools/storageSet';
-import storageRemove from '../../tools/storageRemove';
+import { storageGet, storageSet, storageRemove } from '../../tools/chromeStorage';
 import { migrateConfig } from '../../tools/loadConfig';
 
 const logger = getLogger('BackupRestoreOptions');
@@ -17,7 +15,7 @@ interface StorageData {
   [key: string]: unknown;
 }
 
-const BackupRestoreOptions: React.FC = () => {
+const BackupRestoreOptions = () => {
   const refPage = useRef<HTMLDivElement>(null);
   const refData = useRef<HTMLTextAreaElement>(null);
 
@@ -37,7 +35,7 @@ const BackupRestoreOptions: React.FC = () => {
     }
   }, []);
 
-  const handleLoadConfig = useCallback(async (e?: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLoadConfig = useCallback(async (e?: MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault();
     setLoadState('pending');
     try {
@@ -57,7 +55,7 @@ const BackupRestoreOptions: React.FC = () => {
     checkCloudData();
   }, [handleLoadConfig, checkCloudData]);
 
-  const handleSaveToCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSaveToCloud = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setSaveState('pending');
     try {
@@ -76,7 +74,7 @@ const BackupRestoreOptions: React.FC = () => {
     }
   }, []);
 
-  const handleLoadFromCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLoadFromCloud = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       const storage: StorageData = await storageGet({ backup: '' }, 'sync');
@@ -89,7 +87,7 @@ const BackupRestoreOptions: React.FC = () => {
     }
   }, []);
 
-  const handleClearCloud = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClearCloud = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const confirmMessage =
       chrome.i18n.getMessage('confirmClearCloud') ||
@@ -104,7 +102,7 @@ const BackupRestoreOptions: React.FC = () => {
     }
   }, []);
 
-  const handleRestore = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRestore = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const confirmMessage =
       chrome.i18n.getMessage('confirmRestore') ||

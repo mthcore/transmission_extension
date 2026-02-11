@@ -1,5 +1,5 @@
 import { getRoot, types, Instance } from 'mobx-state-tree';
-import formatBytes from '../tools/formatBytes';
+import { formatBytes } from '../tools/format';
 
 const priorityLocaleMap = ['MF_DONT', 'MF_LOW', 'MF_NORMAL', 'MF_HIGH'];
 

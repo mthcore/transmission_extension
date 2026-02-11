@@ -6,7 +6,7 @@ interface ProgressBarProps {
   progressClass: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ progressStr, progressClass }) => {
+const ProgressBar = ({ progressStr, progressClass }: ProgressBarProps) => {
   const progressNum = parseFloat(progressStr) || 0;
   const lightWidth = progressNum > 0 ? `${PROGRESS_LIGHT_DENOMINATOR / progressNum}%` : '100%';
 

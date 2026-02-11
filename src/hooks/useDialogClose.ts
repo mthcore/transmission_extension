@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, type SyntheticEvent } from 'react';
 
 interface DialogStore {
   close(): void;
 }
 
-export function useDialogClose(dialogStore: DialogStore): (e?: React.SyntheticEvent) => void {
+export function useDialogClose(dialogStore: DialogStore): (e?: SyntheticEvent) => void {
   return useCallback(
-    (e?: React.SyntheticEvent) => {
+    (e?: SyntheticEvent) => {
       e?.preventDefault();
       dialogStore.close();
     },

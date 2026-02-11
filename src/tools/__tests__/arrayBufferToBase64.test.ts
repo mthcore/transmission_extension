@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import arrayBufferToBase64 from '../arrayBufferToBase64';
-import base64ToArrayBuffer from '../base64ToArrayBuffer';
+import { arrayBufferToBase64, base64ToArrayBuffer } from '../binaryConversion';
 
 describe('arrayBufferToBase64', () => {
   it('converts an ArrayBuffer to a base64 string', () => {

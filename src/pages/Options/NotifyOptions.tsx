@@ -12,9 +12,8 @@ interface ConfigStore {
   setOptions: (options: Record<string, unknown>) => void;
 }
 
-const NotifyOptions: React.FC = observer(() => {
-  const { configStore, handleChange, handleSetInt } = useOptionsPage();
-  const typedConfigStore = configStore as unknown as ConfigStore;
+const NotifyOptions = observer(() => {
+  const { configStore, handleChange, handleSetInt } = useOptionsPage<ConfigStore>();
   const [colorPickerOpened, setColorPickerOpened] = useState(false);
 
   const handleToggleColorPicker = useCallback(() => {
@@ -24,14 +23,14 @@ const NotifyOptions: React.FC = observer(() => {
   const handleChangeColor = useCallback(
     (color: RgbaColor) => {
       const rgba = [color.r, color.g, color.b, color.a].join(',');
-      typedConfigStore.setOptions({
+      configStore.setOptions({
         badgeColor: rgba,
       });
     },
-    [typedConfigStore]
+    [configStore]
   );
 
-  const [r, g, b, a] = typedConfigStore.badgeColor.split(',');
+  const [r, g, b, a] = configStore.badgeColor.split(',');
   const pickerColor: RgbaColor = {
     r: parseInt(r, 10),
     g: parseInt(g, 10),
@@ -46,7 +45,7 @@ const NotifyOptions: React.FC = observer(() => {
         <span>{chrome.i18n.getMessage('showNotificationOnDownloadComplete')}</span>
         <span className="toggle-switch">
           <input
-            defaultChecked={typedConfigStore.showDownloadCompleteNotifications}
+            defaultChecked={configStore.showDownloadCompleteNotifications}
             onChange={handleChange}
             type="checkbox"
             name="showDownloadCompleteNotifications"
@@ -58,7 +57,7 @@ const NotifyOptions: React.FC = observer(() => {
         <span>{chrome.i18n.getMessage('displayActiveTorrentCountIcon')}</span>
         <span className="toggle-switch">
           <input
-            defaultChecked={typedConfigStore.showActiveCountBadge}
+            defaultChecked={configStore.showActiveCountBadge}
             onChange={handleChange}
             type="checkbox"
             name="showActiveCountBadge"
@@ -77,14 +76,14 @@ const NotifyOptions: React.FC = observer(() => {
           <span
             onClick={handleToggleColorPicker}
             className="selectColor"
-            style={{ backgroundColor: `rgba(${typedConfigStore.badgeColor})` }}
+            style={{ backgroundColor: `rgba(${configStore.badgeColor})` }}
           />
         </Popover>
       </label>
       <label>
         <span>{chrome.i18n.getMessage('backgroundUpdateInterval')}</span>
         <input
-          defaultValue={typedConfigStore.backgroundUpdateInterval}
+          defaultValue={configStore.backgroundUpdateInterval}
           onChange={handleSetInt}
           type="number"
           name="backgroundUpdateInterval"

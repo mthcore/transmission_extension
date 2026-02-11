@@ -32,14 +32,14 @@ export function useTableHeadColumn({
 
   // Drag & Drop handlers
   const handleDragStart = useCallback(
-    (e: DragEvent<HTMLTableCellElement>): void => {
+    (e: DragEvent<HTMLTableCellElement>) => {
       e.dataTransfer.setData('name', column.column);
       e.dataTransfer.setData('type', type);
     },
     [column.column, type]
   );
 
-  const handleDragOver = useCallback((e: DragEvent<HTMLTableCellElement>): void => {
+  const handleDragOver = useCallback((e: DragEvent<HTMLTableCellElement>) => {
     const el = e.target as HTMLElement;
     if (el.tagName !== 'TH' && el.parentNode && (el.parentNode as HTMLElement).tagName !== 'TH')
       return;
@@ -48,7 +48,7 @@ export function useTableHeadColumn({
   }, []);
 
   const handleDrop = useCallback(
-    (e: DragEvent<HTMLTableCellElement>): void => {
+    (e: DragEvent<HTMLTableCellElement>) => {
       e.preventDefault();
       e.stopPropagation();
       let el = e.target as HTMLElement;
@@ -73,7 +73,7 @@ export function useTableHeadColumn({
 
   // Resize handlers - using refs to avoid recreating functions
   const handleBodyMouseMove = useCallback(
-    (e: globalThis.MouseEvent): void => {
+    (e: globalThis.MouseEvent) => {
       const delta = e.clientX - resizeStartClientX.current;
       let newSize = resizeStartSize.current + delta;
       if (newSize < 16) {
@@ -85,7 +85,7 @@ export function useTableHeadColumn({
   );
 
   const handleBodyMouseUp = useCallback(
-    (e: globalThis.MouseEvent): void => {
+    (e: globalThis.MouseEvent) => {
       e.stopPropagation();
 
       document.body.removeEventListener('mousemove', handleBodyMouseMove);
@@ -100,12 +100,12 @@ export function useTableHeadColumn({
     [handleBodyMouseMove, onSaveColumns]
   );
 
-  const handleResizeClick = useCallback((e: MouseEvent<HTMLDivElement>): void => {
+  const handleResizeClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   }, []);
 
   const handleResizeMouseDown = useCallback(
-    (e: MouseEvent<HTMLDivElement>): void => {
+    (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       if (e.button !== 0) return;
 
@@ -124,7 +124,7 @@ export function useTableHeadColumn({
   );
 
   const handleSort = useCallback(
-    (e: MouseEvent<HTMLTableCellElement>): void => {
+    (e: MouseEvent<HTMLTableCellElement>) => {
       e.preventDefault();
       let direction = 1;
       if (isSorted) {

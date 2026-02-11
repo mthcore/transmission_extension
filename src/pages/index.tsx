@@ -1,19 +1,20 @@
 import 'rc-select/assets/index.css';
 import '../assets/css/stylesheet.scss';
-import React from 'react';
-import Menu from '../components/Menu';
+import React, { useEffect, useCallback, memo, type ReactNode } from 'react';
+import Menu from '../components/menu/Menu';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { createRoot } from 'react-dom/client';
 import RootStore from '../stores/RootStore';
-import TorrentListTable from '../components/TorrentListTable';
-import FileListTable from '../components/FileListTable';
+import TorrentListTable from '../components/table/TorrentListTable';
+import FileListTable from '../components/table/FileListTable';
 import Footer from '../components/Footer';
 import Interval from '../components/Interval';
 import getLogger from '../tools/getLogger';
 import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 import { useTheme } from '../hooks/useTheme';
-import DialogLoader from '../components/DialogLoader';
+import DialogLoader from '../components/dialogs/DialogLoader';
 
 const logger = getLogger('Index');
 
@@ -52,10 +53,10 @@ interface RootStoreType {
   setFileList: (fileList: null) => void;
 }
 
-const Index: React.FC = observer(() => {
-  const rootStore = React.useContext(RootStoreCtx) as unknown as RootStoreType;
+const Index = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStoreType;
 
-  React.useEffect(() => {
+  useEffect(() => {
     rootStore.init();
 
     if (rootStore.isPopup) {
@@ -64,7 +65,7 @@ const Index: React.FC = observer(() => {
   }, [rootStore]);
 
   // Set popup mode in config for column width separation (after config loads)
-  React.useEffect(() => {
+  useEffect(() => {
     const dispose = reaction(
       () => rootStore.config,
       (config) => {
@@ -78,7 +79,7 @@ const Index: React.FC = observer(() => {
   }, [rootStore]);
 
   // Keyboard shortcuts
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if focus in input/textarea
       const target = e.target as HTMLElement;
@@ -207,7 +208,7 @@ const Index: React.FC = observer(() => {
   // Theme application
   useTheme(rootStore.config);
 
-  const onIntervalFire = React.useCallback(
+  const onIntervalFire = useCallback(
     (isInit: boolean) => {
       if (isInit) {
         rootStore.client.updateSettings().catch((err) => {
@@ -233,14 +234,14 @@ const Index: React.FC = observer(() => {
     return <>{`Loading: ${rootStore.state}`}</>;
   }
 
-  let fileList: React.ReactNode = null;
+  let fileList: ReactNode = null;
   if (rootStore.fileList) {
     fileList = <FileListTable key={rootStore.fileList.id} />;
   }
 
   const uiUpdateInterval = rootStore.config.uiUpdateInterval;
 
-  let goInOptions: React.ReactNode = null;
+  let goInOptions: ReactNode = null;
   if (rootStore.config.hostname === '') {
     goInOptions = <GoInOptions isPopup={rootStore.isPopup} />;
   }
@@ -258,8 +259,8 @@ const Index: React.FC = observer(() => {
   );
 });
 
-const Dialogs: React.FC = observer(() => {
-  const rootStore = React.useContext(RootStoreCtx) as unknown as RootStoreType;
+const Dialogs = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStoreType;
 
   return (
     <>
@@ -278,12 +279,12 @@ interface GoInOptionsProps {
   isPopup: boolean;
 }
 
-const GoInOptions = React.memo<GoInOptionsProps>(({ isPopup }) => {
-  const handleOpenOptions = React.useCallback(() => {
+const GoInOptions = memo<GoInOptionsProps>(({ isPopup }) => {
+  const handleOpenOptions = useCallback(() => {
     chrome.runtime.openOptionsPage();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Only redirect if not in popup (e.g., opened in a tab)
     if (!isPopup) {
       location.href = '/options.html#/#redirect';

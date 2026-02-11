@@ -1,11 +1,11 @@
-import React, { useContext, useCallback, MouseEvent } from 'react';
+import React, { useCallback, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import SpeedContextMenu from './SpeedMenu';
+import SpeedContextMenu from './menu/SpeedMenu';
 import SpaceWatcher from './SpaceWatcher';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 
-const Footer: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+const Footer = observer(() => {
+  const rootStore = useRootStore();
 
   const handleResetDownloadSpeed = useCallback(
     (e: MouseEvent<HTMLSpanElement>) => {
@@ -40,7 +40,7 @@ const Footer: React.FC = observer(() => {
     chrome.tabs.create({ url: `${location.origin}${location.pathname}` });
   }, []);
 
-  if (!rootStore || !rootStore.client || !rootStore.config) return null;
+  if (!rootStore.client || !rootStore.config) return null;
 
   const client = rootStore.client;
   const config = rootStore.config;
@@ -116,9 +116,11 @@ const Footer: React.FC = observer(() => {
           {uploadLimit}
         </span>
       </SpeedContextMenu>
-      <span className="status" role="status" aria-live="assertive">
-        {client.lastErrorMessage}
-      </span>
+      {client.lastErrorMessage && (
+        <span className="status" role="status" aria-live="assertive" title={client.lastErrorMessage}>
+          {client.lastErrorMessage}
+        </span>
+      )}
       {openInTab}
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
-import { useDialog } from '../hooks/useDialog';
+import { useDialog } from '../../hooks/useDialog';
 
 interface DialogProps {
   onClose: () => void;
@@ -9,7 +9,7 @@ interface DialogProps {
   isAlert?: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, className, children, isAlert, ...props }) => {
+const Dialog = ({ onClose, className, children, isAlert, ...props }: DialogProps) => {
   const refDialog = useDialog(onClose);
 
   const classList = ['dialog__body'];

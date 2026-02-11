@@ -1,17 +1,17 @@
-import React, { useContext, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { observer } from 'mobx-react';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import { useContextMenuSelection } from '../hooks/useContextMenuSelection';
+import useRootStore from '../../hooks/useRootStore';
+import { useContextMenuSelection } from '../../hooks/useContextMenuSelection';
 
 interface TorrentContextMenuProps {
   children: ReactNode;
   torrentId: number;
 }
 
-const TorrentContextMenu: React.FC<TorrentContextMenuProps> = observer(
-  ({ children, torrentId }) => {
-    const rootStore = useContext(RootStoreCtx);
+const TorrentContextMenu = observer(
+  ({ children, torrentId }: TorrentContextMenuProps) => {
+    const rootStore = useRootStore();
     const torrentListStore = rootStore?.torrentList;
     const handleOpenChange = useContextMenuSelection(
       torrentListStore as unknown as {
@@ -41,13 +41,13 @@ interface Torrent {
   actions: string[];
 }
 
-const TorrentMenuContent: React.FC = observer(() => {
-  const rootStore = React.useContext(RootStoreCtx);
+const TorrentMenuContent = observer(() => {
+  const rootStore = useRootStore();
   const torrentListStore = rootStore?.torrentList;
   const client = rootStore?.client;
   const selectedIds = (torrentListStore?.selectedIds as number[]) || [];
 
-  if (!selectedIds.length || !rootStore || !client) return null;
+  if (!selectedIds.length || !client) return null;
 
   const firstTorrent =
     selectedIds.length > 0 ? (client.torrents.get(selectedIds[0]) as Torrent | undefined) : null;
@@ -65,30 +65,30 @@ const TorrentMenuContent: React.FC = observer(() => {
     }
   });
 
-  const handleStart = (): void => {
+  const handleStart = () => {
     client.torrentsStart(selectedIds);
   };
 
-  const handleForceStart = (): void => {
+  const handleForceStart = () => {
     client.torrentsForceStart(selectedIds);
   };
 
-  const handleStop = (): void => {
+  const handleStop = () => {
     client.torrentsStop(selectedIds);
   };
 
-  const handleRecheck = (): void => {
+  const handleRecheck = () => {
     client.torrentsRecheck(selectedIds);
   };
 
-  const handleRemove = (): void => {
+  const handleRemove = () => {
     rootStore.createDialog({
       type: 'removeConfirm',
       torrentIds: selectedIds.slice(0),
     });
   };
 
-  const handleRemoveTorrent = (): void => {
+  const handleRemoveTorrent = () => {
     rootStore.createDialog({
       type: 'removeConfirm',
       torrentIds: selectedIds.slice(0),
@@ -96,7 +96,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     });
   };
 
-  const handleRemoveTorrentFiles = (): void => {
+  const handleRemoveTorrentFiles = () => {
     rootStore.createDialog({
       type: 'removeConfirm',
       torrentIds: selectedIds.slice(0),
@@ -104,7 +104,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     });
   };
 
-  const handleRename = (): void => {
+  const handleRename = () => {
     if (!firstTorrent) return;
     rootStore.createDialog({
       type: 'rename',
@@ -113,7 +113,7 @@ const TorrentMenuContent: React.FC = observer(() => {
     });
   };
 
-  const handleCopyMagnetUrl = (): void => {
+  const handleCopyMagnetUrl = () => {
     if (!firstTorrent) return;
     rootStore.createDialog({
       type: 'copyMagnetUrl',
@@ -122,17 +122,17 @@ const TorrentMenuContent: React.FC = observer(() => {
     });
   };
 
-  const handleCopyName = (): void => {
+  const handleCopyName = () => {
     if (!firstTorrent) return;
     navigator.clipboard.writeText(firstTorrent.name);
   };
 
-  const handleCopyHash = (): void => {
+  const handleCopyHash = () => {
     if (!firstTorrent || !firstTorrent.hash) return;
     navigator.clipboard.writeText(firstTorrent.hash);
   };
 
-  const handleMove = (): void => {
+  const handleMove = () => {
     if (!firstTorrent) return;
     rootStore.createDialog({
       type: 'move',
@@ -141,33 +141,33 @@ const TorrentMenuContent: React.FC = observer(() => {
     });
   };
 
-  const handleReannounce = (): void => {
+  const handleReannounce = () => {
     client.reannounce(selectedIds);
   };
 
-  const handleQueueTop = (): void => {
+  const handleQueueTop = () => {
     client.torrentsQueueTop(selectedIds);
   };
 
-  const handleQueueUp = (): void => {
+  const handleQueueUp = () => {
     client.torrentsQueueUp(selectedIds);
   };
 
-  const handleQueueDown = (): void => {
+  const handleQueueDown = () => {
     client.torrentsQueueDown(selectedIds);
   };
 
-  const handleQueueBottom = (): void => {
+  const handleQueueBottom = () => {
     client.torrentsQueueBottom(selectedIds);
   };
 
-  const handleShowFiles = (): void => {
+  const handleShowFiles = () => {
     if (selectedIds.length) {
       rootStore.createFileList(selectedIds[0]);
     }
   };
 
-  const handleShowProperties = (): void => {
+  const handleShowProperties = () => {
     if (selectedIds.length) {
       rootStore.createDialog({
         type: 'torrentDetails',

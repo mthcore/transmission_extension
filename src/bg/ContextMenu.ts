@@ -280,7 +280,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
     });
   });
 
-  const joinSingleParts = (tree: Record<string, unknown>, part: string): void => {
+  const joinSingleParts = (tree: Record<string, unknown>, part: string) => {
     const subTree = tree[part];
     if (typeof subTree !== 'object' || subTree === null) return;
 
@@ -306,7 +306,7 @@ function transformFoldersToTree(folders: Folder[]): MenuItem[] {
   });
 
   const menus: MenuItem[] = [];
-  const makeMenuItems = (tree: Record<string, unknown>, parentId?: string): void => {
+  const makeMenuItems = (tree: Record<string, unknown>, parentId?: string) => {
     Object.entries(tree).forEach(([name, item]) => {
       if (typeof item === 'object' && item !== null) {
         const branch = item as Record<string, unknown>;

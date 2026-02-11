@@ -1,10 +1,11 @@
 import '../../assets/css/options.scss';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import RootStore from '../../stores/RootStore';
 import { createRoot } from 'react-dom/client';
 import { observer } from 'mobx-react';
 import { HashRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import RootStoreCtx from '../../tools/rootStoreCtx';
+import useRootStore from '../../hooks/useRootStore';
 import { useTheme } from '../../hooks/useTheme';
 import ClientOptions from './ClientOptions';
 import UiOptions from './UiOptions';
@@ -21,8 +22,8 @@ interface RootStoreType {
   init: () => void;
 }
 
-const Options: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStoreType;
+const Options = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStoreType;
   useTheme(rootStore.config as { theme: 'light' | 'dark' | 'system' });
 
   useEffect(() => {

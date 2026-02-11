@@ -1,22 +1,9 @@
 import { observer } from 'mobx-react';
-import React, { useContext, useCallback, ChangeEvent } from 'react';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import FileContextMenu from './FileContextMenu';
+import React, { useCallback, ChangeEvent } from 'react';
+import useRootStore from '../../hooks/useRootStore';
+import FileContextMenu from '../menu/FileContextMenu';
 import fileColumnRenderers, { FileColumnCtx } from './fileColumns';
-
-interface File {
-  name: string;
-  selected: boolean;
-  sizeStr: string;
-  downloadedStr: string;
-  progressStr: string;
-  priorityStr: string;
-  size: number;
-  downloaded: number;
-  priority: number;
-  shortName: string;
-  nameParts: string[];
-}
+import type { FileEntry } from '../../types/stores';
 
 interface FileListStore {
   addMultipleSelectedId: (id: string) => void;
@@ -27,11 +14,11 @@ interface FileListStore {
 }
 
 interface FileListTableItemProps {
-  file: File;
+  file: FileEntry;
 }
 
-const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) => {
-  const rootStore = useContext(RootStoreCtx);
+const FileListTableItem = observer(({ file }: FileListTableItemProps) => {
+  const rootStore = useRootStore();
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
   const config = rootStore?.config;
 
@@ -50,7 +37,7 @@ const FileListTableItem: React.FC<FileListTableItemProps> = observer(({ file }) 
     [file, fileListStore]
   );
 
-  if (!rootStore || !config || !fileListStore) return null;
+  if (!config || !fileListStore) return null;
 
   const visibleFileColumns = config.visibleFileColumns as unknown as Array<{ column: string }>;
 

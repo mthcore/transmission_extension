@@ -2,16 +2,15 @@ import React, {
   useState,
   useRef,
   useCallback,
-  useContext,
   ChangeEvent,
   KeyboardEvent,
   MouseEvent,
 } from 'react';
 import { observer } from 'mobx-react';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 
-const SearchBox: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+const SearchBox = observer(() => {
+  const rootStore = useRootStore();
   const config = rootStore?.config;
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

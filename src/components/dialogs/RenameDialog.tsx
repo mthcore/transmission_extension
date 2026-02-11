@@ -1,9 +1,9 @@
-import React, { useContext, useCallback, FormEvent } from 'react';
+import React, { useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import showError from '../tools/showError';
-import { useDialogClose } from '../hooks/useDialogClose';
+import useRootStore from '../../hooks/useRootStore';
+import showError from '../../tools/showError';
+import { useDialogClose } from '../../hooks/useDialogClose';
 
 interface RenameDialogStore {
   close: () => void;
@@ -16,8 +16,8 @@ interface RenameDialogProps {
   dialogStore: RenameDialogStore;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = observer(({ dialogStore }) => {
-  const rootStore = useContext(RootStoreCtx);
+const RenameDialog = observer(({ dialogStore }: RenameDialogProps) => {
+  const rootStore = useRootStore();
   const client = rootStore?.client;
   const handleClose = useDialogClose(dialogStore);
 

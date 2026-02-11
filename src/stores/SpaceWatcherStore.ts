@@ -1,6 +1,6 @@
 import { flow, getRoot, isAlive, types, Instance, cast } from 'mobx-state-tree';
 import getLogger from '../tools/getLogger';
-import formatBytes from '../tools/formatBytes';
+import { formatBytes } from '../tools/format';
 
 const logger = getLogger('SpaceWatcherStore');
 

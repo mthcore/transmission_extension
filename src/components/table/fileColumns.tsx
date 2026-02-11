@@ -1,19 +1,6 @@
 import React, { ChangeEvent } from 'react';
-import ProgressBar from './ProgressBar';
-
-interface FileItem {
-  name: string;
-  selected: boolean;
-  sizeStr: string;
-  downloadedStr: string;
-  progressStr: string;
-  priorityStr: string;
-  size: number;
-  downloaded: number;
-  priority: number;
-  shortName: string;
-  nameParts: string[];
-}
+import ProgressBar from '../ProgressBar';
+import type { FileEntry } from '../../types/stores';
 
 interface FileListStore {
   filterLevel: number;
@@ -21,7 +8,7 @@ interface FileListStore {
 }
 
 export interface FileColumnCtx {
-  file: FileItem;
+  file: FileEntry;
   handleSelect: (e: ChangeEvent<HTMLInputElement>) => void;
   fileListStore: FileListStore;
 }
@@ -76,11 +63,11 @@ const fileColumnRenderers: Record<string, ColumnRenderer> = {
 };
 
 interface FileNameProps {
-  fileStore: FileItem;
+  fileStore: FileEntry;
   fileListStore: FileListStore;
 }
 
-const FileName: React.FC<FileNameProps> = React.memo(({ fileStore, fileListStore }) => {
+const FileName = React.memo(({ fileStore, fileListStore }: FileNameProps) => {
   const handleSetFilter = React.useCallback(
     (level: number) => {
       let targetLevel = level;

@@ -1,15 +1,11 @@
-import React, { useContext, useCallback, useEffect, useRef, FormEvent } from 'react';
+import React, { useCallback, useEffect, useRef, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import DirectorySelect from './DirectorySelect';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import showError from '../tools/showError';
-import { useDialogClose } from '../hooks/useDialogClose';
-
-interface Folder {
-  name?: string;
-  path: string;
-}
+import DirectorySelect from '../DirectorySelect';
+import useRootStore from '../../hooks/useRootStore';
+import showError from '../../tools/showError';
+import { useDialogClose } from '../../hooks/useDialogClose';
+import type { Folder } from '../../types/bg';
 
 interface PutFilesDialogStore {
   close: () => void;
@@ -21,8 +17,8 @@ interface PutFilesDialogProps {
   dialogStore: PutFilesDialogStore;
 }
 
-const PutFilesDialog: React.FC<PutFilesDialogProps> = observer(({ dialogStore }) => {
-  const rootStore = useContext(RootStoreCtx);
+const PutFilesDialog = observer(({ dialogStore }: PutFilesDialogProps) => {
+  const rootStore = useRootStore();
   const config = rootStore?.config;
   const client = rootStore?.client;
   const folders = (config?.folders as Folder[] | undefined) ?? [];

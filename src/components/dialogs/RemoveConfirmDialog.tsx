@@ -1,9 +1,9 @@
-import React, { useContext, useCallback, FormEvent } from 'react';
+import React, { useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import showError from '../tools/showError';
-import { useDialogClose } from '../hooks/useDialogClose';
+import useRootStore from '../../hooks/useRootStore';
+import showError from '../../tools/showError';
+import { useDialogClose } from '../../hooks/useDialogClose';
 
 interface RemoveConfirmDialogStore {
   close: () => void;
@@ -15,13 +15,13 @@ interface RemoveConfirmDialogProps {
   dialogStore: RemoveConfirmDialogStore;
 }
 
-const RemoveConfirmDialog: React.FC<RemoveConfirmDialogProps> = observer(({ dialogStore }) => {
-  const rootStore = useContext(RootStoreCtx);
+const RemoveConfirmDialog = observer(({ dialogStore }: RemoveConfirmDialogProps) => {
+  const rootStore = useRootStore();
   const client = rootStore?.client;
   const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    (e: FormEvent) => {
       e.preventDefault();
 
       if (!client) return;

@@ -1,10 +1,10 @@
-import React, { useContext, useCallback, FormEvent } from 'react';
+import React, { useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import DirectorySelect from './DirectorySelect';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import showError from '../tools/showError';
-import { useDialogClose } from '../hooks/useDialogClose';
+import DirectorySelect from '../DirectorySelect';
+import useRootStore from '../../hooks/useRootStore';
+import showError from '../../tools/showError';
+import { useDialogClose } from '../../hooks/useDialogClose';
 
 interface Folder {
   name?: string;
@@ -19,8 +19,8 @@ interface PutUrlDialogProps {
   dialogStore: PutUrlDialogStore;
 }
 
-const PutUrlDialog: React.FC<PutUrlDialogProps> = observer(({ dialogStore }) => {
-  const rootStore = useContext(RootStoreCtx);
+const PutUrlDialog = observer(({ dialogStore }: PutUrlDialogProps) => {
+  const rootStore = useRootStore();
   const config = rootStore?.config;
   const client = rootStore?.client;
   const handleClose = useDialogClose(dialogStore);

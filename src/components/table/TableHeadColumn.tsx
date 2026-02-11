@@ -7,6 +7,7 @@ interface Column {
   order: number;
   display: boolean;
   setWidth: (width: number) => void;
+  toggleDisplay: () => void;
 }
 
 interface TableHeadColumnProps {

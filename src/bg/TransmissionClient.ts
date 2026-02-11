@@ -3,11 +3,7 @@ import type { TransmissionResponse } from './TransmissionTransport';
 import TorrentService, { type NormalizedTorrent } from './TorrentService';
 import FileService, { type NormalizedFile } from './FileService';
 import SettingsService, { type NormalizedSettings } from './SettingsService';
-
-interface Folder {
-  name?: string;
-  path: string;
-}
+import type { Folder } from '../types/bg';
 
 interface BgStore {
   config: {

@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useCallback,
   useState,
   useRef,
@@ -8,15 +7,15 @@ import React, {
   ChangeEvent,
 } from 'react';
 import { observer } from 'mobx-react';
-import ComponentLoader from './ComponentLoader';
-import showError from '../tools/showError';
-import VisiblePage from './VisiblePage';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import SearchBox from './SearchBox';
-import LabelSelect from './LabelSelect';
+import ComponentLoader from '../ComponentLoader';
+import showError from '../../tools/showError';
+import VisiblePage from '../VisiblePage';
+import useRootStore from '../../hooks/useRootStore';
+import SearchBox from '../SearchBox';
+import LabelSelect from '../LabelSelect';
 
-const Menu: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+const Menu = observer(() => {
+  const rootStore = useRootStore();
   const [showDropLayer, setShowDropLayer] = useState(false);
   const [isDropped, setIsDropped] = useState(false);
   const refFileInput = useRef<HTMLInputElement>(null);
@@ -140,7 +139,7 @@ const Menu: React.FC = observer(() => {
     [onPutFiles]
   );
 
-  if (!rootStore || !config) return null;
+  if (!config) return null;
 
   let dropLayer: React.ReactNode = null;
   if (showDropLayer) {

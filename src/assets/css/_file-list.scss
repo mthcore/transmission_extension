@@ -114,15 +114,8 @@ div.file-list div.bottom-menu {
   }
 
   a {
-    border: 1px solid transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    border-radius: $radius-sm;
-    transition: all $transition-base;
-    filter: var(--icon-filter);
+    @include icon-button(28px);
+    background-color: transparent;
 
     &.update {
       background-image: url("../img/refresh.svg");
@@ -132,15 +125,6 @@ div.file-list div.bottom-menu {
     &.close {
       background-image: url('../img/close.svg');
       background-size: 18px;
-    }
-
-    &:hover {
-      background-color: var(--input-bg);
-      border-color: var(--border-color);
-    }
-
-    &:active {
-      transform: scale(0.95);
     }
   }
 }

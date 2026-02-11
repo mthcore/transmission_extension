@@ -1,11 +1,7 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, type FormEventHandler, type MouseEvent, type ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import { useOptionsPage } from '../../hooks/useOptionsPage';
-
-interface Folder {
-  path: string;
-  name?: string;
-}
+import type { Folder } from '../../types/bg';
 
 interface ConfigStore {
   folders: Folder[];
@@ -29,10 +25,10 @@ interface CtxOptionsDirsFormElement extends HTMLFormElement {
 
 interface CtxOptionsDirsProps {
   configStore: ConfigStore;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, handleChange }) => {
+const CtxOptionsDirs = observer(({ configStore, handleChange }: CtxOptionsDirsProps) => {
   const refDirectorySelect = useRef<HTMLSelectElement>(null);
 
   const getSelectedDirectories = useCallback(() => {
@@ -42,7 +38,7 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
     });
   }, [configStore]);
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(
+  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
       const form = e.currentTarget as CtxOptionsDirsFormElement;
@@ -61,7 +57,7 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
   );
 
   const handleRemove = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       configStore.removeFolders(getSelectedDirectories());
     },
@@ -69,7 +65,7 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
   );
 
   const handleMoveUp = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       configStore.moveFolders(getSelectedDirectories(), -1);
     },
@@ -77,7 +73,7 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
   );
 
   const handleMoveDown = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       configStore.moveFolders(getSelectedDirectories(), 1);
     },
@@ -168,14 +164,14 @@ const CtxOptionsDirs: React.FC<CtxOptionsDirsProps> = observer(({ configStore, h
   );
 });
 
-const CtxOptions: React.FC = observer(() => {
-  const { configStore, handleChange } = useOptionsPage();
+const CtxOptions = observer(() => {
+  const { configStore, handleChange } = useOptionsPage<ConfigStore>();
 
   return (
     <div className="page ctx">
       <h2>{chrome.i18n.getMessage('optCtx')}</h2>
       <CtxOptionsDirs
-        configStore={configStore as unknown as ConfigStore}
+        configStore={configStore}
         handleChange={handleChange}
       />
     </div>

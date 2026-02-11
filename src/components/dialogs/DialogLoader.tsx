@@ -1,6 +1,6 @@
 import React from 'react';
-import Spinner from './Spinner';
-import ErrorBoundary from './ErrorBoundary';
+import Spinner from '../Spinner';
+import ErrorBoundary from '../ErrorBoundary';
 
 const dialogComponents = {
   putFiles: React.lazy(() => import('./PutFilesDialog')),
@@ -19,7 +19,7 @@ interface DialogLoaderProps {
   dialogStore: unknown;
 }
 
-const DialogLoader: React.FC<DialogLoaderProps> = ({ type, dialogStore }) => {
+const DialogLoader = ({ type, dialogStore }: DialogLoaderProps) => {
   const Component = dialogComponents[type as DialogType];
 
   if (!Component) {

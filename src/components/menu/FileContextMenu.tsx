@@ -1,30 +1,26 @@
-import React, { useContext, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { observer } from 'mobx-react';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import { useContextMenuSelection } from '../hooks/useContextMenuSelection';
+import useRootStore from '../../hooks/useRootStore';
+import { useContextMenuSelection } from '../../hooks/useContextMenuSelection';
+import type { FileEntry } from '../../types/stores';
 
 interface FileContextMenuProps {
   children: ReactNode;
   fileId: string;
 }
 
-interface File {
-  name: string;
-  priority: number;
-}
-
 interface FileListStore {
   selectedIds: (string | number)[];
   resetSelectedIds: () => void;
   addSelectedId: (id: string | number) => void;
-  getFileById: (id: string) => File | undefined;
+  getFileById: (id: string) => FileEntry | undefined;
   id: number;
   selectedIndexes: number[];
 }
 
-const FileContextMenu: React.FC<FileContextMenuProps> = observer(({ children, fileId }) => {
-  const rootStore = useContext(RootStoreCtx);
+const FileContextMenu = observer(({ children, fileId }: FileContextMenuProps) => {
+  const rootStore = useRootStore();
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
   const handleOpenChange = useContextMenuSelection(
     fileListStore as {
@@ -45,13 +41,13 @@ const FileContextMenu: React.FC<FileContextMenuProps> = observer(({ children, fi
   );
 });
 
-const FileMenuContent: React.FC = observer(() => {
-  const rootStore = React.useContext(RootStoreCtx);
+const FileMenuContent = observer(() => {
+  const rootStore = useRootStore();
   const fileListStore = rootStore?.fileList as FileListStore | undefined;
   const client = rootStore?.client;
   const selectedIds = (fileListStore?.selectedIds as string[]) || [];
 
-  if (!selectedIds.length || !rootStore || !fileListStore || !client) return null;
+  if (!selectedIds.length || !fileListStore || !client) return null;
 
   // Determine current priority
   let currentPriority: number | null = null;
@@ -72,13 +68,13 @@ const FileMenuContent: React.FC = observer(() => {
 
   const firstFile = selectedIds.length > 0 ? fileListStore.getFileById(selectedIds[0]) : null;
 
-  const handleSetPriority = (priority: number): void => {
+  const handleSetPriority = (priority: number) => {
     const id = fileListStore.id;
     const selectedIndexes = fileListStore.selectedIndexes;
     client.filesSetPriority(id, selectedIndexes, priority);
   };
 
-  const handleRename = (): void => {
+  const handleRename = () => {
     const id = fileListStore.id;
     if (!firstFile) return;
 
@@ -128,7 +124,7 @@ interface PriorityItemProps {
   onSelect: () => void;
 }
 
-const PriorityItem: React.FC<PriorityItemProps> = ({ level, selected, onSelect }) => {
+const PriorityItem = ({ level, selected, onSelect }: PriorityItemProps) => {
   let name: string;
   switch (level) {
     case 3:

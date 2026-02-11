@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, RefObject } from 'react';
+import { useRef, useEffect, useCallback, RefObject, type UIEvent } from 'react';
 
 interface ScrollSyncOptions {
   withWidthCheck?: boolean;
@@ -7,12 +7,12 @@ interface ScrollSyncOptions {
 export function useScrollSync(
   headerRef: RefObject<HTMLElement | null>,
   options: ScrollSyncOptions = {}
-): (e: React.UIEvent<HTMLElement>) => void {
+): (e: UIEvent<HTMLElement>) => void {
   const scrollRafId = useRef<number | null>(null);
   const { withWidthCheck = false } = options;
 
   const handleScroll = useCallback(
-    (e: React.UIEvent<HTMLElement>) => {
+    (e: UIEvent<HTMLElement>) => {
       const scrollLeft = e.currentTarget.scrollLeft;
       const scrollWidth = e.currentTarget.scrollWidth;
       if (scrollRafId.current) return;

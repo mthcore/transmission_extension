@@ -1,16 +1,16 @@
-import { useContext, useCallback, ChangeEvent } from 'react';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import { useCallback, ChangeEvent } from 'react';
+import useRootStore from './useRootStore';
 
 interface ConfigStore {
-  setOptions(options: Record<string, unknown>): Promise<void>;
+  setOptions(options: Record<string, unknown>): void;
 }
 
 interface RootStore {
   config: ConfigStore;
 }
 
-export function useOptionsPage() {
-  const rootStore = useContext(RootStoreCtx) as RootStore;
+export function useOptionsPage<T = ConfigStore>() {
+  const rootStore = useRootStore() as unknown as RootStore;
   const configStore = rootStore.config;
 
   const handleChange = useCallback(
@@ -48,7 +48,7 @@ export function useOptionsPage() {
 
   return {
     rootStore,
-    configStore,
+    configStore: configStore as unknown as T,
     handleChange,
     handleSetInt,
     handleRadioChange,

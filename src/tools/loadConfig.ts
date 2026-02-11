@@ -1,5 +1,4 @@
-import storageGet from './storageGet';
-import storageSet from './storageSet';
+import { storageGet, storageSet } from './chromeStorage';
 
 // OldFolder is a tuple: [unknown, path: string, label: string]
 type OldFolder = [unknown, string, string];

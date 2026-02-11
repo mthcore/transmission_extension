@@ -1,7 +1,6 @@
 import { getRoot, types, Instance, cast } from 'mobx-state-tree';
 import SpeedRollStore from './SpeedRollStore';
-import speedToStr from '../tools/speedToStr';
-import formatBytes from '../tools/formatBytes';
+import { speedToStr, formatBytes } from '../tools/format';
 import TorrentStore, { ITorrentStore } from './TorrentStore';
 import callApi from '../tools/callApi';
 import getLogger from '../tools/getLogger';

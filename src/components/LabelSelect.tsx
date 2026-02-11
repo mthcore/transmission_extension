@@ -1,10 +1,10 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { observer } from 'mobx-react';
 import Select, { Option } from 'rc-select';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 
-const LabelSelect: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+const LabelSelect = observer(() => {
+  const rootStore = useRootStore();
   const config = rootStore?.config;
 
   const handleChange = useCallback(
@@ -15,7 +15,7 @@ const LabelSelect: React.FC = observer(() => {
     [config]
   );
 
-  if (!rootStore || !config) return null;
+  if (!config) return null;
 
   const selectedLabel = config.selectedLabel;
 

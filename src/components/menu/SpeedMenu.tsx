@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import * as ContextMenu from '@radix-ui/react-context-menu';
 import { observer } from 'mobx-react';
-import speedToStr from '../tools/speedToStr';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import { SPEED_ARRAY_COUNT, DEFAULT_SPEED_LIMIT } from '../constants';
+import { speedToStr } from '../../tools/format';
+import useRootStore from '../../hooks/useRootStore';
+import { SPEED_ARRAY_COUNT, DEFAULT_SPEED_LIMIT } from '../../constants';
 
 type SpeedType = 'download' | 'upload';
 
@@ -12,7 +12,7 @@ interface SpeedContextMenuProps {
   type: SpeedType;
 }
 
-const SpeedContextMenu: React.FC<SpeedContextMenuProps> = observer(({ children, type }) => {
+const SpeedContextMenu = observer(({ children, type }: SpeedContextMenuProps) => {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
@@ -27,8 +27,8 @@ interface SpeedMenuContentProps {
   type: SpeedType;
 }
 
-const SpeedMenuContent: React.FC<SpeedMenuContentProps> = observer(({ type }) => {
-  const rootStore = React.useContext(RootStoreCtx);
+const SpeedMenuContent = observer(({ type }: SpeedMenuContentProps) => {
+  const rootStore = useRootStore();
   const client = rootStore?.client;
   const settings = client?.settings;
 
@@ -63,7 +63,7 @@ const SpeedMenuContent: React.FC<SpeedMenuContentProps> = observer(({ type }) =>
     return false;
   };
 
-  const handleUnlimited = (): void => {
+  const handleUnlimited = () => {
     if (type === 'download') {
       if (isAltSpeed) {
         client?.setAltSpeedEnabled(false);
@@ -79,7 +79,7 @@ const SpeedMenuContent: React.FC<SpeedMenuContentProps> = observer(({ type }) =>
     }
   };
 
-  const handleSetSpeedLimit = (speed: number): void => {
+  const handleSetSpeedLimit = (speed: number) => {
     if (type === 'download') {
       if (isAltSpeed) {
         client?.setAltDownloadSpeedLimit(speed);

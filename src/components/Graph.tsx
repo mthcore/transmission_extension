@@ -1,10 +1,10 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 import { useGraph } from '../hooks/useGraph';
 
-const Graph: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+const Graph = observer(() => {
+  const rootStore = useRootStore();
   const refChart = useRef<HTMLDivElement>(null);
   const speedRoll = rootStore?.client?.speedRoll;
 

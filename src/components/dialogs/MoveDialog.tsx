@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useCallback,
   useState,
   FormEvent,
@@ -7,15 +6,11 @@ import React, {
 } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import DirectorySelect from './DirectorySelect';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import showError from '../tools/showError';
-import { useDialogClose } from '../hooks/useDialogClose';
-
-interface Folder {
-  name?: string;
-  path: string;
-}
+import DirectorySelect from '../DirectorySelect';
+import useRootStore from '../../hooks/useRootStore';
+import showError from '../../tools/showError';
+import { useDialogClose } from '../../hooks/useDialogClose';
+import type { Folder } from '../../types/bg';
 
 interface MoveDialogStore {
   close: () => void;
@@ -27,8 +22,8 @@ interface MoveDialogProps {
   dialogStore: MoveDialogStore;
 }
 
-const MoveDialog: React.FC<MoveDialogProps> = observer(({ dialogStore }) => {
-  const rootStore = useContext(RootStoreCtx);
+const MoveDialog = observer(({ dialogStore }: MoveDialogProps) => {
+  const rootStore = useRootStore();
   const [showCustomLocation, setShowCustomLocation] = useState(true);
   const handleClose = useDialogClose(dialogStore);
   const client = rootStore?.client;

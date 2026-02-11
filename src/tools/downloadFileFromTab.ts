@@ -1,5 +1,5 @@
 import ErrorWithCode from './ErrorWithCode';
-import base64ToArrayBuffer from './base64ToArrayBuffer';
+import { base64ToArrayBuffer } from './binaryConversion';
 
 interface DownloadResult {
   blob: Blob;

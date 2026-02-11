@@ -5,7 +5,7 @@ interface SpinnerProps {
   className?: string;
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ size = 'small', className = '' }) => {
+const Spinner = ({ size = 'small', className = '' }: SpinnerProps) => {
   const sizeClass = `spinner--${size}`;
   return (
     <span

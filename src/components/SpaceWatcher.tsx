@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react';
-import React, { useContext, useEffect, useCallback, MouseEvent } from 'react';
+import React, { useEffect, useCallback, MouseEvent } from 'react';
 import Interval from './Interval';
-import RootStoreCtx from '../tools/rootStoreCtx';
+import useRootStore from '../hooks/useRootStore';
 import { SPACE_WATCHER_INTERVAL } from '../constants';
 
 const SpaceWatcher = observer(() => {
-  const rootStore = useContext(RootStoreCtx);
+  const rootStore = useRootStore();
   const spaceWatcherStore = rootStore?.spaceWatcher;
 
   useEffect(() => {

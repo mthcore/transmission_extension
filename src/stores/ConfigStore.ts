@@ -1,5 +1,5 @@
 import { getPropertyMembers, resolveIdentifier, types, Instance, cast } from 'mobx-state-tree';
-import storageSet from '../tools/storageSet';
+import { storageSet } from '../tools/chromeStorage';
 import url from 'url';
 import { BG_UPDATE_INTERVAL, UI_UPDATE_INTERVAL } from '../constants';
 

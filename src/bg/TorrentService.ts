@@ -1,17 +1,13 @@
 import getLogger from '../tools/getLogger';
 import readBlobAsArrayBuffer from '../tools/readBlobAsArrayBuffer';
-import arrayBufferToBase64 from '../tools/arrayBufferToBase64';
+import { arrayBufferToBase64 } from '../tools/binaryConversion';
 import downloadFileFromUrl from '../tools/downloadFileFromUrl';
 import { RECENTLY_ACTIVE_THRESHOLD } from '../constants';
 import type TransmissionTransport from './TransmissionTransport';
 import type { TransmissionResponse } from './TransmissionTransport';
+import type { Folder } from '../types/bg';
 
 const logger = getLogger('TorrentService');
-
-interface Folder {
-  name?: string;
-  path: string;
-}
 
 export interface NormalizedTorrent {
   id: number;

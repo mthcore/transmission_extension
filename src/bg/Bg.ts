@@ -178,19 +178,13 @@ class Bg {
       case 'recheck':
       case 'removetorrent':
       case 'removedatatorrent':
-      case 'reannounce': {
-        const action = message.action;
-        const ids = message.ids;
-        promise = this.requireClient()[action](ids);
-        break;
-      }
+      case 'reannounce':
       case 'queueTop':
       case 'queueUp':
       case 'queueDown':
       case 'queueBottom': {
         const action = message.action;
-        const ids = message.ids;
-        promise = this.requireClient()[action](ids);
+        promise = this.requireClient()[action](message.ids);
         break;
       }
       case 'setPriority': {
@@ -202,36 +196,20 @@ class Bg {
         break;
       }
       case 'setDownloadSpeedLimitEnabled':
-      case 'setUploadSpeedLimitEnabled': {
+      case 'setUploadSpeedLimitEnabled':
+      case 'setAltSpeedEnabled': {
         const action = message.action;
         const enabled = message.enabled;
-        promise = this.whenReady().then(() => {
-          return this.requireClient()[action](enabled);
-        });
+        promise = this.whenReady().then(() => this.requireClient()[action](enabled));
         break;
       }
       case 'setDownloadSpeedLimit':
-      case 'setUploadSpeedLimit': {
-        const action = message.action;
-        const speed = message.speed;
-        promise = this.whenReady().then(() => {
-          return this.requireClient()[action](speed);
-        });
-        break;
-      }
-      case 'setAltSpeedEnabled': {
-        promise = this.whenReady().then(() => {
-          return this.requireClient().setAltSpeedEnabled(message.enabled);
-        });
-        break;
-      }
+      case 'setUploadSpeedLimit':
       case 'setAltUploadSpeedLimit':
       case 'setAltDownloadSpeedLimit': {
         const action = message.action;
         const speed = message.speed;
-        promise = this.whenReady().then(() => {
-          return this.requireClient()[action](speed);
-        });
+        promise = this.whenReady().then(() => this.requireClient()[action](speed));
         break;
       }
       case 'updateSettings': {
@@ -286,7 +264,7 @@ class Bg {
     }
   };
 
-  handleAlarm = (alarm: chrome.alarms.Alarm): void => {
+  handleAlarm = (alarm: chrome.alarms.Alarm) => {
     if (alarm.name !== ALARM_NAME) return;
     this.whenReady()
       .then(() => {

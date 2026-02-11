@@ -1,4 +1,4 @@
-import React, { useCallback, ChangeEvent } from 'react';
+import React, { useCallback, type ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import { useOptionsPage } from '../../hooks/useOptionsPage';
 
@@ -12,15 +12,14 @@ interface ConfigStore {
   setTheme: (theme: string) => void;
 }
 
-const UiOptions: React.FC = observer(() => {
-  const { configStore, handleChange, handleSetInt } = useOptionsPage();
-  const typedConfigStore = configStore as unknown as ConfigStore;
+const UiOptions = observer(() => {
+  const { configStore, handleChange, handleSetInt } = useOptionsPage<ConfigStore>();
 
   const handleThemeChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
-      typedConfigStore.setTheme(e.target.value);
+      configStore.setTheme(e.target.value);
     },
-    [typedConfigStore]
+    [configStore]
   );
 
   return (
@@ -28,7 +27,7 @@ const UiOptions: React.FC = observer(() => {
       <h2>{chrome.i18n.getMessage('optMain')}</h2>
       <label>
         <span>{chrome.i18n.getMessage('theme')}</span>
-        <select value={typedConfigStore.theme} onChange={handleThemeChange}>
+        <select value={configStore.theme} onChange={handleThemeChange}>
           <option value="system">{chrome.i18n.getMessage('themeSystem')}</option>
           <option value="light">{chrome.i18n.getMessage('themeLight')}</option>
           <option value="dark">{chrome.i18n.getMessage('themeDark')}</option>
@@ -41,7 +40,7 @@ const UiOptions: React.FC = observer(() => {
             onChange={handleChange}
             name="showFreeSpace"
             type="checkbox"
-            defaultChecked={typedConfigStore.showFreeSpace}
+            defaultChecked={configStore.showFreeSpace}
           />
           <span className="toggle-slider"></span>
         </span>
@@ -53,7 +52,7 @@ const UiOptions: React.FC = observer(() => {
             onChange={handleChange}
             name="hideSeedingTorrents"
             type="checkbox"
-            defaultChecked={typedConfigStore.hideSeedingTorrents}
+            defaultChecked={configStore.hideSeedingTorrents}
           />
           <span className="toggle-slider"></span>
         </span>
@@ -65,7 +64,7 @@ const UiOptions: React.FC = observer(() => {
             onChange={handleChange}
             name="hideFinishedTorrents"
             type="checkbox"
-            defaultChecked={typedConfigStore.hideFinishedTorrents}
+            defaultChecked={configStore.hideFinishedTorrents}
           />
           <span className="toggle-slider"></span>
         </span>
@@ -77,7 +76,7 @@ const UiOptions: React.FC = observer(() => {
             onChange={handleChange}
             name="showSpeedGraph"
             type="checkbox"
-            defaultChecked={typedConfigStore.showSpeedGraph}
+            defaultChecked={configStore.showSpeedGraph}
           />
           <span className="toggle-slider"></span>
         </span>
@@ -89,7 +88,7 @@ const UiOptions: React.FC = observer(() => {
           name="uiUpdateInterval"
           type="number"
           min="100"
-          defaultValue={typedConfigStore.uiUpdateInterval}
+          defaultValue={configStore.uiUpdateInterval}
         />{' '}
         <span>{chrome.i18n.getMessage('ms')}</span>
       </label>

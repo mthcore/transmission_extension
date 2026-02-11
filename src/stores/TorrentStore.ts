@@ -1,8 +1,7 @@
 import { getRoot, types, Instance } from 'mobx-state-tree';
-import speedToStr from '../tools/speedToStr';
+import { speedToStr, formatBytes } from '../tools/format';
 import getEta from '../tools/getEta';
-import fecha from 'fecha';
-import formatBytes from '../tools/formatBytes';
+
 
 const TorrentStore = types
   .model('TorrentStore', {
@@ -101,14 +100,14 @@ const TorrentStore = types
         if (!self.addedTime) {
           return '∞';
         } else {
-          return fecha.format(new Date(self.addedTime * 1000), 'YYYY-MM-DD HH:mm:ss');
+          return new Date(self.addedTime * 1000).toLocaleString();
         }
       },
       get completedTimeStr(): string {
         if (!self.completedTime) {
           return '∞';
         } else {
-          return fecha.format(new Date(self.completedTime * 1000), 'YYYY-MM-DD HH:mm:ss');
+          return new Date(self.completedTime * 1000).toLocaleString();
         }
       },
       get stateText(): string {

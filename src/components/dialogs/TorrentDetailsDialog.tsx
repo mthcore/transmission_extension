@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import { useDialogClose } from '../hooks/useDialogClose';
+import { useDialogClose } from '../../hooks/useDialogClose';
 
 interface Torrent {
   name: string;
@@ -34,7 +34,7 @@ interface TorrentDetailsDialogProps {
   dialogStore: TorrentDetailsDialogStore;
 }
 
-const TorrentDetailsDialog: React.FC<TorrentDetailsDialogProps> = observer(({ dialogStore }) => {
+const TorrentDetailsDialog = observer(({ dialogStore }: TorrentDetailsDialogProps) => {
   const torrent = dialogStore.torrent;
   const handleClose = useDialogClose(dialogStore);
 

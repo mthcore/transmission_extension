@@ -1,7 +1,7 @@
-import React, { useContext, useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, type FormEventHandler, type ReactNode } from 'react';
 import { observer } from 'mobx-react';
 import { useLocation } from 'react-router-dom';
-import RootStoreCtx from '../../tools/rootStoreCtx';
+import useRootStore from '../../hooks/useRootStore';
 
 interface ConfigStore {
   login: string;
@@ -40,7 +40,7 @@ interface ClientFormElement extends HTMLFormElement {
 type ClientStatus = 'pending' | 'done' | 'error' | null;
 
 const ClientOptions = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as RootStoreType;
+  const rootStore = useRootStore() as unknown as RootStoreType;
   const configStore = rootStore.config;
   const location = useLocation();
   const refPage = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ const ClientOptions = observer(() => {
   const [clientStatus, setClientStatus] = useState<ClientStatus>(null);
   const [clientStatusText, setClientStatusText] = useState('');
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = useCallback(
+  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
       e.preventDefault();
       const form = e.currentTarget as ClientFormElement;
@@ -96,7 +96,7 @@ const ClientOptions = observer(() => {
     [rootStore, configStore, location]
   );
 
-  let status: React.ReactNode = null;
+  let status: ReactNode = null;
   if (clientStatus) {
     switch (clientStatus) {
       case 'pending': {

@@ -1,38 +1,12 @@
-import React, { useContext, useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Column } from './TableHeadColumn';
 import TorrentListTableItem from './TorrentListTableItem';
-import TorrentColumnContextMenu from './TorrentColumnMenu';
+import ColumnContextMenu from './ColumnContextMenu';
 import TableHeadColumnRenderer from './TableHeadColumnRenderer';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import { useScrollSync } from '../hooks/useScrollSync';
-
-interface TorrentItem {
-  id: number;
-  name: string;
-  selected: boolean;
-  order: number;
-  sizeStr: string;
-  remainingStr: string;
-  isSeeding: boolean;
-  progressStr: string;
-  errorMessage?: string;
-  stateText: string;
-  seeds: number;
-  peers: number;
-  activePeers: number;
-  activeSeeds: number;
-  downloadSpeedStr: string;
-  uploadSpeedStr: string;
-  etaStr: string;
-  uploadedStr: string;
-  downloadedStr: string;
-  shared: number;
-  addedTimeStr: string;
-  completedTimeStr: string;
-  start: () => Promise<void>;
-  stop: () => Promise<void>;
-}
+import useRootStore from '../../hooks/useRootStore';
+import { useScrollSync } from '../../hooks/useScrollSync';
+import type { Torrent } from '../../types/stores';
 
 interface RootStore {
   flushTorrentList: () => void;
@@ -40,27 +14,26 @@ interface RootStore {
   config: {
     torrentsSort: { by: string; direction: number };
     visibleTorrentColumns: Column[];
+    activeTorrentColumns: Column[];
     setTorrentsSort: (column: string, direction: number) => void;
     moveTorrentsColumn: (from: string, to: string) => void;
     saveTorrentsColumns: () => void;
   };
   torrentList: {
-    sortedTorrents: TorrentItem[];
+    sortedTorrents: Torrent[];
     isSelectedAll: boolean;
     toggleSelectAll: () => void;
   };
 }
 
-const TorrentListTable: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
+const TorrentListTable = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
   const refFixedHead = useRef<HTMLTableElement>(null);
   const handleScroll = useScrollSync(refFixedHead as React.RefObject<HTMLElement>);
 
   useEffect(() => {
-    rootStore?.flushTorrentList();
+    rootStore.flushTorrentList();
   }, [rootStore]);
-
-  if (!rootStore) return null;
 
   const columnVars: Record<string, string> = {};
   rootStore.config.visibleTorrentColumns.forEach((col) => {
@@ -74,7 +47,10 @@ const TorrentListTable: React.FC = observer(() => {
           <div className="spinner spinner--large" />
         </div>
       )}
-      <TorrentColumnContextMenu>
+      <ColumnContextMenu
+        columns={rootStore.config.activeTorrentColumns}
+        onSave={() => rootStore.config.saveTorrentsColumns()}
+      >
         <table
           ref={refFixedHead}
           className="torrent-table-head"
@@ -84,7 +60,7 @@ const TorrentListTable: React.FC = observer(() => {
         >
           <TorrentListTableHead />
         </table>
-      </TorrentColumnContextMenu>
+      </ColumnContextMenu>
       <table className="torrent-table-body" border={0} cellSpacing={0} cellPadding={0}>
         <TorrentListTableHead />
         <TorrentListTableTorrents />
@@ -95,33 +71,31 @@ const TorrentListTable: React.FC = observer(() => {
 
 const TORRENT_FIXED_COLUMNS = ['checkbox', 'actions'];
 
-const TorrentListTableHead: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
-  const torrentListStore = rootStore?.torrentList;
+const TorrentListTableHead = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
+  const torrentListStore = rootStore.torrentList;
 
   const handleSort = useCallback(
-    (column: string, direction: number): void => {
-      rootStore?.config.setTorrentsSort(column, direction);
+    (column: string, direction: number) => {
+      rootStore.config.setTorrentsSort(column, direction);
     },
     [rootStore]
   );
 
   const handleMoveColumn = useCallback(
-    (from: string, to: string): void => {
-      rootStore?.config.moveTorrentsColumn(from, to);
+    (from: string, to: string) => {
+      rootStore.config.moveTorrentsColumn(from, to);
     },
     [rootStore]
   );
 
-  const handleSaveColumns = useCallback((): void => {
-    rootStore?.config.saveTorrentsColumns();
+  const handleSaveColumns = useCallback(() => {
+    rootStore.config.saveTorrentsColumns();
   }, [rootStore]);
 
-  const handleToggleSelectAll = useCallback((): void => {
+  const handleToggleSelectAll = useCallback(() => {
     torrentListStore?.toggleSelectAll();
   }, [torrentListStore]);
-
-  if (!rootStore || !torrentListStore) return null;
 
   const torrentsSort = rootStore.config.torrentsSort;
   const torrentColumns = rootStore.config.visibleTorrentColumns;
@@ -149,16 +123,14 @@ const TorrentListTableHead: React.FC = observer(() => {
   );
 });
 
-const TorrentListTableTorrents: React.FC = observer(() => {
-  const rootStore = useContext(RootStoreCtx) as unknown as RootStore | null;
-  const torrentListStore = rootStore?.torrentList;
-
-  if (!torrentListStore) return null;
+const TorrentListTableTorrents = observer(() => {
+  const rootStore = useRootStore() as unknown as RootStore;
+  const torrentListStore = rootStore.torrentList;
 
   return (
     <tbody>
       {torrentListStore.sortedTorrents.map((torrent) => (
-        <TorrentListTableItem key={torrent.id} torrent={torrent as TorrentItem} />
+        <TorrentListTableItem key={torrent.id} torrent={torrent as Torrent} />
       ))}
     </tbody>
   );

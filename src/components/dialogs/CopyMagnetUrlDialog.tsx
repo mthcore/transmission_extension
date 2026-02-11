@@ -1,7 +1,7 @@
 import React, { useCallback, FormEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
-import { useDialogClose } from '../hooks/useDialogClose';
+import { useDialogClose } from '../../hooks/useDialogClose';
 
 interface CopyMagnetUrlDialogStore {
   close: () => void;
@@ -12,7 +12,7 @@ interface CopyMagnetUrlDialogProps {
   dialogStore: CopyMagnetUrlDialogStore;
 }
 
-const CopyMagnetUrlDialog: React.FC<CopyMagnetUrlDialogProps> = observer(({ dialogStore }) => {
+const CopyMagnetUrlDialog = observer(({ dialogStore }: CopyMagnetUrlDialogProps) => {
   const handleClose = useDialogClose(dialogStore);
 
   const handleSubmit = useCallback(

@@ -8,13 +8,13 @@ const idComponent: Record<string, React.LazyExoticComponent<React.ComponentType>
   graph: Graph,
 };
 
-const Spinner: React.FC = () => null;
+const Spinner = () => null;
 
 interface ComponentLoaderProps {
   'load-page': string;
 }
 
-const ComponentLoader: React.FC<ComponentLoaderProps> = ({ 'load-page': componentId }) => {
+const ComponentLoader = ({ 'load-page': componentId }: ComponentLoaderProps) => {
   if (window.PRERENDER) {
     return <Spinner />;
   }

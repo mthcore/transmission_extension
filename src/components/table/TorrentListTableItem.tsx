@@ -1,36 +1,10 @@
 import { observer } from 'mobx-react';
-import React, { useContext, useCallback, ChangeEvent } from 'react';
-import RootStoreCtx from '../tools/rootStoreCtx';
-import TorrentContextMenu from './TorrentContextMenu';
+import React, { useCallback, ChangeEvent } from 'react';
+import useRootStore from '../../hooks/useRootStore';
+import TorrentContextMenu from '../menu/TorrentContextMenu';
 import torrentColumnRenderers, { TorrentColumnCtx } from './torrentColumns';
-import { useLoading } from '../hooks/useLoading';
-
-interface Torrent {
-  id: number;
-  name: string;
-  selected: boolean;
-  order: number;
-  sizeStr: string;
-  remainingStr: string;
-  isSeeding: boolean;
-  progressStr: string;
-  errorMessage?: string;
-  stateText: string;
-  seeds: number;
-  peers: number;
-  activePeers: number;
-  activeSeeds: number;
-  downloadSpeedStr: string;
-  uploadSpeedStr: string;
-  etaStr: string;
-  uploadedStr: string;
-  downloadedStr: string;
-  shared: number;
-  addedTimeStr: string;
-  completedTimeStr: string;
-  start: () => Promise<void>;
-  stop: () => Promise<void>;
-}
+import { useLoading } from '../../hooks/useLoading';
+import type { Torrent } from '../../types/stores';
 
 interface TorrentListTableItemProps {
   torrent: Torrent;
@@ -42,8 +16,8 @@ interface TorrentListStore {
   removeSelectedId: (id: number) => void;
 }
 
-const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ torrent }) => {
-  const rootStore = useContext(RootStoreCtx);
+const TorrentListTableItem = observer(({ torrent }: TorrentListTableItemProps) => {
+  const rootStore = useRootStore();
   const torrentListStore = rootStore?.torrentList as TorrentListStore | undefined;
   const config = rootStore?.config;
   const { isLoading: isStarting, withLoading: withStartLoading } = useLoading();
@@ -80,7 +54,7 @@ const TorrentListTableItem: React.FC<TorrentListTableItemProps> = observer(({ to
     [rootStore, torrent.id]
   );
 
-  if (!rootStore || !config) return null;
+  if (!config) return null;
 
   const visibleTorrentColumns = config.visibleTorrentColumns as unknown as Array<{
     column: string;

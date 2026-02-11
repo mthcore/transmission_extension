@@ -6,12 +6,7 @@
  */
 
 import type { TorrentId } from './index';
-
-// Directory configuration for adding torrents
-export interface DirectoryConfig {
-  name?: string;
-  path: string;
-}
+import type { Folder } from './bg';
 
 // Discriminated union of all message types
 export type BgMessage =
@@ -20,18 +15,14 @@ export type BgMessage =
   | GetConfigStoreMessage
   // Torrent list updates
   | UpdateTorrentListMessage
-  // Torrent actions (bulk)
-  | TorrentActionMessage
-  // Queue management
-  | QueueActionMessage
+  // Torrent & queue actions (bulk by IDs)
+  | IdActionMessage
   // File operations
   | SetPriorityMessage
   | GetFileListMessage
   // Speed settings
-  | SpeedLimitEnabledMessage
-  | SpeedLimitMessage
-  | AltSpeedEnabledMessage
-  | AltSpeedLimitMessage
+  | SpeedEnabledMessage
+  | SpeedValueMessage
   // Session operations
   | UpdateSettingsMessage
   | SendFilesMessage
@@ -57,26 +48,22 @@ export interface UpdateTorrentListMessage {
   force?: boolean;
 }
 
-// Torrent actions that operate on IDs
-type TorrentAction =
+// Torrent & queue actions that operate on IDs
+type IdAction =
   | 'start'
   | 'forcestart'
   | 'stop'
   | 'recheck'
   | 'removetorrent'
   | 'removedatatorrent'
-  | 'reannounce';
+  | 'reannounce'
+  | 'queueTop'
+  | 'queueUp'
+  | 'queueDown'
+  | 'queueBottom';
 
-export interface TorrentActionMessage {
-  action: TorrentAction;
-  ids: TorrentId[];
-}
-
-// Queue management
-type QueueAction = 'queueTop' | 'queueUp' | 'queueDown' | 'queueBottom';
-
-export interface QueueActionMessage {
-  action: QueueAction;
+export interface IdActionMessage {
+  action: IdAction;
   ids: TorrentId[];
 }
 
@@ -93,30 +80,25 @@ export interface GetFileListMessage {
   id: TorrentId;
 }
 
-// Speed limit settings
-type SpeedLimitEnabledAction = 'setDownloadSpeedLimitEnabled' | 'setUploadSpeedLimitEnabled';
+// Speed settings
+type SpeedEnabledAction =
+  | 'setDownloadSpeedLimitEnabled'
+  | 'setUploadSpeedLimitEnabled'
+  | 'setAltSpeedEnabled';
 
-export interface SpeedLimitEnabledMessage {
-  action: SpeedLimitEnabledAction;
+export interface SpeedEnabledMessage {
+  action: SpeedEnabledAction;
   enabled: boolean;
 }
 
-type SpeedLimitAction = 'setDownloadSpeedLimit' | 'setUploadSpeedLimit';
+type SpeedValueAction =
+  | 'setDownloadSpeedLimit'
+  | 'setUploadSpeedLimit'
+  | 'setAltUploadSpeedLimit'
+  | 'setAltDownloadSpeedLimit';
 
-export interface SpeedLimitMessage {
-  action: SpeedLimitAction;
-  speed: number;
-}
-
-export interface AltSpeedEnabledMessage {
-  action: 'setAltSpeedEnabled';
-  enabled: boolean;
-}
-
-type AltSpeedLimitAction = 'setAltUploadSpeedLimit' | 'setAltDownloadSpeedLimit';
-
-export interface AltSpeedLimitMessage {
-  action: AltSpeedLimitAction;
+export interface SpeedValueMessage {
+  action: SpeedValueAction;
   speed: number;
 }
 
@@ -128,7 +110,7 @@ export interface UpdateSettingsMessage {
 export interface SendFilesMessage {
   action: 'sendFiles';
   urls: string[];
-  directory?: DirectoryConfig;
+  directory?: Folder;
 }
 
 export interface GetFreeSpaceMessage {

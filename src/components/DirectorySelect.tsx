@@ -1,10 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { CUSTOM_PATH_INDEX, DEFAULT_PATH_INDEX } from '../constants';
-
-interface Folder {
-  name?: string;
-  path: string;
-}
+import type { Folder } from '../types/bg';
 
 interface DirectorySelectProps {
   folders: Folder[];
@@ -15,14 +11,14 @@ interface DirectorySelectProps {
   label?: string;
 }
 
-const DirectorySelect: React.FC<DirectorySelectProps> = ({
+const DirectorySelect = ({
   folders,
   name = 'directory',
   defaultValue = DEFAULT_PATH_INDEX,
   showCustomOption = false,
   onChange,
   label,
-}) => {
+}: DirectorySelectProps) => {
   if (!folders.length) {
     return null;
   }

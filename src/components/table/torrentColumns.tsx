@@ -1,31 +1,7 @@
 import React, { ChangeEvent } from 'react';
-import TorrentName from './TorrentName';
-import ProgressBar from './ProgressBar';
-
-interface Torrent {
-  id: number;
-  name: string;
-  selected: boolean;
-  order: number;
-  sizeStr: string;
-  remainingStr: string;
-  isSeeding: boolean;
-  progressStr: string;
-  errorMessage?: string;
-  stateText: string;
-  seeds: number;
-  peers: number;
-  activePeers: number;
-  activeSeeds: number;
-  downloadSpeedStr: string;
-  uploadSpeedStr: string;
-  etaStr: string;
-  uploadedStr: string;
-  downloadedStr: string;
-  shared: number;
-  addedTimeStr: string;
-  completedTimeStr: string;
-}
+import TorrentName from '../TorrentName';
+import ProgressBar from '../ProgressBar';
+import type { Torrent } from '../../types/stores';
 
 export interface TorrentColumnCtx {
   torrent: Torrent;
@@ -57,7 +33,7 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
   ),
 
   order: ({ torrent }) => {
-    let value: number | string = torrent.order;
+    let value: number | string = torrent.order ?? 0;
     if (!Number.isFinite(value)) {
       value = '*';
     }

@@ -87,8 +87,8 @@ export interface FileViews {
   readonly normalizedName: string;
 }
 
-// Combined File type
-export type File = FileSnapshot & FileViews;
+// Combined File type (named FileEntry to avoid collision with DOM File)
+export type FileEntry = FileSnapshot & FileViews;
 
 // Settings store snapshot (normalized from Transmission)
 export interface SettingsSnapshot {

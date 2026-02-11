@@ -1,7 +1,7 @@
 import React, { useCallback, ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Column } from './TableHeadColumn';
-import { useTableHeadColumn } from '../hooks/useTableHeadColumn';
+import { useTableHeadColumn } from '../../hooks/useTableHeadColumn';
 
 interface TableHeadColumnRendererProps {
   column: Column;
@@ -16,7 +16,7 @@ interface TableHeadColumnRendererProps {
   onToggleSelectAll?: () => void;
 }
 
-const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer((props) => {
+const TableHeadColumnRenderer = observer((props: TableHeadColumnRendererProps) => {
   const {
     column,
     isSorted,
@@ -49,7 +49,7 @@ const TableHeadColumnRenderer: React.FC<TableHeadColumnRendererProps> = observer
   });
 
   const handleSelectAll = useCallback(
-    (_e: ChangeEvent<HTMLInputElement>): void => {
+    (_e: ChangeEvent<HTMLInputElement>) => {
       onToggleSelectAll?.();
     },
     [onToggleSelectAll]

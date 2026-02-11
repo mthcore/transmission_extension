@@ -1,5 +1,5 @@
 import 'whatwg-fetch';
-import arrayBufferToBase64 from './tools/arrayBufferToBase64';
+import { arrayBufferToBase64 } from './tools/binaryConversion';
 import getLogger from './tools/getLogger';
 import ErrorWithCode from './tools/ErrorWithCode';
 import { serializeError } from 'serialize-error';
