@@ -70,17 +70,6 @@ jobs:
           name: opera-extension
           path: transmission-opera-${{ github.ref_name }}.zip
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            transmission-chrome-${{ github.ref_name }}.zip
-            transmission-firefox-${{ github.ref_name }}.zip
-            transmission-opera-${{ github.ref_name }}.zip
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # Deploy to Chrome Web Store
   deploy-chrome:
     needs: build
