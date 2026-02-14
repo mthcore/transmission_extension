@@ -20,11 +20,7 @@ interface ExtendedError extends ErrorWithCode {
   original?: Error;
 }
 
-const mobxApplyPatchLine = (
-  target: Record<string, unknown>,
-  session: Session,
-  delta: Delta
-) => {
+const mobxApplyPatchLine = (target: Record<string, unknown>, session: Session, delta: Delta) => {
   const { id, type, patchId, branches, result } = delta;
   switch (type) {
     case 'snapshot': {

@@ -462,14 +462,16 @@ class TorrentService {
         const torrents = (response.arguments as { torrents: TorrentPeers[] }).torrents;
         const torrent = torrents.find((t) => t.id === id);
         if (!torrent) return [];
-        return torrent.peers.map((peer): PeerData => ({
-          address: peer.address,
-          client: peer.clientName,
-          progress: peer.progress,
-          downloadSpeed: peer.rateToClient,
-          uploadSpeed: peer.rateToPeer,
-          flags: peer.flagStr,
-        }));
+        return torrent.peers.map(
+          (peer): PeerData => ({
+            address: peer.address,
+            client: peer.clientName,
+            progress: peer.progress,
+            downloadSpeed: peer.rateToClient,
+            uploadSpeed: peer.rateToPeer,
+            flags: peer.flagStr,
+          })
+        );
       });
   }
 

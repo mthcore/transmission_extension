@@ -88,7 +88,12 @@ describe('TorrentListStore', () => {
       const r = createRoot();
       const filters = r.torrentList.filters;
       expect(filters.map((f) => f.label)).toEqual([
-        'ALL', 'DL', 'SEEDING', 'COMPL', 'ACTIVE', 'INACTIVE',
+        'ALL',
+        'DL',
+        'SEEDING',
+        'COMPL',
+        'ACTIVE',
+        'INACTIVE',
       ]);
       expect(filters.every((f) => f.custom)).toBe(true);
     });
@@ -121,94 +126,73 @@ describe('TorrentListStore', () => {
 
   describe('filteredTorrents', () => {
     it('returns all torrents for ALL filter', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'ALL', custom: true } },
-        [makeTorrent({ id: 1 }), makeTorrent({ id: 2, name: 'Second' })]
-      );
+      const r = createRoot({ selectedLabel: { label: 'ALL', custom: true } }, [
+        makeTorrent({ id: 1 }),
+        makeTorrent({ id: 2, name: 'Second' }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(2);
     });
 
     it('filters by DL (downloading)', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'DL', custom: true } },
-        [
-          makeTorrent({ id: 1, statusCode: 4 }), // downloading
-          makeTorrent({ id: 2, statusCode: 6 }), // seeding
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'DL', custom: true } }, [
+        makeTorrent({ id: 1, statusCode: 4 }), // downloading
+        makeTorrent({ id: 2, statusCode: 6 }), // seeding
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(1);
     });
 
     it('filters by SEEDING', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'SEEDING', custom: true } },
-        [
-          makeTorrent({ id: 1, statusCode: 4 }),
-          makeTorrent({ id: 2, statusCode: 6 }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'SEEDING', custom: true } }, [
+        makeTorrent({ id: 1, statusCode: 4 }),
+        makeTorrent({ id: 2, statusCode: 6 }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(2);
     });
 
     it('filters by COMPL (completed)', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'COMPL', custom: true } },
-        [
-          makeTorrent({ id: 1, percentDone: 0.5 }),
-          makeTorrent({ id: 2, percentDone: 1 }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'COMPL', custom: true } }, [
+        makeTorrent({ id: 1, percentDone: 0.5 }),
+        makeTorrent({ id: 2, percentDone: 1 }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(2);
     });
 
     it('filters by ACTIVE (has speed)', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'ACTIVE', custom: true } },
-        [
-          makeTorrent({ id: 1, downloadSpeed: 100, uploadSpeed: 0 }),
-          makeTorrent({ id: 2, downloadSpeed: 0, uploadSpeed: 0 }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'ACTIVE', custom: true } }, [
+        makeTorrent({ id: 1, downloadSpeed: 100, uploadSpeed: 0 }),
+        makeTorrent({ id: 2, downloadSpeed: 0, uploadSpeed: 0 }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(1);
     });
 
     it('filters by INACTIVE (no speed)', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'INACTIVE', custom: true } },
-        [
-          makeTorrent({ id: 1, downloadSpeed: 100 }),
-          makeTorrent({ id: 2, downloadSpeed: 0, uploadSpeed: 0 }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'INACTIVE', custom: true } }, [
+        makeTorrent({ id: 1, downloadSpeed: 100 }),
+        makeTorrent({ id: 2, downloadSpeed: 0, uploadSpeed: 0 }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(2);
     });
 
     it('filters by NO_LABEL (torrents without labels)', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'NO_LABEL', custom: true } },
-        [
-          makeTorrent({ id: 1, labels: ['movies'] }),
-          makeTorrent({ id: 2, labels: [] }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'NO_LABEL', custom: true } }, [
+        makeTorrent({ id: 1, labels: ['movies'] }),
+        makeTorrent({ id: 2, labels: [] }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(2);
     });
 
     it('filters by specific label name', () => {
-      const r = createRoot(
-        { selectedLabel: { label: 'movies', custom: false } },
-        [
-          makeTorrent({ id: 1, labels: ['movies', 'hd'] }),
-          makeTorrent({ id: 2, labels: ['music'] }),
-          makeTorrent({ id: 3, labels: [] }),
-        ]
-      );
+      const r = createRoot({ selectedLabel: { label: 'movies', custom: false } }, [
+        makeTorrent({ id: 1, labels: ['movies', 'hd'] }),
+        makeTorrent({ id: 2, labels: ['music'] }),
+        makeTorrent({ id: 3, labels: [] }),
+      ]);
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].id).toBe(1);
     });
@@ -240,10 +224,7 @@ describe('TorrentListStore', () => {
     it('applies search query filter', () => {
       const r = createRoot(
         { selectedLabel: { label: 'ALL', custom: true }, searchQuery: 'alpha' },
-        [
-          makeTorrent({ id: 1, name: 'Alpha File' }),
-          makeTorrent({ id: 2, name: 'Beta File' }),
-        ]
+        [makeTorrent({ id: 1, name: 'Alpha File' }), makeTorrent({ id: 2, name: 'Beta File' })]
       );
       expect(r.torrentList.filteredTorrents).toHaveLength(1);
       expect(r.torrentList.filteredTorrents[0].name).toBe('Alpha File');
@@ -260,27 +241,21 @@ describe('TorrentListStore', () => {
 
   describe('sortedTorrents', () => {
     it('sorts by name ascending', () => {
-      const r = createRoot(
-        { torrentsSort: { by: 'name', direction: 1 } },
-        [
-          makeTorrent({ id: 1, name: 'Charlie' }),
-          makeTorrent({ id: 2, name: 'Alpha' }),
-          makeTorrent({ id: 3, name: 'Bravo' }),
-        ]
-      );
+      const r = createRoot({ torrentsSort: { by: 'name', direction: 1 } }, [
+        makeTorrent({ id: 1, name: 'Charlie' }),
+        makeTorrent({ id: 2, name: 'Alpha' }),
+        makeTorrent({ id: 3, name: 'Bravo' }),
+      ]);
       const names = r.torrentList.sortedTorrents.map((t) => t.name);
       expect(names).toEqual(['Alpha', 'Bravo', 'Charlie']);
     });
 
     it('sorts by name descending', () => {
-      const r = createRoot(
-        { torrentsSort: { by: 'name', direction: -1 } },
-        [
-          makeTorrent({ id: 1, name: 'Charlie' }),
-          makeTorrent({ id: 2, name: 'Alpha' }),
-          makeTorrent({ id: 3, name: 'Bravo' }),
-        ]
-      );
+      const r = createRoot({ torrentsSort: { by: 'name', direction: -1 } }, [
+        makeTorrent({ id: 1, name: 'Charlie' }),
+        makeTorrent({ id: 2, name: 'Alpha' }),
+        makeTorrent({ id: 3, name: 'Bravo' }),
+      ]);
       const names = r.torrentList.sortedTorrents.map((t) => t.name);
       expect(names).toEqual(['Charlie', 'Bravo', 'Alpha']);
     });
@@ -288,13 +263,10 @@ describe('TorrentListStore', () => {
 
   describe('sortedTorrentIds', () => {
     it('returns IDs in sorted order', () => {
-      const r = createRoot(
-        { torrentsSort: { by: 'name', direction: 1 } },
-        [
-          makeTorrent({ id: 10, name: 'Bravo' }),
-          makeTorrent({ id: 20, name: 'Alpha' }),
-        ]
-      );
+      const r = createRoot({ torrentsSort: { by: 'name', direction: 1 } }, [
+        makeTorrent({ id: 10, name: 'Bravo' }),
+        makeTorrent({ id: 20, name: 'Alpha' }),
+      ]);
       expect(r.torrentList.sortedTorrentIds).toEqual([20, 10]);
     });
   });

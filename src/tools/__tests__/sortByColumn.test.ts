@@ -54,11 +54,7 @@ describe('createColumnSorter', () => {
   });
 
   it('handles undefined values by pushing them to the end (descending)', () => {
-    const withUndefined = [
-      { name: 'B', value: 2 },
-      { name: 'A' },
-      { name: 'C', value: 1 },
-    ];
+    const withUndefined = [{ name: 'B', value: 2 }, { name: 'A' }, { name: 'C', value: 1 }];
     const result = sorter(withUndefined, 'value', -1);
     expect(result.map((i) => i.name)).toEqual(['B', 'C', 'A']);
   });

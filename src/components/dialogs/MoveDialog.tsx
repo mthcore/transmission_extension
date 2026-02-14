@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useState,
-  FormEvent,
-  ChangeEvent,
-} from 'react';
+import React, { useCallback, useState, FormEvent, ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import DirectorySelect from '../DirectorySelect';

@@ -2,7 +2,6 @@ import { getRoot, types, Instance } from 'mobx-state-tree';
 import { speedToStr, formatBytes } from '../tools/format';
 import getEta from '../tools/getEta';
 
-
 const TorrentStore = types
   .model('TorrentStore', {
     id: types.identifierNumber,

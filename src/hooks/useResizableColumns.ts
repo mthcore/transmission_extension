@@ -13,8 +13,15 @@ interface ResizeHandleProps {
 
 const MIN_WIDTH = 24;
 
-export function useResizableColumns({ defaultWidths, savedWidths, onSave }: UseResizableColumnsProps) {
-  const merged = useMemo(() => ({ ...defaultWidths, ...savedWidths }), [defaultWidths, savedWidths]);
+export function useResizableColumns({
+  defaultWidths,
+  savedWidths,
+  onSave,
+}: UseResizableColumnsProps) {
+  const merged = useMemo(
+    () => ({ ...defaultWidths, ...savedWidths }),
+    [defaultWidths, savedWidths]
+  );
   const [widths, setWidths] = useState<Record<string, number>>(merged);
 
   // Sync when savedWidths change (e.g. from storage)
@@ -27,40 +34,39 @@ export function useResizableColumns({ defaultWidths, savedWidths, onSave }: UseR
   onSaveRef.current = onSave;
 
   const resizeRef = useRef({ key: '', startX: 0, startWidth: 0 });
-  const listenersRef = useRef<{ move: (e: globalThis.MouseEvent) => void; up: () => void } | null>(null);
-
-  const startResize = useCallback(
-    (key: string, clientX: number, currentWidth: number) => {
-      // Clean up any leftover listeners
-      if (listenersRef.current) {
-        document.body.removeEventListener('mousemove', listenersRef.current.move);
-        document.body.removeEventListener('mouseup', listenersRef.current.up);
-      }
-
-      resizeRef.current = { key, startX: clientX, startWidth: currentWidth };
-
-      const move = (e: globalThis.MouseEvent) => {
-        const delta = e.clientX - resizeRef.current.startX;
-        const newWidth = Math.max(MIN_WIDTH, resizeRef.current.startWidth + delta);
-        setWidths((prev) => ({ ...prev, [resizeRef.current.key]: newWidth }));
-      };
-
-      const up = () => {
-        document.body.removeEventListener('mousemove', move);
-        document.body.removeEventListener('mouseup', up);
-        listenersRef.current = null;
-        setWidths((current) => {
-          onSaveRef.current(current);
-          return current;
-        });
-      };
-
-      listenersRef.current = { move, up };
-      document.body.addEventListener('mousemove', move);
-      document.body.addEventListener('mouseup', up);
-    },
-    []
+  const listenersRef = useRef<{ move: (e: globalThis.MouseEvent) => void; up: () => void } | null>(
+    null
   );
+
+  const startResize = useCallback((key: string, clientX: number, currentWidth: number) => {
+    // Clean up any leftover listeners
+    if (listenersRef.current) {
+      document.body.removeEventListener('mousemove', listenersRef.current.move);
+      document.body.removeEventListener('mouseup', listenersRef.current.up);
+    }
+
+    resizeRef.current = { key, startX: clientX, startWidth: currentWidth };
+
+    const move = (e: globalThis.MouseEvent) => {
+      const delta = e.clientX - resizeRef.current.startX;
+      const newWidth = Math.max(MIN_WIDTH, resizeRef.current.startWidth + delta);
+      setWidths((prev) => ({ ...prev, [resizeRef.current.key]: newWidth }));
+    };
+
+    const up = () => {
+      document.body.removeEventListener('mousemove', move);
+      document.body.removeEventListener('mouseup', up);
+      listenersRef.current = null;
+      setWidths((current) => {
+        onSaveRef.current(current);
+        return current;
+      });
+    };
+
+    listenersRef.current = { move, up };
+    document.body.addEventListener('mousemove', move);
+    document.body.addEventListener('mouseup', up);
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {

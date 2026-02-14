@@ -1,6 +1,11 @@
 import TransmissionTransport from './TransmissionTransport';
 import type { TransmissionResponse } from './TransmissionTransport';
-import TorrentService, { type NormalizedTorrent, type PeerData, type TorrentDetailData, type TrackerStat } from './TorrentService';
+import TorrentService, {
+  type NormalizedTorrent,
+  type PeerData,
+  type TorrentDetailData,
+  type TrackerStat,
+} from './TorrentService';
 import FileService, { type NormalizedFile } from './FileService';
 import SettingsService, { type NormalizedSettings } from './SettingsService';
 import type { Folder } from '../types/bg';
@@ -143,7 +148,13 @@ class TransmissionClient {
     seedIdleMode: number,
     seedIdleLimit: number
   ): Promise<TransmissionResponse> {
-    return this.torrentService.setSeedLimits(ids, seedRatioMode, seedRatioLimit, seedIdleMode, seedIdleLimit);
+    return this.torrentService.setSeedLimits(
+      ids,
+      seedRatioMode,
+      seedRatioLimit,
+      seedIdleMode,
+      seedIdleLimit
+    );
   }
 
   // File operations
@@ -177,8 +188,7 @@ class TransmissionClient {
     this.settingsService.setAltUploadSpeedLimit(speed);
   setBlocklistEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setBlocklistEnabled(enabled);
-  setBlocklistUrl = (url: string): Promise<void> =>
-    this.settingsService.setBlocklistUrl(url);
+  setBlocklistUrl = (url: string): Promise<void> => this.settingsService.setBlocklistUrl(url);
   blocklistUpdate(): Promise<{ blocklistSize: number }> {
     return this.settingsService.blocklistUpdate();
   }
@@ -194,24 +204,17 @@ class TransmissionClient {
     this.settingsService.setIdleSeedingLimitEnabled(enabled);
   setIdleSeedingLimit = (limit: number): Promise<void> =>
     this.settingsService.setIdleSeedingLimit(limit);
-  setPeerPort = (port: number): Promise<void> =>
-    this.settingsService.setPeerPort(port);
+  setPeerPort = (port: number): Promise<void> => this.settingsService.setPeerPort(port);
   setPortForwardingEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setPortForwardingEnabled(enabled);
-  setEncryption = (mode: string): Promise<void> =>
-    this.settingsService.setEncryption(mode);
-  setDhtEnabled = (enabled: boolean): Promise<void> =>
-    this.settingsService.setDhtEnabled(enabled);
-  setPexEnabled = (enabled: boolean): Promise<void> =>
-    this.settingsService.setPexEnabled(enabled);
-  setLpdEnabled = (enabled: boolean): Promise<void> =>
-    this.settingsService.setLpdEnabled(enabled);
-  setUtpEnabled = (enabled: boolean): Promise<void> =>
-    this.settingsService.setUtpEnabled(enabled);
+  setEncryption = (mode: string): Promise<void> => this.settingsService.setEncryption(mode);
+  setDhtEnabled = (enabled: boolean): Promise<void> => this.settingsService.setDhtEnabled(enabled);
+  setPexEnabled = (enabled: boolean): Promise<void> => this.settingsService.setPexEnabled(enabled);
+  setLpdEnabled = (enabled: boolean): Promise<void> => this.settingsService.setLpdEnabled(enabled);
+  setUtpEnabled = (enabled: boolean): Promise<void> => this.settingsService.setUtpEnabled(enabled);
   setIncompleteDirEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setIncompleteDirEnabled(enabled);
-  setIncompleteDir = (dir: string): Promise<void> =>
-    this.settingsService.setIncompleteDir(dir);
+  setIncompleteDir = (dir: string): Promise<void> => this.settingsService.setIncompleteDir(dir);
   setRenamePartialFiles = (enabled: boolean): Promise<void> =>
     this.settingsService.setRenamePartialFiles(enabled);
   setDownloadQueueEnabled = (enabled: boolean): Promise<void> =>
@@ -220,8 +223,7 @@ class TransmissionClient {
     this.settingsService.setDownloadQueueSize(size);
   setSeedQueueEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setSeedQueueEnabled(enabled);
-  setSeedQueueSize = (size: number): Promise<void> =>
-    this.settingsService.setSeedQueueSize(size);
+  setSeedQueueSize = (size: number): Promise<void> => this.settingsService.setSeedQueueSize(size);
   setQueueStalledEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setQueueStalledEnabled(enabled);
   setQueueStalledMinutes = (minutes: number): Promise<void> =>
@@ -236,8 +238,7 @@ class TransmissionClient {
     this.settingsService.setAltSpeedTimeBegin(minutes);
   setAltSpeedTimeEnd = (minutes: number): Promise<void> =>
     this.settingsService.setAltSpeedTimeEnd(minutes);
-  setAltSpeedTimeDay = (day: number): Promise<void> =>
-    this.settingsService.setAltSpeedTimeDay(day);
+  setAltSpeedTimeDay = (day: number): Promise<void> => this.settingsService.setAltSpeedTimeDay(day);
   setScriptTorrentDoneEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setScriptTorrentDoneEnabled(enabled);
   setScriptTorrentDoneFilename = (filename: string): Promise<void> =>

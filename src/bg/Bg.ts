@@ -284,27 +284,19 @@ class Bg {
         break;
       }
       case 'setEncryption': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().setEncryption(message.mode)
-        );
+        promise = this.whenReady().then(() => this.requireClient().setEncryption(message.mode));
         break;
       }
       case 'setBlocklistUrl': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().setBlocklistUrl(message.url)
-        );
+        promise = this.whenReady().then(() => this.requireClient().setBlocklistUrl(message.url));
         break;
       }
       case 'blocklistUpdate': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().blocklistUpdate()
-        );
+        promise = this.whenReady().then(() => this.requireClient().blocklistUpdate());
         break;
       }
       case 'setIncompleteDir': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().setIncompleteDir(message.dir)
-        );
+        promise = this.whenReady().then(() => this.requireClient().setIncompleteDir(message.dir));
         break;
       }
       case 'setScriptTorrentDoneFilename': {
@@ -314,9 +306,7 @@ class Bg {
         break;
       }
       case 'portTest': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().portTest()
-        );
+        promise = this.whenReady().then(() => this.requireClient().portTest());
         break;
       }
       case 'getTorrentDetails': {

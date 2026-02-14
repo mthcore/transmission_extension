@@ -59,9 +59,7 @@ class SettingsService {
 
   updateSettings(): Promise<void> {
     return this.transport.sendAction({ method: 'session-get' }).then((response) => {
-      this.applySettings(
-        this.normalizeSettings(response.arguments as Record<string, unknown>)
-      );
+      this.applySettings(this.normalizeSettings(response.arguments as Record<string, unknown>));
     });
   }
 
@@ -127,10 +125,10 @@ class SettingsService {
     this.setSessionSetting({ 'peer-limit-per-torrent': limit });
 
   setSeedRatioLimited = (enabled: boolean): Promise<void> =>
-    this.setSessionSetting({ 'seedRatioLimited': enabled });
+    this.setSessionSetting({ seedRatioLimited: enabled });
 
   setSeedRatioLimit = (limit: number): Promise<void> =>
-    this.setSessionSetting({ 'seedRatioLimited': true, 'seedRatioLimit': limit });
+    this.setSessionSetting({ seedRatioLimited: true, seedRatioLimit: limit });
 
   setIdleSeedingLimitEnabled = (enabled: boolean): Promise<void> =>
     this.setSessionSetting({ 'idle-seeding-limit-enabled': enabled });
@@ -138,14 +136,12 @@ class SettingsService {
   setIdleSeedingLimit = (limit: number): Promise<void> =>
     this.setSessionSetting({ 'idle-seeding-limit-enabled': true, 'idle-seeding-limit': limit });
 
-  setPeerPort = (port: number): Promise<void> =>
-    this.setSessionSetting({ 'peer-port': port });
+  setPeerPort = (port: number): Promise<void> => this.setSessionSetting({ 'peer-port': port });
 
   setPortForwardingEnabled = (enabled: boolean): Promise<void> =>
     this.setSessionSetting({ 'port-forwarding-enabled': enabled });
 
-  setEncryption = (mode: string): Promise<void> =>
-    this.setSessionSetting({ encryption: mode });
+  setEncryption = (mode: string): Promise<void> => this.setSessionSetting({ encryption: mode });
 
   setDhtEnabled = (enabled: boolean): Promise<void> =>
     this.setSessionSetting({ 'dht-enabled': enabled });
@@ -211,12 +207,10 @@ class SettingsService {
     this.setSessionSetting({ 'script-torrent-done-filename': filename });
 
   portTest(): Promise<boolean> {
-    return this.transport
-      .sendAction({ method: 'port-test' })
-      .then((response) => {
-        const args = response.arguments as { 'port-is-open': boolean };
-        return args['port-is-open'];
-      });
+    return this.transport.sendAction({ method: 'port-test' }).then((response) => {
+      const args = response.arguments as { 'port-is-open': boolean };
+      return args['port-is-open'];
+    });
   }
 
   blocklistUpdate(): Promise<{ blocklistSize: number }> {

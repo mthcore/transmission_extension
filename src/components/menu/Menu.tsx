@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useState,
-  useRef,
-  useEffect,
-  DragEvent,
-  ChangeEvent,
-} from 'react';
+import React, { useCallback, useState, useRef, useEffect, DragEvent, ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import ComponentLoader from '../ComponentLoader';
 import showError from '../../tools/showError';

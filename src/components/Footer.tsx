@@ -117,7 +117,12 @@ const Footer = observer(() => {
         </span>
       </SpeedContextMenu>
       {client.lastErrorMessage && (
-        <span className="status" role="status" aria-live="assertive" title={client.lastErrorMessage}>
+        <span
+          className="status"
+          role="status"
+          aria-live="assertive"
+          title={client.lastErrorMessage}
+        >
           {client.lastErrorMessage}
         </span>
       )}

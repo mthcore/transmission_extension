@@ -9,29 +9,27 @@ interface TorrentContextMenuProps {
   torrentId: number;
 }
 
-const TorrentContextMenu = observer(
-  ({ children, torrentId }: TorrentContextMenuProps) => {
-    const rootStore = useRootStore();
-    const torrentListStore = rootStore?.torrentList;
-    const handleOpenChange = useContextMenuSelection(
-      torrentListStore as unknown as {
-        selectedIds: (string | number)[];
-        resetSelectedIds: () => void;
-        addSelectedId: (id: string | number) => void;
-      },
-      torrentId
-    );
+const TorrentContextMenu = observer(({ children, torrentId }: TorrentContextMenuProps) => {
+  const rootStore = useRootStore();
+  const torrentListStore = rootStore?.torrentList;
+  const handleOpenChange = useContextMenuSelection(
+    torrentListStore as unknown as {
+      selectedIds: (string | number)[];
+      resetSelectedIds: () => void;
+      addSelectedId: (id: string | number) => void;
+    },
+    torrentId
+  );
 
-    return (
-      <ContextMenu.Root onOpenChange={handleOpenChange}>
-        <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
-        <ContextMenu.Portal>
-          <TorrentMenuContent />
-        </ContextMenu.Portal>
-      </ContextMenu.Root>
-    );
-  }
-);
+  return (
+    <ContextMenu.Root onOpenChange={handleOpenChange}>
+      <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <TorrentMenuContent />
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+});
 
 interface Torrent {
   name: string;
@@ -303,13 +301,22 @@ const TorrentMenuContent = observer(() => {
         </ContextMenu.SubTrigger>
         <ContextMenu.Portal>
           <ContextMenu.SubContent className="context-menu">
-            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, 1)}>
+            <ContextMenu.Item
+              className="context-menu-item"
+              onSelect={() => client.setBandwidthPriority(selectedIds, 1)}
+            >
               {chrome.i18n.getMessage('MF_HIGH')}
             </ContextMenu.Item>
-            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, 0)}>
+            <ContextMenu.Item
+              className="context-menu-item"
+              onSelect={() => client.setBandwidthPriority(selectedIds, 0)}
+            >
               {chrome.i18n.getMessage('MF_NORMAL')}
             </ContextMenu.Item>
-            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, -1)}>
+            <ContextMenu.Item
+              className="context-menu-item"
+              onSelect={() => client.setBandwidthPriority(selectedIds, -1)}
+            >
               {chrome.i18n.getMessage('MF_LOW')}
             </ContextMenu.Item>
           </ContextMenu.SubContent>

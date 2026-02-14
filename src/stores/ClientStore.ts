@@ -432,9 +432,7 @@ const ClientStore = types
           .then(thenSyncClient);
       },
       portTest(): Promise<boolean> {
-        return callApi<boolean>({ action: 'portTest' }).then(
-          ...exceptionLog()
-        ) as Promise<boolean>;
+        return callApi<boolean>({ action: 'portTest' }).then(...exceptionLog()) as Promise<boolean>;
       },
       setPeerLimitGlobal(limit: number): Promise<unknown> {
         return callApi({ action: 'setPeerLimitGlobal', value: limit })
@@ -477,9 +475,9 @@ const ClientStore = types
         ) as Promise<FileData[]>;
       },
       getPeers(id: number): Promise<PeerData[]> {
-        return callApi<PeerData[]>({ action: 'getPeers', id }).then(
-          ...exceptionLog()
-        ) as Promise<PeerData[]>;
+        return callApi<PeerData[]>({ action: 'getPeers', id }).then(...exceptionLog()) as Promise<
+          PeerData[]
+        >;
       },
       getTorrentDetails(id: number): Promise<TorrentDetailData> {
         return callApi<TorrentDetailData>({ action: 'getTorrentDetails', id }).then(
@@ -498,7 +496,14 @@ const ClientStore = types
         seedIdleMode: number,
         seedIdleLimit: number
       ): Promise<unknown> {
-        return callApi({ action: 'setSeedLimits', ids, seedRatioMode, seedRatioLimit, seedIdleMode, seedIdleLimit })
+        return callApi({
+          action: 'setSeedLimits',
+          ids,
+          seedRatioMode,
+          seedRatioLimit,
+          seedIdleMode,
+          seedIdleLimit,
+        })
           .then(...exceptionLog())
           .then(thenSyncClient);
       },

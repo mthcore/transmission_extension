@@ -153,10 +153,7 @@ const FileListTable = observer(() => {
           </div>
         </div>
       </div>
-      <div
-        onClick={handleClose}
-        className="file-list-layer-temp"
-      />
+      <div onClick={handleClose} className="file-list-layer-temp" />
     </>
   );
 });

@@ -1,4 +1,10 @@
-import React, { useRef, useCallback, type FormEventHandler, type MouseEvent, type ChangeEvent } from 'react';
+import React, {
+  useRef,
+  useCallback,
+  type FormEventHandler,
+  type MouseEvent,
+  type ChangeEvent,
+} from 'react';
 import { observer } from 'mobx-react';
 import { useOptionsPage } from '../../hooks/useOptionsPage';
 import type { Folder } from '../../types/bg';
@@ -170,10 +176,7 @@ const CtxOptions = observer(() => {
   return (
     <div className="page ctx">
       <h2>{chrome.i18n.getMessage('optCtx')}</h2>
-      <CtxOptionsDirs
-        configStore={configStore}
-        handleChange={handleChange}
-      />
+      <CtxOptionsDirs configStore={configStore} handleChange={handleChange} />
     </div>
   );
 });
