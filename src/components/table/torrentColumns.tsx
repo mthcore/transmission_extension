@@ -151,6 +151,18 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
     </td>
   ),
 
+  label: ({ torrent }) => (
+    <td key="label" className="label">
+      <div title={torrent.labelsStr}>{torrent.labelsStr}</div>
+    </td>
+  ),
+
+  priority: ({ torrent }) => (
+    <td key="priority" className="priority">
+      <div title={torrent.bandwidthPriorityStr}>{torrent.bandwidthPriorityStr}</div>
+    </td>
+  ),
+
   actions: ({ handleStart, handleStop, isStarting, isStopping }) => (
     <td key="actions" className="actions">
       <div className="btns">

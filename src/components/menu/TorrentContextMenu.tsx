@@ -38,6 +38,7 @@ interface Torrent {
   magnetLink: string;
   hash?: string;
   directory: string;
+  labelsStr: string;
   actions: string[];
 }
 
@@ -137,6 +138,15 @@ const TorrentMenuContent = observer(() => {
     rootStore.createDialog({
       type: 'move',
       directory: firstTorrent.directory,
+      torrentIds: selectedIds.slice(0),
+    });
+  };
+
+  const handleSetLabels = () => {
+    if (!firstTorrent) return;
+    rootStore.createDialog({
+      type: 'setLabels',
+      currentLabels: firstTorrent.labelsStr,
       torrentIds: selectedIds.slice(0),
     });
   };
@@ -253,6 +263,9 @@ const TorrentMenuContent = observer(() => {
             <ContextMenu.Item className="context-menu-item" onSelect={handleMove}>
               {chrome.i18n.getMessage('move')}
             </ContextMenu.Item>
+            <ContextMenu.Item className="context-menu-item" onSelect={handleSetLabels}>
+              {chrome.i18n.getMessage('OV_COL_LABEL')}
+            </ContextMenu.Item>
             <ContextMenu.Item className="context-menu-item" onSelect={handleReannounce}>
               {chrome.i18n.getMessage('reannounce')}
             </ContextMenu.Item>
@@ -278,6 +291,26 @@ const TorrentMenuContent = observer(() => {
             </ContextMenu.Item>
             <ContextMenu.Item className="context-menu-item" onSelect={handleQueueBottom}>
               {chrome.i18n.getMessage('queueBottom')}
+            </ContextMenu.Item>
+          </ContextMenu.SubContent>
+        </ContextMenu.Portal>
+      </ContextMenu.Sub>
+
+      <ContextMenu.Sub>
+        <ContextMenu.SubTrigger className="context-menu-item context-menu-subtrigger">
+          {chrome.i18n.getMessage('FI_COL_PRIO')}
+          <span className="context-menu-arrow">&#9656;</span>
+        </ContextMenu.SubTrigger>
+        <ContextMenu.Portal>
+          <ContextMenu.SubContent className="context-menu">
+            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, 1)}>
+              {chrome.i18n.getMessage('MF_HIGH')}
+            </ContextMenu.Item>
+            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, 0)}>
+              {chrome.i18n.getMessage('MF_NORMAL')}
+            </ContextMenu.Item>
+            <ContextMenu.Item className="context-menu-item" onSelect={() => client.setBandwidthPriority(selectedIds, -1)}>
+              {chrome.i18n.getMessage('MF_LOW')}
             </ContextMenu.Item>
           </ContextMenu.SubContent>
         </ContextMenu.Portal>

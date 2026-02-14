@@ -30,6 +30,8 @@ const defaultTorrentListColumnList: ColumnDef[] = [
   { column: 'shared', display: 1, order: 1, width: 91, lang: 'OV_COL_SHARED' },
   { column: 'added', display: 1, order: 1, width: 94, lang: 'OV_COL_DATE_ADDED' },
   { column: 'completed', display: 1, order: 1, width: 110, lang: 'OV_COL_DATE_COMPLETED' },
+  { column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL' },
+  { column: 'priority', display: 0, order: 1, width: 70, lang: 'FI_COL_PRIO' },
   { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 
@@ -52,6 +54,8 @@ const defaultTorrentListColumnListPopup: ColumnDef[] = [
   { column: 'shared', display: 0, order: 1, width: 70, lang: 'OV_COL_SHARED' },
   { column: 'added', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_ADDED' },
   { column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED' },
+  { column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL' },
+  { column: 'priority', display: 0, order: 1, width: 70, lang: 'FI_COL_PRIO' },
   { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 
@@ -390,4 +394,10 @@ export type IColumnStore = Instance<typeof ColumnStore>;
 export type IFolderStore = Instance<typeof FolderStore>;
 export type ISelectedLabelStore = Instance<typeof SelectedLabelStore>;
 export default ConfigStore;
-export { configKeys, SelectedLabelStore, defaultTorrentListColumnList, defaultFileListColumnList };
+export {
+  configKeys,
+  SelectedLabelStore,
+  defaultTorrentListColumnList,
+  defaultTorrentListColumnListPopup,
+  defaultFileListColumnList,
+};

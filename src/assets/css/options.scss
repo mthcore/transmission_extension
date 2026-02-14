@@ -168,7 +168,8 @@ label > span:first-child {
 .client label > span:first-child,
 .main label > span:first-child,
 .notify label > span:first-child,
-.ctx label > span:first-child {
+.ctx label > span:first-child,
+.server label > span:first-child {
   min-width: 450px;
 }
 
@@ -593,6 +594,18 @@ ol.help li {
         font-size: 12px;
       }
     }
+  }
+}
+
+// Blocklist URL row
+.blocklist-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  input[type="text"] {
+    flex: 1;
+    min-width: 200px;
   }
 }
 

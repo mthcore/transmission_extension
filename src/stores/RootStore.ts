@@ -12,6 +12,7 @@ import SpaceWatcherStore from './SpaceWatcherStore';
 import RenameDialogStore from './RenameDialogStore';
 import CopyMagnetUrlDialogStore from './CopyMagnetUrlDialogStore';
 import MoveDialogStore from './MoveDialogStore';
+import SetLabelsDialogStore from './SetLabelsDialogStore';
 import TorrentDetailsDialogStore from './TorrentDetailsDialogStore';
 import mobxApplyPatchLine from '../tools/mobxApplyPatchLine';
 
@@ -57,6 +58,7 @@ const RootStore = types
         RenameDialogStore,
         CopyMagnetUrlDialogStore,
         MoveDialogStore,
+        SetLabelsDialogStore,
         TorrentDetailsDialogStore
       )
     ),

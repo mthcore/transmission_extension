@@ -65,6 +65,8 @@ export const torrentColumnMap: ColumnMap = {
   added: 'addedTime',
   completed: 'completedTime',
   status: 'statusCode',
+  label: 'labelsStr',
+  priority: 'bandwidthPriority',
 };
 
 export const torrentSpecialHandlers: SpecialHandlers = {

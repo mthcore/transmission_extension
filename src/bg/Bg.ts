@@ -195,9 +195,21 @@ class Bg {
         promise = this.requireClient().getFileList(message.id);
         break;
       }
+      case 'getPeers': {
+        promise = this.requireClient().getPeers(message.id);
+        break;
+      }
       case 'setDownloadSpeedLimitEnabled':
       case 'setUploadSpeedLimitEnabled':
-      case 'setAltSpeedEnabled': {
+      case 'setAltSpeedEnabled':
+      case 'setBlocklistEnabled':
+      case 'setSeedRatioLimited':
+      case 'setIdleSeedingLimitEnabled':
+      case 'setPortForwardingEnabled':
+      case 'setDhtEnabled':
+      case 'setPexEnabled':
+      case 'setLpdEnabled':
+      case 'setUtpEnabled': {
         const action = message.action;
         const enabled = message.enabled;
         promise = this.whenReady().then(() => this.requireClient()[action](enabled));
@@ -236,6 +248,42 @@ class Bg {
       }
       case 'torrentSetLocation': {
         promise = this.requireClient().torrentSetLocation(message.ids, message.location);
+        break;
+      }
+      case 'setLabels': {
+        promise = this.requireClient().setLabels(message.ids, message.labels);
+        break;
+      }
+      case 'setBandwidthPriority': {
+        promise = this.requireClient().setBandwidthPriority(message.ids, message.priority);
+        break;
+      }
+      case 'setPeerLimitGlobal':
+      case 'setPeerLimitPerTorrent':
+      case 'setSeedRatioLimit':
+      case 'setIdleSeedingLimit':
+      case 'setPeerPort': {
+        const action = message.action;
+        const value = message.value;
+        promise = this.whenReady().then(() => this.requireClient()[action](value));
+        break;
+      }
+      case 'setEncryption': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().setEncryption(message.mode)
+        );
+        break;
+      }
+      case 'setBlocklistUrl': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().setBlocklistUrl(message.url)
+        );
+        break;
+      }
+      case 'blocklistUpdate': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().blocklistUpdate()
+        );
         break;
       }
       default: {

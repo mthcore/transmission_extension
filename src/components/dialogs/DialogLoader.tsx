@@ -9,6 +9,7 @@ const dialogComponents = {
   rename: React.lazy(() => import('./RenameDialog')),
   copyMagnetUrl: React.lazy(() => import('./CopyMagnetUrlDialog')),
   move: React.lazy(() => import('./MoveDialog')),
+  setLabels: React.lazy(() => import('./SetLabelsDialog')),
   torrentDetails: React.lazy(() => import('./TorrentDetailsDialog')),
 };
 

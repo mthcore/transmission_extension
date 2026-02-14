@@ -20,6 +20,15 @@ interface FileData {
   priority: number;
 }
 
+interface PeerData {
+  address: string;
+  client: string;
+  progress: number;
+  downloadSpeed: number;
+  uploadSpeed: number;
+  flags: string;
+}
+
 const SettingsStore = types
   .model('SettingsStore', {
     downloadSpeedLimit: types.number,
@@ -31,6 +40,22 @@ const SettingsStore = types
     altUploadSpeedLimit: types.number,
     downloadDir: types.string,
     downloadDirFreeSpace: types.maybe(types.number),
+    blocklistEnabled: types.optional(types.boolean, false),
+    blocklistUrl: types.optional(types.string, ''),
+    blocklistSize: types.optional(types.number, 0),
+    peerLimitGlobal: types.optional(types.number, 200),
+    peerLimitPerTorrent: types.optional(types.number, 50),
+    seedRatioLimit: types.optional(types.number, 2.0),
+    seedRatioLimited: types.optional(types.boolean, false),
+    idleSeedingLimit: types.optional(types.number, 30),
+    idleSeedingLimitEnabled: types.optional(types.boolean, false),
+    peerPort: types.optional(types.number, 51413),
+    portForwardingEnabled: types.optional(types.boolean, false),
+    encryption: types.optional(types.string, 'preferred'),
+    dhtEnabled: types.optional(types.boolean, true),
+    pexEnabled: types.optional(types.boolean, true),
+    lpdEnabled: types.optional(types.boolean, true),
+    utpEnabled: types.optional(types.boolean, true),
   })
   .views((self) => {
     return {
@@ -230,10 +255,95 @@ const ClientStore = types
           .then(...exceptionLog())
           .then(thenSyncClient);
       },
+      setBlocklistEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setBlocklistEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setBlocklistUrl(url: string): Promise<unknown> {
+        return callApi({ action: 'setBlocklistUrl', url })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setSeedRatioLimited(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setSeedRatioLimited', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setIdleSeedingLimitEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setIdleSeedingLimitEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setPortForwardingEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setPortForwardingEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setDhtEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setDhtEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setPexEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setPexEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setLpdEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setLpdEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setUtpEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setUtpEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setPeerLimitGlobal(limit: number): Promise<unknown> {
+        return callApi({ action: 'setPeerLimitGlobal', value: limit })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setPeerLimitPerTorrent(limit: number): Promise<unknown> {
+        return callApi({ action: 'setPeerLimitPerTorrent', value: limit })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setSeedRatioLimit(limit: number): Promise<unknown> {
+        return callApi({ action: 'setSeedRatioLimit', value: limit })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setIdleSeedingLimit(limit: number): Promise<unknown> {
+        return callApi({ action: 'setIdleSeedingLimit', value: limit })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setPeerPort(port: number): Promise<unknown> {
+        return callApi({ action: 'setPeerPort', value: port })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setEncryption(mode: string): Promise<unknown> {
+        return callApi({ action: 'setEncryption', mode })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      blocklistUpdate(): Promise<{ blocklistSize: number }> {
+        return callApi<{ blocklistSize: number }>({ action: 'blocklistUpdate' })
+          .then(...exceptionLog())
+          .then(thenSyncClient) as Promise<{ blocklistSize: number }>;
+      },
       getTorrentFiles(id: number): Promise<FileData[]> {
         return callApi<FileData[]>({ action: 'getFileList', id }).then(
           ...exceptionLog()
         ) as Promise<FileData[]>;
+      },
+      getPeers(id: number): Promise<PeerData[]> {
+        return callApi<PeerData[]>({ action: 'getPeers', id }).then(
+          ...exceptionLog()
+        ) as Promise<PeerData[]>;
       },
       updateSettings(): Promise<unknown> {
         return callApi({ action: 'updateSettings' })
@@ -260,6 +370,16 @@ const ClientStore = types
       },
       torrentSetLocation(ids: number[], location: string): Promise<unknown> {
         return callApi({ action: 'torrentSetLocation', ids, location })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setLabels(ids: number[], labels: string[]): Promise<unknown> {
+        return callApi({ action: 'setLabels', ids, labels })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setBandwidthPriority(ids: number[], priority: number): Promise<unknown> {
+        return callApi({ action: 'setBandwidthPriority', ids, priority })
           .then(...exceptionLog())
           .then(thenSyncClient);
       },

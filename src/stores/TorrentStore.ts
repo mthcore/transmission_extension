@@ -28,6 +28,11 @@ const TorrentStore = types
     completedTime: types.number,
     directory: types.maybe(types.string),
     magnetLink: types.maybe(types.string),
+    hashString: types.maybe(types.string),
+    isStalled: types.optional(types.boolean, false),
+    peersConnected: types.optional(types.number, 0),
+    labels: types.optional(types.array(types.string), []),
+    bandwidthPriority: types.optional(types.number, 0),
   })
   .views((self) => {
     return {
@@ -127,13 +132,15 @@ const TorrentStore = types
             return chrome.i18n.getMessage('OV_FL_CHECKED') + ' ' + this.recheckProgressStr;
           }
           case 4: {
-            return chrome.i18n.getMessage('OV_FL_DOWNLOADING');
+            const label = chrome.i18n.getMessage('OV_FL_DOWNLOADING');
+            return self.isStalled ? `${label} (${chrome.i18n.getMessage('OV_FL_STALLED')})` : label;
           }
           case 5: {
             return chrome.i18n.getMessage('OV_FL_QUEUED_SEED');
           }
           case 6: {
-            return chrome.i18n.getMessage('OV_FL_SEEDING');
+            const label = chrome.i18n.getMessage('OV_FL_SEEDING');
+            return self.isStalled ? `${label} (${chrome.i18n.getMessage('OV_FL_STALLED')})` : label;
           }
           default: {
             return `Unknown (${self.statusCode})`;
@@ -210,7 +217,21 @@ const TorrentStore = types
       get isActive(): boolean {
         return !!(self.downloadSpeed || self.uploadSpeed);
       },
+      get labelsStr(): string {
+        return (self as unknown as { labels: string[] }).labels.join(', ');
+      },
+      get bandwidthPriorityStr(): string {
+        switch (self.bandwidthPriority) {
+          case -1:
+            return chrome.i18n.getMessage('MF_LOW');
+          case 1:
+            return chrome.i18n.getMessage('MF_HIGH');
+          default:
+            return chrome.i18n.getMessage('MF_NORMAL');
+        }
+      },
       get hash(): string | null {
+        if (self.hashString) return self.hashString.toUpperCase();
         if (!self.magnetLink) return null;
         const match = self.magnetLink.match(/urn:btih:([a-fA-F0-9]{40}|[a-zA-Z2-7]{32})/i);
         return match ? match[1].toUpperCase() : null;

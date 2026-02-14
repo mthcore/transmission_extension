@@ -147,6 +147,9 @@
     "OV_FL_STOPPED": {
         "message": "Stopped"
     },
+    "OV_FL_STALLED": {
+        "message": "Stalled"
+    },
     "MF_DONT": {
         "message": "Don't Download"
     },
@@ -608,5 +611,86 @@
     },
     "speedGraph": {
         "message": "Speed graph"
+    },
+    "optServer": {
+        "message": "Server"
+    },
+    "blocklist": {
+        "message": "Blocklist"
+    },
+    "blocklistEnable": {
+        "message": "Enable blocklist"
+    },
+    "blocklistUrl": {
+        "message": "Blocklist URL"
+    },
+    "blocklistRules": {
+        "message": "Rules"
+    },
+    "blocklistUpdateNow": {
+        "message": "Update blocklist now"
+    },
+    "peerFlags": {
+        "message": "Flags"
+    },
+    "peerSettings": {
+        "message": "Peers"
+    },
+    "peerLimitGlobal": {
+        "message": "Max peers overall"
+    },
+    "peerLimitPerTorrent": {
+        "message": "Max peers per torrent"
+    },
+    "seedingSettings": {
+        "message": "Seeding"
+    },
+    "seedRatioLimited": {
+        "message": "Stop seeding at ratio"
+    },
+    "seedRatioLimit": {
+        "message": "Seed ratio limit"
+    },
+    "idleSeedingLimitEnabled": {
+        "message": "Stop seeding if idle for"
+    },
+    "idleSeedingLimit": {
+        "message": "Idle limit"
+    },
+    "networkSettings": {
+        "message": "Network"
+    },
+    "peerPort": {
+        "message": "Listening port"
+    },
+    "portForwardingEnabled": {
+        "message": "Enable UPnP / NAT-PMP"
+    },
+    "encryption": {
+        "message": "Encryption"
+    },
+    "encryptionRequired": {
+        "message": "Required"
+    },
+    "encryptionPreferred": {
+        "message": "Preferred"
+    },
+    "encryptionTolerated": {
+        "message": "Tolerated"
+    },
+    "dhtEnabled": {
+        "message": "Enable DHT"
+    },
+    "pexEnabled": {
+        "message": "Enable PEX"
+    },
+    "lpdEnabled": {
+        "message": "Enable LPD"
+    },
+    "utpEnabled": {
+        "message": "Enable uTP"
+    },
+    "minutes": {
+        "message": "min"
     }
 }

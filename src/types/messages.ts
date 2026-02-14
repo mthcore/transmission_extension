@@ -20,16 +20,24 @@ export type BgMessage =
   // File operations
   | SetPriorityMessage
   | GetFileListMessage
+  | GetPeersMessage
   // Speed settings
   | SpeedEnabledMessage
   | SpeedValueMessage
+  // Blocklist operations
+  | BlocklistUrlMessage
+  | BlocklistUpdateMessage
   // Session operations
   | UpdateSettingsMessage
   | SendFilesMessage
   | GetFreeSpaceMessage
   // Torrent modifications
   | RenameMessage
-  | TorrentSetLocationMessage;
+  | TorrentSetLocationMessage
+  | SetLabelsMessage
+  | SetBandwidthPriorityMessage
+  | SessionNumberMessage
+  | EncryptionMessage;
 
 // Store sync messages
 export interface GetBgStoreDeltaMessage {
@@ -80,11 +88,24 @@ export interface GetFileListMessage {
   id: TorrentId;
 }
 
+export interface GetPeersMessage {
+  action: 'getPeers';
+  id: TorrentId;
+}
+
 // Speed settings
 type SpeedEnabledAction =
   | 'setDownloadSpeedLimitEnabled'
   | 'setUploadSpeedLimitEnabled'
-  | 'setAltSpeedEnabled';
+  | 'setAltSpeedEnabled'
+  | 'setBlocklistEnabled'
+  | 'setSeedRatioLimited'
+  | 'setIdleSeedingLimitEnabled'
+  | 'setPortForwardingEnabled'
+  | 'setDhtEnabled'
+  | 'setPexEnabled'
+  | 'setLpdEnabled'
+  | 'setUtpEnabled';
 
 export interface SpeedEnabledMessage {
   action: SpeedEnabledAction;
@@ -100,6 +121,23 @@ type SpeedValueAction =
 export interface SpeedValueMessage {
   action: SpeedValueAction;
   speed: number;
+}
+
+type SessionNumberAction =
+  | 'setPeerLimitGlobal'
+  | 'setPeerLimitPerTorrent'
+  | 'setSeedRatioLimit'
+  | 'setIdleSeedingLimit'
+  | 'setPeerPort';
+
+export interface SessionNumberMessage {
+  action: SessionNumberAction;
+  value: number;
+}
+
+export interface EncryptionMessage {
+  action: 'setEncryption';
+  mode: string;
 }
 
 // Session operations
@@ -130,4 +168,26 @@ export interface TorrentSetLocationMessage {
   action: 'torrentSetLocation';
   ids: TorrentId[];
   location: string;
+}
+
+export interface SetLabelsMessage {
+  action: 'setLabels';
+  ids: TorrentId[];
+  labels: string[];
+}
+
+export interface SetBandwidthPriorityMessage {
+  action: 'setBandwidthPriority';
+  ids: TorrentId[];
+  priority: number;
+}
+
+// Blocklist operations
+export interface BlocklistUrlMessage {
+  action: 'setBlocklistUrl';
+  url: string;
+}
+
+export interface BlocklistUpdateMessage {
+  action: 'blocklistUpdate';
 }

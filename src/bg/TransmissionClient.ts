@@ -1,6 +1,6 @@
 import TransmissionTransport from './TransmissionTransport';
 import type { TransmissionResponse } from './TransmissionTransport';
-import TorrentService, { type NormalizedTorrent } from './TorrentService';
+import TorrentService, { type NormalizedTorrent, type PeerData } from './TorrentService';
 import FileService, { type NormalizedFile } from './FileService';
 import SettingsService, { type NormalizedSettings } from './SettingsService';
 import type { Folder } from '../types/bg';
@@ -100,6 +100,12 @@ class TransmissionClient {
   torrentSetLocation(ids: number[], location: string): Promise<TransmissionResponse> {
     return this.torrentService.torrentSetLocation(ids, location);
   }
+  setLabels(ids: number[], labels: string[]): Promise<TransmissionResponse> {
+    return this.torrentService.setLabels(ids, labels);
+  }
+  setBandwidthPriority(ids: number[], priority: number): Promise<TransmissionResponse> {
+    return this.torrentService.setBandwidthPriority(ids, priority);
+  }
   reannounce(ids: number[]): Promise<TransmissionResponse> {
     return this.torrentService.reannounce(ids);
   }
@@ -120,6 +126,9 @@ class TransmissionClient {
   }
   putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void> {
     return this.torrentService.putTorrent(data, directory);
+  }
+  getPeers(id: number): Promise<PeerData[]> {
+    return this.torrentService.getPeers(id);
   }
 
   // File operations
@@ -151,6 +160,39 @@ class TransmissionClient {
     this.settingsService.setAltDownloadSpeedLimit(speed);
   setAltUploadSpeedLimit = (speed: number): Promise<void> =>
     this.settingsService.setAltUploadSpeedLimit(speed);
+  setBlocklistEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setBlocklistEnabled(enabled);
+  setBlocklistUrl = (url: string): Promise<void> =>
+    this.settingsService.setBlocklistUrl(url);
+  blocklistUpdate(): Promise<{ blocklistSize: number }> {
+    return this.settingsService.blocklistUpdate();
+  }
+  setPeerLimitGlobal = (limit: number): Promise<void> =>
+    this.settingsService.setPeerLimitGlobal(limit);
+  setPeerLimitPerTorrent = (limit: number): Promise<void> =>
+    this.settingsService.setPeerLimitPerTorrent(limit);
+  setSeedRatioLimited = (enabled: boolean): Promise<void> =>
+    this.settingsService.setSeedRatioLimited(enabled);
+  setSeedRatioLimit = (limit: number): Promise<void> =>
+    this.settingsService.setSeedRatioLimit(limit);
+  setIdleSeedingLimitEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setIdleSeedingLimitEnabled(enabled);
+  setIdleSeedingLimit = (limit: number): Promise<void> =>
+    this.settingsService.setIdleSeedingLimit(limit);
+  setPeerPort = (port: number): Promise<void> =>
+    this.settingsService.setPeerPort(port);
+  setPortForwardingEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setPortForwardingEnabled(enabled);
+  setEncryption = (mode: string): Promise<void> =>
+    this.settingsService.setEncryption(mode);
+  setDhtEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setDhtEnabled(enabled);
+  setPexEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setPexEnabled(enabled);
+  setLpdEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setLpdEnabled(enabled);
+  setUtpEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setUtpEnabled(enabled);
 
   destroy(): void {
     // Cleanup

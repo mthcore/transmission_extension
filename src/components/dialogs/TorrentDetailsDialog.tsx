@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import Dialog from './Dialog';
 import { useDialogClose } from '../../hooks/useDialogClose';
+import useRootStore from '../../hooks/useRootStore';
+import { speedToStr } from '../../tools/format';
+
+interface PeerInfo {
+  address: string;
+  client: string;
+  progress: number;
+  downloadSpeed: number;
+  uploadSpeed: number;
+  flags: string;
+}
+
+interface RootStore {
+  client: {
+    getPeers: (id: number) => Promise<PeerInfo[]>;
+  };
+}
 
 interface Torrent {
+  id: number;
   name: string;
   sizeStr: string;
   progressStr: string;
@@ -23,6 +41,8 @@ interface Torrent {
   completedTimeStr: string;
   directory?: string;
   errorMessage?: string;
+  hash?: string | null;
+  peersConnected?: number;
 }
 
 interface TorrentDetailsDialogStore {
@@ -37,6 +57,24 @@ interface TorrentDetailsDialogProps {
 const TorrentDetailsDialog = observer(({ dialogStore }: TorrentDetailsDialogProps) => {
   const torrent = dialogStore.torrent;
   const handleClose = useDialogClose(dialogStore);
+  const rootStore = useRootStore() as unknown as RootStore;
+  const [peers, setPeers] = useState<PeerInfo[]>([]);
+  const [peersLoading, setPeersLoading] = useState(false);
+
+  const torrentId = torrent?.id;
+  useEffect(() => {
+    if (torrentId == null) return;
+    setPeersLoading(true);
+    rootStore.client.getPeers(torrentId).then(
+      (data) => {
+        setPeers(data);
+        setPeersLoading(false);
+      },
+      () => {
+        setPeersLoading(false);
+      }
+    );
+  }, [torrentId, rootStore.client]);
 
   if (!torrent) {
     return null;
@@ -93,6 +131,7 @@ const TorrentDetailsDialog = observer(({ dialogStore }: TorrentDetailsDialogProp
             <label>{chrome.i18n.getMessage('OV_COL_PEERS')}</label>
             <span>
               {torrent.activePeers} / {torrent.peers}
+              {torrent.peersConnected != null && ` (${torrent.peersConnected})`}
             </span>
           </div>
 
@@ -126,6 +165,13 @@ const TorrentDetailsDialog = observer(({ dialogStore }: TorrentDetailsDialogProp
             <span>{torrent.completedTimeStr}</span>
           </div>
 
+          {torrent.hash && (
+            <div className="nf-subItem torrent-details-full-width">
+              <label>{chrome.i18n.getMessage('copyHash')}</label>
+              <span className="torrent-details-path">{torrent.hash}</span>
+            </div>
+          )}
+
           {torrent.directory && (
             <div className="nf-subItem torrent-details-full-width">
               <label>{chrome.i18n.getMessage('path')}</label>
@@ -140,6 +186,50 @@ const TorrentDetailsDialog = observer(({ dialogStore }: TorrentDetailsDialogProp
             </div>
           )}
         </div>
+
+        {peers.length > 0 && (
+          <div className="torrent-details-peers">
+            <div className="torrent-details-peers-header">
+              {chrome.i18n.getMessage('OV_COL_PEERS')} ({peers.length})
+            </div>
+            <div className="peer-list-scroll">
+              <table className="peer-list-table">
+                <thead>
+                  <tr>
+                    <th>{chrome.i18n.getMessage('PRS_COL_IP')}</th>
+                    <th>Client</th>
+                    <th>%</th>
+                    <th>{chrome.i18n.getMessage('OV_COL_DOWNSPD')}</th>
+                    <th>{chrome.i18n.getMessage('OV_COL_UPSPD')}</th>
+                    <th>{chrome.i18n.getMessage('peerFlags')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {peers.map((peer) => (
+                    <tr key={peer.address}>
+                      <td title={peer.address}>{peer.address}</td>
+                      <td className="peer-client" title={peer.client}>
+                        {peer.client}
+                      </td>
+                      <td>{(peer.progress * 100).toFixed(0)}%</td>
+                      <td>{peer.downloadSpeed ? speedToStr(peer.downloadSpeed) : '-'}</td>
+                      <td>{peer.uploadSpeed ? speedToStr(peer.uploadSpeed) : '-'}</td>
+                      <td className="peer-flags" title={peer.flags}>{peer.flags}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {peersLoading && peers.length === 0 && (
+          <div className="torrent-details-peers">
+            <div className="torrent-details-peers-header">
+              {chrome.i18n.getMessage('OV_COL_PEERS')}...
+            </div>
+          </div>
+        )}
 
         <div className="nf-subItem">
           <input

@@ -143,6 +143,9 @@
     "OV_FL_STOPPED": {
         "message": "Arrêté"
     },
+    "OV_FL_STALLED": {
+        "message": "Bloqué"
+    },
     "MF_DONT": {
         "message": "Ne pas télécharger"
     },
@@ -604,5 +607,86 @@
     },
     "speedGraph": {
         "message": "Graphique de vitesse"
+    },
+    "optServer": {
+        "message": "Serveur"
+    },
+    "blocklist": {
+        "message": "Liste de blocage"
+    },
+    "blocklistEnable": {
+        "message": "Activer la liste de blocage"
+    },
+    "blocklistUrl": {
+        "message": "URL de la liste de blocage"
+    },
+    "blocklistRules": {
+        "message": "Règles"
+    },
+    "blocklistUpdateNow": {
+        "message": "Mettre à jour maintenant"
+    },
+    "peerFlags": {
+        "message": "Drapeaux"
+    },
+    "peerSettings": {
+        "message": "Pairs"
+    },
+    "peerLimitGlobal": {
+        "message": "Limite globale de pairs"
+    },
+    "peerLimitPerTorrent": {
+        "message": "Limite de pairs par torrent"
+    },
+    "seedingSettings": {
+        "message": "Partage"
+    },
+    "seedRatioLimited": {
+        "message": "Arrêter le partage au ratio"
+    },
+    "seedRatioLimit": {
+        "message": "Limite de ratio"
+    },
+    "idleSeedingLimitEnabled": {
+        "message": "Arrêter le partage si inactif depuis"
+    },
+    "idleSeedingLimit": {
+        "message": "Limite d'inactivité"
+    },
+    "networkSettings": {
+        "message": "Réseau"
+    },
+    "peerPort": {
+        "message": "Port d'écoute"
+    },
+    "portForwardingEnabled": {
+        "message": "Activer UPnP / NAT-PMP"
+    },
+    "encryption": {
+        "message": "Chiffrement"
+    },
+    "encryptionRequired": {
+        "message": "Obligatoire"
+    },
+    "encryptionPreferred": {
+        "message": "Préféré"
+    },
+    "encryptionTolerated": {
+        "message": "Toléré"
+    },
+    "dhtEnabled": {
+        "message": "Activer DHT"
+    },
+    "pexEnabled": {
+        "message": "Activer PEX"
+    },
+    "lpdEnabled": {
+        "message": "Activer LPD"
+    },
+    "utpEnabled": {
+        "message": "Activer uTP"
+    },
+    "minutes": {
+        "message": "min"
     }
 }

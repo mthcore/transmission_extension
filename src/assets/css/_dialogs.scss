@@ -193,6 +193,64 @@ div.loading {
       }
     }
   }
+
+  .torrent-details-peers {
+    text-align: left;
+    margin-bottom: 16px;
+  }
+
+  .torrent-details-peers-header {
+    font-weight: 500;
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .peer-list-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .peer-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+
+    th,
+    td {
+      padding: 3px 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: var(--card-bg);
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      color: var(--text-color);
+    }
+
+    .peer-client {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .peer-flags {
+      max-width: 80px;
+      font-family: $font-family-mono;
+      font-size: 0.85em;
+      letter-spacing: 1px;
+    }
+  }
 }
 
 // Go to options overlay (shown when not configured)

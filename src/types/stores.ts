@@ -27,6 +27,11 @@ export interface TorrentSnapshot {
   completedTime: number;
   directory?: string;
   magnetLink?: string;
+  hashString?: string;
+  isStalled?: boolean;
+  peersConnected?: number;
+  labels?: string[];
+  bandwidthPriority?: number;
 }
 
 // Torrent store views (computed properties)
@@ -60,6 +65,8 @@ export interface TorrentViews {
   readonly actions: string[];
   readonly isFinished: boolean;
   readonly isActive: boolean;
+  readonly labelsStr: string;
+  readonly bandwidthPriorityStr: string;
   readonly hash: string | null;
 }
 
@@ -101,6 +108,22 @@ export interface SettingsSnapshot {
   altSpeedEnabled: boolean;
   altSpeedDown: number;
   altSpeedUp: number;
+  blocklistEnabled?: boolean;
+  blocklistUrl?: string;
+  blocklistSize?: number;
+  peerLimitGlobal?: number;
+  peerLimitPerTorrent?: number;
+  seedRatioLimit?: number;
+  seedRatioLimited?: boolean;
+  idleSeedingLimit?: number;
+  idleSeedingLimitEnabled?: boolean;
+  peerPort?: number;
+  portForwardingEnabled?: boolean;
+  encryption?: string;
+  dhtEnabled?: boolean;
+  pexEnabled?: boolean;
+  lpdEnabled?: boolean;
+  utpEnabled?: boolean;
 }
 
 // Dialog types

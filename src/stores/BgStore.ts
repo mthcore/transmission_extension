@@ -3,6 +3,7 @@ import ConfigStore, {
   configKeys,
   defaultFileListColumnList,
   defaultTorrentListColumnList,
+  defaultTorrentListColumnListPopup,
 } from './ConfigStore';
 import getLogger from '../tools/getLogger';
 import loadConfig from '../tools/loadConfig';
@@ -26,6 +27,7 @@ const BgStore = types
           const columnMergeConfigs: [string, ColumnConfig[]][] = [
             ['filesColumns', defaultFileListColumnList as ColumnConfig[]],
             ['torrentColumns', defaultTorrentListColumnList as ColumnConfig[]],
+            ['torrentColumnsPopup', defaultTorrentListColumnListPopup as ColumnConfig[]],
           ];
 
           columnMergeConfigs.forEach(([key, defColumns]) => {

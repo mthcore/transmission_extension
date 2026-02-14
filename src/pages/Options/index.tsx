@@ -12,6 +12,7 @@ import UiOptions from './UiOptions';
 import NotifyOptions from './NotifyOptions';
 import CtxOptions from './CtxOptions';
 import BackupRestoreOptions from './BackupRestoreOptions';
+import ServerOptions from './ServerOptions';
 
 interface RootStoreType {
   state: string;
@@ -62,6 +63,9 @@ const Options = observer(() => {
             <NavLink to="/ctx" className={({ isActive }) => (isActive ? 'active' : '')}>
               {chrome.i18n.getMessage('optCtx')}
             </NavLink>
+            <NavLink to="/server" className={({ isActive }) => (isActive ? 'active' : '')}>
+              {chrome.i18n.getMessage('optServer')}
+            </NavLink>
             <NavLink to="/backup" className={({ isActive }) => (isActive ? 'active' : '')}>
               {chrome.i18n.getMessage('backupRestore')}
             </NavLink>
@@ -72,6 +76,7 @@ const Options = observer(() => {
               <Route path="/main" element={<UiOptions />} />
               <Route path="/notify" element={<NotifyOptions />} />
               <Route path="/ctx" element={<CtxOptions />} />
+              <Route path="/server" element={<ServerOptions />} />
               <Route path="/backup" element={<BackupRestoreOptions />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

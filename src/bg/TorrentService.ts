@@ -9,6 +9,15 @@ import type { Folder } from '../types/bg';
 
 const logger = getLogger('TorrentService');
 
+export interface PeerData {
+  address: string;
+  client: string;
+  progress: number;
+  downloadSpeed: number;
+  uploadSpeed: number;
+  flags: string;
+}
+
 export interface NormalizedTorrent {
   id: number;
   statusCode: number;
@@ -33,6 +42,11 @@ export interface NormalizedTorrent {
   completedTime: number;
   directory: string;
   magnetLink: string;
+  hashString?: string;
+  isStalled: boolean;
+  peersConnected: number;
+  labels: string[];
+  bandwidthPriority: number;
 }
 
 interface TorrentStore {
@@ -123,6 +137,12 @@ class TorrentService {
             'errorString',
             'trackerStats',
             'magnetLink',
+            'uploadRatio',
+            'hashString',
+            'isStalled',
+            'peersConnected',
+            'labels',
+            'bandwidthPriority',
           ],
           ids: isRecently ? 'recently-active' : undefined,
         },
@@ -241,6 +261,18 @@ class TorrentService {
   torrentSetLocation(ids: number[], location: string): Promise<TransmissionResponse> {
     return this.transport
       .sendAction({ method: 'torrent-set-location', arguments: { ids, location, move: true } })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setLabels(ids: number[], labels: string[]): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({ method: 'torrent-set', arguments: { ids, labels } })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setBandwidthPriority(ids: number[], priority: number): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({ method: 'torrent-set', arguments: { ids, bandwidthPriority: priority } })
       .then(this.thenUpdateTorrents);
   }
 
@@ -379,6 +411,39 @@ class TorrentService {
     ).then(() => this.thenUpdateTorrents({} as TransmissionResponse));
   }
 
+  getPeers(id: number): Promise<PeerData[]> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-get',
+        arguments: {
+          fields: ['id', 'peers'],
+          ids: [id],
+        },
+      })
+      .then((response) => {
+        type RawPeer = {
+          address: string;
+          clientName: string;
+          progress: number;
+          rateToClient: number;
+          rateToPeer: number;
+          flagStr: string;
+        };
+        type TorrentPeers = { id: number; peers: RawPeer[] };
+        const torrents = (response.arguments as { torrents: TorrentPeers[] }).torrents;
+        const torrent = torrents.find((t) => t.id === id);
+        if (!torrent) return [];
+        return torrent.peers.map((peer): PeerData => ({
+          address: peer.address,
+          client: peer.clientName,
+          progress: peer.progress,
+          downloadSpeed: peer.rateToClient,
+          uploadSpeed: peer.rateToPeer,
+          flags: peer.flagStr,
+        }));
+      });
+  }
+
   private normalizeTorrent = (torrent: Record<string, unknown>): NormalizedTorrent => {
     const id = torrent.id as number;
     const statusCode = torrent.status as number;
@@ -390,7 +455,8 @@ class TorrentService {
     const recheckProgress = torrent.recheckProgress as number;
     const downloaded = torrent.downloadedEver as number;
     const uploaded = torrent.uploadedEver as number;
-    const shared = downloaded > 0 ? Math.round((uploaded / downloaded) * 1000) : 0;
+    const uploadRatio = torrent.uploadRatio as number;
+    const shared = uploadRatio >= 0 ? Math.round(uploadRatio * 1000) : 0;
     const uploadSpeed = torrent.rateUpload as number;
     const downloadSpeed = torrent.rateDownload as number;
     const eta = (torrent.eta as number) < 0 ? 0 : (torrent.eta as number);
@@ -421,6 +487,11 @@ class TorrentService {
     const completedTime = torrent.doneDate as number;
     const directory = torrent.downloadDir as string;
     const magnetLink = torrent.magnetLink as string;
+    const hashString = (torrent.hashString as string) ?? undefined;
+    const isStalled = (torrent.isStalled as boolean) ?? false;
+    const peersConnected = (torrent.peersConnected as number) ?? 0;
+    const labels = (torrent.labels as string[] | undefined) ?? [];
+    const bandwidthPriority = (torrent.bandwidthPriority as number) ?? 0;
 
     return {
       id,
@@ -446,6 +517,11 @@ class TorrentService {
       completedTime,
       directory,
       magnetLink,
+      hashString,
+      isStalled,
+      peersConnected,
+      labels,
+      bandwidthPriority,
     };
   };
 }
