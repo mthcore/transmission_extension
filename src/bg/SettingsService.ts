@@ -26,6 +26,23 @@ export interface NormalizedSettings {
   pexEnabled: boolean;
   lpdEnabled: boolean;
   utpEnabled: boolean;
+  incompleteDirEnabled: boolean;
+  incompleteDir: string;
+  renamePartialFiles: boolean;
+  downloadQueueEnabled: boolean;
+  downloadQueueSize: number;
+  seedQueueEnabled: boolean;
+  seedQueueSize: number;
+  queueStalledEnabled: boolean;
+  queueStalledMinutes: number;
+  startAddedTorrents: boolean;
+  trashOriginalTorrentFiles: boolean;
+  altSpeedTimeEnabled: boolean;
+  altSpeedTimeBegin: number;
+  altSpeedTimeEnd: number;
+  altSpeedTimeDay: number;
+  scriptTorrentDoneEnabled: boolean;
+  scriptTorrentDoneFilename: string;
 }
 
 class SettingsService {
@@ -142,6 +159,66 @@ class SettingsService {
   setUtpEnabled = (enabled: boolean): Promise<void> =>
     this.setSessionSetting({ 'utp-enabled': enabled });
 
+  setIncompleteDirEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'incomplete-dir-enabled': enabled });
+
+  setIncompleteDir = (dir: string): Promise<void> =>
+    this.setSessionSetting({ 'incomplete-dir': dir });
+
+  setRenamePartialFiles = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'rename-partial-files': enabled });
+
+  setDownloadQueueEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'download-queue-enabled': enabled });
+
+  setDownloadQueueSize = (size: number): Promise<void> =>
+    this.setSessionSetting({ 'download-queue-enabled': true, 'download-queue-size': size });
+
+  setSeedQueueEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'seed-queue-enabled': enabled });
+
+  setSeedQueueSize = (size: number): Promise<void> =>
+    this.setSessionSetting({ 'seed-queue-enabled': true, 'seed-queue-size': size });
+
+  setQueueStalledEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'queue-stalled-enabled': enabled });
+
+  setQueueStalledMinutes = (minutes: number): Promise<void> =>
+    this.setSessionSetting({ 'queue-stalled-enabled': true, 'queue-stalled-minutes': minutes });
+
+  setStartAddedTorrents = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'start-added-torrents': enabled });
+
+  setTrashOriginalTorrentFiles = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'trash-original-torrent-files': enabled });
+
+  setAltSpeedTimeEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'alt-speed-time-enabled': enabled });
+
+  setAltSpeedTimeBegin = (minutes: number): Promise<void> =>
+    this.setSessionSetting({ 'alt-speed-time-begin': minutes });
+
+  setAltSpeedTimeEnd = (minutes: number): Promise<void> =>
+    this.setSessionSetting({ 'alt-speed-time-end': minutes });
+
+  setAltSpeedTimeDay = (day: number): Promise<void> =>
+    this.setSessionSetting({ 'alt-speed-time-day': day });
+
+  setScriptTorrentDoneEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-done-enabled': enabled });
+
+  setScriptTorrentDoneFilename = (filename: string): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-done-filename': filename });
+
+  portTest(): Promise<boolean> {
+    return this.transport
+      .sendAction({ method: 'port-test' })
+      .then((response) => {
+        const args = response.arguments as { 'port-is-open': boolean };
+        return args['port-is-open'];
+      });
+  }
+
   blocklistUpdate(): Promise<{ blocklistSize: number }> {
     return this.transport
       .sendAction({ method: 'blocklist-update' })
@@ -181,6 +258,23 @@ class SettingsService {
       pexEnabled: (settings['pex-enabled'] as boolean) ?? true,
       lpdEnabled: (settings['lpd-enabled'] as boolean) ?? true,
       utpEnabled: (settings['utp-enabled'] as boolean) ?? true,
+      incompleteDirEnabled: (settings['incomplete-dir-enabled'] as boolean) ?? false,
+      incompleteDir: (settings['incomplete-dir'] as string) ?? '',
+      renamePartialFiles: (settings['rename-partial-files'] as boolean) ?? true,
+      downloadQueueEnabled: (settings['download-queue-enabled'] as boolean) ?? true,
+      downloadQueueSize: (settings['download-queue-size'] as number) ?? 5,
+      seedQueueEnabled: (settings['seed-queue-enabled'] as boolean) ?? false,
+      seedQueueSize: (settings['seed-queue-size'] as number) ?? 10,
+      queueStalledEnabled: (settings['queue-stalled-enabled'] as boolean) ?? true,
+      queueStalledMinutes: (settings['queue-stalled-minutes'] as number) ?? 30,
+      startAddedTorrents: (settings['start-added-torrents'] as boolean) ?? true,
+      trashOriginalTorrentFiles: (settings['trash-original-torrent-files'] as boolean) ?? false,
+      altSpeedTimeEnabled: (settings['alt-speed-time-enabled'] as boolean) ?? false,
+      altSpeedTimeBegin: (settings['alt-speed-time-begin'] as number) ?? 540,
+      altSpeedTimeEnd: (settings['alt-speed-time-end'] as number) ?? 1020,
+      altSpeedTimeDay: (settings['alt-speed-time-day'] as number) ?? 127,
+      scriptTorrentDoneEnabled: (settings['script-torrent-done-enabled'] as boolean) ?? false,
+      scriptTorrentDoneFilename: (settings['script-torrent-done-filename'] as string) ?? '',
     };
   };
 }

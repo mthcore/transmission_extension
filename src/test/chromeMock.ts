@@ -1,8 +1,14 @@
 import { vi } from 'vitest';
 
+const i18nOverrides: Record<string, string> = {
+  sizeList: '["B", "kB", "MB", "GB", "TB", "PB", "EB"]',
+  sizePsList: '["B/s", "kB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"]',
+  timeOutList: '["w", "d", "h", "m", "s"]',
+};
+
 const chromeMock = {
   i18n: {
-    getMessage: (key: string) => key,
+    getMessage: (key: string) => i18nOverrides[key] ?? key,
   },
   runtime: {
     sendMessage: vi.fn(),

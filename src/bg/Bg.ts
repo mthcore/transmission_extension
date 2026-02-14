@@ -209,7 +209,16 @@ class Bg {
       case 'setDhtEnabled':
       case 'setPexEnabled':
       case 'setLpdEnabled':
-      case 'setUtpEnabled': {
+      case 'setUtpEnabled':
+      case 'setIncompleteDirEnabled':
+      case 'setRenamePartialFiles':
+      case 'setDownloadQueueEnabled':
+      case 'setSeedQueueEnabled':
+      case 'setQueueStalledEnabled':
+      case 'setStartAddedTorrents':
+      case 'setTrashOriginalTorrentFiles':
+      case 'setAltSpeedTimeEnabled':
+      case 'setScriptTorrentDoneEnabled': {
         const action = message.action;
         const enabled = message.enabled;
         promise = this.whenReady().then(() => this.requireClient()[action](enabled));
@@ -262,7 +271,13 @@ class Bg {
       case 'setPeerLimitPerTorrent':
       case 'setSeedRatioLimit':
       case 'setIdleSeedingLimit':
-      case 'setPeerPort': {
+      case 'setPeerPort':
+      case 'setDownloadQueueSize':
+      case 'setSeedQueueSize':
+      case 'setQueueStalledMinutes':
+      case 'setAltSpeedTimeBegin':
+      case 'setAltSpeedTimeEnd':
+      case 'setAltSpeedTimeDay': {
         const action = message.action;
         const value = message.value;
         promise = this.whenReady().then(() => this.requireClient()[action](value));
@@ -283,6 +298,42 @@ class Bg {
       case 'blocklistUpdate': {
         promise = this.whenReady().then(() =>
           this.requireClient().blocklistUpdate()
+        );
+        break;
+      }
+      case 'setIncompleteDir': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().setIncompleteDir(message.dir)
+        );
+        break;
+      }
+      case 'setScriptTorrentDoneFilename': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().setScriptTorrentDoneFilename(message.filename)
+        );
+        break;
+      }
+      case 'portTest': {
+        promise = this.whenReady().then(() =>
+          this.requireClient().portTest()
+        );
+        break;
+      }
+      case 'getTorrentDetails': {
+        promise = this.requireClient().getTorrentDetails(message.id);
+        break;
+      }
+      case 'setTrackerList': {
+        promise = this.requireClient().setTrackerList(message.ids, message.trackerList);
+        break;
+      }
+      case 'setSeedLimits': {
+        promise = this.requireClient().setSeedLimits(
+          message.ids,
+          message.seedRatioMode,
+          message.seedRatioLimit,
+          message.seedIdleMode,
+          message.seedIdleLimit
         );
         break;
       }

@@ -176,7 +176,8 @@ label > span:first-child {
 // Inputs
 input[type="text"],
 input[type="password"],
-input[type="number"] {
+input[type="number"],
+input[type="time"] {
   padding: 0.625rem 0.875rem;
   border: 1px solid var(--border-color);
   border-radius: $radius;
@@ -607,6 +608,38 @@ ol.help li {
     flex: 1;
     min-width: 200px;
   }
+}
+
+// Day checkbox grid for alt-speed scheduling
+.day-checkboxes {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  .day-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0;
+    min-width: auto;
+    cursor: pointer;
+
+    span {
+      min-width: auto;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Port test result colors
+.port-open {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.port-closed {
+  color: #ef4444;
+  font-weight: 500;
 }
 
 // Backup & Restore

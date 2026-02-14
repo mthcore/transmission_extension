@@ -37,7 +37,13 @@ export type BgMessage =
   | SetLabelsMessage
   | SetBandwidthPriorityMessage
   | SessionNumberMessage
-  | EncryptionMessage;
+  | EncryptionMessage
+  | IncompleteDirMessage
+  | ScriptTorrentDoneFilenameMessage
+  | PortTestMessage
+  | GetTorrentDetailsMessage
+  | SetTrackerListMessage
+  | SetSeedLimitsMessage;
 
 // Store sync messages
 export interface GetBgStoreDeltaMessage {
@@ -105,7 +111,16 @@ type SpeedEnabledAction =
   | 'setDhtEnabled'
   | 'setPexEnabled'
   | 'setLpdEnabled'
-  | 'setUtpEnabled';
+  | 'setUtpEnabled'
+  | 'setIncompleteDirEnabled'
+  | 'setRenamePartialFiles'
+  | 'setDownloadQueueEnabled'
+  | 'setSeedQueueEnabled'
+  | 'setQueueStalledEnabled'
+  | 'setStartAddedTorrents'
+  | 'setTrashOriginalTorrentFiles'
+  | 'setAltSpeedTimeEnabled'
+  | 'setScriptTorrentDoneEnabled';
 
 export interface SpeedEnabledMessage {
   action: SpeedEnabledAction;
@@ -128,7 +143,13 @@ type SessionNumberAction =
   | 'setPeerLimitPerTorrent'
   | 'setSeedRatioLimit'
   | 'setIdleSeedingLimit'
-  | 'setPeerPort';
+  | 'setPeerPort'
+  | 'setDownloadQueueSize'
+  | 'setSeedQueueSize'
+  | 'setQueueStalledMinutes'
+  | 'setAltSpeedTimeBegin'
+  | 'setAltSpeedTimeEnd'
+  | 'setAltSpeedTimeDay';
 
 export interface SessionNumberMessage {
   action: SessionNumberAction;
@@ -190,4 +211,44 @@ export interface BlocklistUrlMessage {
 
 export interface BlocklistUpdateMessage {
   action: 'blocklistUpdate';
+}
+
+// Incomplete dir
+export interface IncompleteDirMessage {
+  action: 'setIncompleteDir';
+  dir: string;
+}
+
+// Script on completion
+export interface ScriptTorrentDoneFilenameMessage {
+  action: 'setScriptTorrentDoneFilename';
+  filename: string;
+}
+
+// Port test
+export interface PortTestMessage {
+  action: 'portTest';
+}
+
+// Torrent details (on-demand)
+export interface GetTorrentDetailsMessage {
+  action: 'getTorrentDetails';
+  id: TorrentId;
+}
+
+// Tracker list
+export interface SetTrackerListMessage {
+  action: 'setTrackerList';
+  ids: TorrentId[];
+  trackerList: string;
+}
+
+// Per-torrent seed limits
+export interface SetSeedLimitsMessage {
+  action: 'setSeedLimits';
+  ids: TorrentId[];
+  seedRatioMode: number;
+  seedRatioLimit: number;
+  seedIdleMode: number;
+  seedIdleLimit: number;
 }

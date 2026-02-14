@@ -62,6 +62,7 @@ const LabelSelect = observer(() => {
         optionLabelProp="children"
         virtual={false}
         listHeight={500}
+        aria-label={chrome.i18n.getMessage('OV_CAT_ALL')}
       >
         {options}
       </Select>

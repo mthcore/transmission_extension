@@ -25,6 +25,14 @@ interface TransportOptions {
   onTokenRefresh?: () => void;
 }
 
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 1000;
+
+function isNetworkError(err: unknown): boolean {
+  // TypeError is thrown by fetch for network failures (DNS, connection refused, etc.)
+  return err instanceof TypeError;
+}
+
 class TransmissionTransport {
   url: string;
   token: string | null;
@@ -45,17 +53,32 @@ class TransmissionTransport {
     customParser?: (text: string) => TransmissionResponse
   ): Promise<TransmissionResponse> {
     return this.retryIfTokenInvalid(() => {
-      return fetch(
-        this.url,
-        this.sign({
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Transmission-Session-Id': this.token || '',
-          },
-          body: JSON.stringify(body),
-        })
-      ).then((response) => {
+      return this.fetchWithRetry(body, customParser);
+    }).then((response) => {
+      if (response.result !== 'success') {
+        throw new ErrorWithCode(response.result, 'TRANSMISSION_ERROR');
+      }
+      return response;
+    });
+  }
+
+  private fetchWithRetry(
+    body: Record<string, unknown>,
+    customParser?: (text: string) => TransmissionResponse,
+    attempt = 0
+  ): Promise<TransmissionResponse> {
+    return fetch(
+      this.url,
+      this.sign({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Transmission-Session-Id': this.token || '',
+        },
+        body: JSON.stringify(body),
+      })
+    ).then(
+      (response) => {
         if (!response.ok) {
           const error = new ErrorWithCode(
             `${response.status}: ${response.statusText}`,
@@ -77,13 +100,18 @@ class TransmissionTransport {
         } else {
           return response.json() as Promise<TransmissionResponse>;
         }
-      });
-    }).then((response) => {
-      if (response.result !== 'success') {
-        throw new ErrorWithCode(response.result, 'TRANSMISSION_ERROR');
+      },
+      (err: Error) => {
+        // Retry only on network errors (fetch failures), not HTTP or auth errors
+        if (attempt < MAX_RETRIES && isNetworkError(err)) {
+          const delay = INITIAL_RETRY_DELAY * Math.pow(2, attempt);
+          return new Promise<TransmissionResponse>((resolve) =>
+            setTimeout(() => resolve(this.fetchWithRetry(body, customParser, attempt + 1)), delay)
+          );
+        }
+        throw err;
       }
-      return response;
-    });
+    );
   }
 
   private retryIfTokenInvalid<T>(callback: () => Promise<T>): Promise<T> {

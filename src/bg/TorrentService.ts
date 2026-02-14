@@ -18,6 +18,35 @@ export interface PeerData {
   flags: string;
 }
 
+export interface TrackerStat {
+  id: number;
+  announce: string;
+  tier: number;
+  seederCount: number;
+  leecherCount: number;
+  lastAnnounceResult: string;
+  isBackup: boolean;
+}
+
+export interface TorrentDetailData {
+  comment: string;
+  creator: string;
+  dateCreated: number;
+  pieceCount: number;
+  pieceSize: number;
+  corruptEver: number;
+  desiredAvailable: number;
+  secondsDownloading: number;
+  secondsSeeding: number;
+  webseeds: string[];
+  trackerList: string;
+  trackerStats: TrackerStat[];
+  seedRatioLimit: number;
+  seedRatioMode: number;
+  seedIdleLimit: number;
+  seedIdleMode: number;
+}
+
 export interface NormalizedTorrent {
   id: number;
   statusCode: number;
@@ -442,6 +471,142 @@ class TorrentService {
           flags: peer.flagStr,
         }));
       });
+  }
+
+  getTorrentDetails(id: number): Promise<TorrentDetailData> {
+    return this.transport
+      .sendAction(
+        {
+          method: 'torrent-get',
+          arguments: {
+            fields: [
+              'id',
+              'comment',
+              'creator',
+              'dateCreated',
+              'pieceCount',
+              'pieceSize',
+              'corruptEver',
+              'desiredAvailable',
+              'secondsDownloading',
+              'secondsSeeding',
+              'webseeds',
+              'trackerList',
+              'trackerStats',
+              'seedRatioLimit',
+              'seedRatioMode',
+              'seedIdleLimit',
+              'seedIdleMode',
+            ],
+            ids: [id],
+          },
+        },
+        safeTrackerParser
+      )
+      .then((response) => {
+        type RawTrackerStat = {
+          id: number;
+          announce: string;
+          tier: number;
+          seederCount: number;
+          leecherCount: number;
+          lastAnnounceResult: string;
+          isBackup: boolean;
+        };
+        type RawTorrent = {
+          id: number;
+          comment: string;
+          creator: string;
+          dateCreated: number;
+          pieceCount: number;
+          pieceSize: number;
+          corruptEver: number;
+          desiredAvailable: number;
+          secondsDownloading: number;
+          secondsSeeding: number;
+          webseeds: string[];
+          trackerList: string;
+          trackerStats: RawTrackerStat[];
+          seedRatioLimit: number;
+          seedRatioMode: number;
+          seedIdleLimit: number;
+          seedIdleMode: number;
+        };
+        const torrents = (response.arguments as { torrents: RawTorrent[] }).torrents;
+        const torrent = torrents.find((t) => t.id === id);
+        if (!torrent) throw new Error(`Torrent ${id} not found`);
+        return {
+          comment: torrent.comment || '',
+          creator: torrent.creator || '',
+          dateCreated: torrent.dateCreated || 0,
+          pieceCount: torrent.pieceCount || 0,
+          pieceSize: torrent.pieceSize || 0,
+          corruptEver: torrent.corruptEver || 0,
+          desiredAvailable: torrent.desiredAvailable || 0,
+          secondsDownloading: torrent.secondsDownloading || 0,
+          secondsSeeding: torrent.secondsSeeding || 0,
+          webseeds: torrent.webseeds || [],
+          trackerList: torrent.trackerList || '',
+          trackerStats: (torrent.trackerStats || []).map(
+            (ts): TrackerStat => ({
+              id: ts.id,
+              announce: ts.announce,
+              tier: ts.tier,
+              seederCount: ts.seederCount,
+              leecherCount: ts.leecherCount,
+              lastAnnounceResult: ts.lastAnnounceResult || '',
+              isBackup: ts.isBackup,
+            })
+          ),
+          seedRatioLimit: torrent.seedRatioLimit ?? 0,
+          seedRatioMode: torrent.seedRatioMode ?? 0,
+          seedIdleLimit: torrent.seedIdleLimit ?? 0,
+          seedIdleMode: torrent.seedIdleMode ?? 0,
+        };
+      });
+
+    function safeTrackerParser(text: string): TransmissionResponse {
+      try {
+        return JSON.parse(text);
+      } catch {
+        return JSON.parse(
+          text.replace(
+            /"(announce|scrape|lastAnnounceResult|lastScrapeResult)":"([^"]+)"/g,
+            safeTrackerValue
+          )
+        );
+      }
+    }
+
+    function safeTrackerValue(_match: string, key: string, value: string): string {
+      try {
+        JSON.parse(`"${value}"`);
+      } catch {
+        value = encodeURIComponent(value);
+      }
+      return `"${key}":"${value}"`;
+    }
+  }
+
+  setTrackerList(ids: number[], trackerList: string): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({ method: 'torrent-set', arguments: { ids, trackerList } })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setSeedLimits(
+    ids: number[],
+    seedRatioMode: number,
+    seedRatioLimit: number,
+    seedIdleMode: number,
+    seedIdleLimit: number
+  ): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, seedRatioMode, seedRatioLimit, seedIdleMode, seedIdleLimit },
+      })
+      .then(this.thenUpdateTorrents);
   }
 
   private normalizeTorrent = (torrent: Record<string, unknown>): NormalizedTorrent => {

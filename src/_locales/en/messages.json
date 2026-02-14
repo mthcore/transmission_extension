@@ -692,5 +692,185 @@
     },
     "minutes": {
         "message": "min"
+    },
+    "OV_CAT_NO_LABEL": {
+        "message": "No Label"
+    },
+    "generalSettings": {
+        "message": "General"
+    },
+    "startAddedTorrents": {
+        "message": "Start added torrents"
+    },
+    "trashOriginalTorrentFiles": {
+        "message": "Trash original .torrent files"
+    },
+    "incompleteDirSettings": {
+        "message": "Incomplete Downloads"
+    },
+    "incompleteDirEnabled": {
+        "message": "Use incomplete downloads directory"
+    },
+    "incompleteDir": {
+        "message": "Incomplete directory"
+    },
+    "renamePartialFiles": {
+        "message": "Rename partial files with .part extension"
+    },
+    "queueSettings": {
+        "message": "Queue"
+    },
+    "downloadQueueEnabled": {
+        "message": "Limit download queue"
+    },
+    "downloadQueueSize": {
+        "message": "Max concurrent downloads"
+    },
+    "seedQueueEnabled": {
+        "message": "Limit seed queue"
+    },
+    "seedQueueSize": {
+        "message": "Max concurrent seeds"
+    },
+    "queueStalledEnabled": {
+        "message": "Consider idle after"
+    },
+    "queueStalledMinutes": {
+        "message": "Stalled timeout"
+    },
+    "altSpeedSchedule": {
+        "message": "Speed Limit Schedule"
+    },
+    "altSpeedTimeEnabled": {
+        "message": "Enable speed limit schedule"
+    },
+    "altSpeedTimeBegin": {
+        "message": "Start time"
+    },
+    "altSpeedTimeEnd": {
+        "message": "End time"
+    },
+    "altSpeedTimeDays": {
+        "message": "Active days"
+    },
+    "daySunday": {
+        "message": "Sun"
+    },
+    "dayMonday": {
+        "message": "Mon"
+    },
+    "dayTuesday": {
+        "message": "Tue"
+    },
+    "dayWednesday": {
+        "message": "Wed"
+    },
+    "dayThursday": {
+        "message": "Thu"
+    },
+    "dayFriday": {
+        "message": "Fri"
+    },
+    "daySaturday": {
+        "message": "Sat"
+    },
+    "scriptSettings": {
+        "message": "Script"
+    },
+    "scriptTorrentDoneEnabled": {
+        "message": "Run script when download completes"
+    },
+    "scriptTorrentDoneFilename": {
+        "message": "Script path"
+    },
+    "portTest": {
+        "message": "Test port"
+    },
+    "portOpen": {
+        "message": "Port is open"
+    },
+    "portClosed": {
+        "message": "Port is closed"
+    },
+    "portTesting": {
+        "message": "Testing..."
+    },
+    "DT_TAB_INFO": {
+        "message": "Info"
+    },
+    "DT_TAB_TRACKERS": {
+        "message": "Trackers"
+    },
+    "DT_TAB_SEED_LIMITS": {
+        "message": "Seed Limits"
+    },
+    "DT_COMMENT": {
+        "message": "Comment"
+    },
+    "DT_CREATOR": {
+        "message": "Creator"
+    },
+    "DT_DATE_CREATED": {
+        "message": "Date Created"
+    },
+    "DT_PIECES": {
+        "message": "Pieces"
+    },
+    "DT_CORRUPT": {
+        "message": "Corrupt"
+    },
+    "DT_TIME_DOWNLOADING": {
+        "message": "Time Downloading"
+    },
+    "DT_TIME_SEEDING": {
+        "message": "Time Seeding"
+    },
+    "DT_WEBSEEDS": {
+        "message": "Web Seeds"
+    },
+    "DT_TRACKER_URL": {
+        "message": "URL"
+    },
+    "DT_TRACKER_TIER": {
+        "message": "Tier"
+    },
+    "DT_TRACKER_SEEDS": {
+        "message": "Seeds"
+    },
+    "DT_TRACKER_PEERS": {
+        "message": "Peers"
+    },
+    "DT_TRACKER_STATUS": {
+        "message": "Status"
+    },
+    "DT_TRACKER_LIST": {
+        "message": "Tracker List"
+    },
+    "DT_TRACKER_LIST_HELP": {
+        "message": "One URL per line, blank line between tiers"
+    },
+    "DT_SEED_RATIO_MODE": {
+        "message": "Seed Ratio Mode"
+    },
+    "DT_SEED_RATIO_LIMIT": {
+        "message": "Seed Ratio Limit"
+    },
+    "DT_SEED_IDLE_MODE": {
+        "message": "Idle Seeding Mode"
+    },
+    "DT_SEED_IDLE_LIMIT": {
+        "message": "Idle Seeding Limit (min)"
+    },
+    "DT_USE_GLOBAL": {
+        "message": "Use Global Settings"
+    },
+    "DT_CUSTOM": {
+        "message": "Custom"
+    },
+    "DT_UNLIMITED": {
+        "message": "Unlimited"
+    },
+    "DT_APPLY": {
+        "message": "Apply"
     }
 }

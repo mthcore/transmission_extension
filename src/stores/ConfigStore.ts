@@ -172,6 +172,9 @@ const ConfigStore = types
 
     selectedLabel: types.optional(SelectedLabelStore, { label: 'ALL', custom: true }),
 
+    detailPeerWidths: types.optional(types.frozen<Record<string, number>>(), {}),
+    detailTrackerWidths: types.optional(types.frozen<Record<string, number>>(), {}),
+
     configVersion: types.optional(types.number, 2),
   })
   .actions((self) => {
@@ -281,6 +284,14 @@ const ConfigStore = types
       setTheme(theme: 'light' | 'dark' | 'system') {
         self.theme = theme;
         return storageSet({ theme });
+      },
+      setDetailPeerWidths(widths: Record<string, number>) {
+        self.detailPeerWidths = widths;
+        return storageSet({ detailPeerWidths: widths });
+      },
+      setDetailTrackerWidths(widths: Record<string, number>) {
+        self.detailTrackerWidths = widths;
+        return storageSet({ detailTrackerWidths: widths });
       },
     };
   })

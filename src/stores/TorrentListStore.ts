@@ -9,6 +9,8 @@ import type { ITorrentStore } from './TorrentStore';
 
 const customLabels = ['ALL', 'DL', 'SEEDING', 'COMPL', 'ACTIVE', 'INACTIVE'] as const;
 
+const NO_LABEL = 'NO_LABEL';
+
 const sortTorrents = createColumnSorter(torrentColumnMap, torrentSpecialHandlers);
 
 interface Filter {
@@ -21,8 +23,34 @@ const TorrentListStore = types
   .views((self) => {
     return {
       get filters(): Filter[] {
+        const rootStore = getRoot<{
+          client: { torrents: Map<number, ITorrentStore> };
+        }>(self);
+
         const result: Filter[] = [];
         customLabels.forEach((label) => result.push({ label, custom: true }));
+
+        // Collect unique labels from all torrents
+        const labelSet = new Set<string>();
+        for (const torrent of rootStore.client.torrents.values()) {
+          const labels = torrent.labels;
+          if (labels) {
+            for (const label of labels) {
+              if (label) labelSet.add(label);
+            }
+          }
+        }
+
+        if (labelSet.size > 0) {
+          // Add "No Label" filter
+          result.push({ label: NO_LABEL, custom: true });
+          // Add each unique label as a non-custom filter
+          const sorted = Array.from(labelSet).sort();
+          for (const label of sorted) {
+            result.push({ label, custom: false });
+          }
+        }
+
         return result;
       },
       get filteredTorrents(): ITorrentStore[] {
@@ -77,6 +105,17 @@ const TorrentListStore = types
                 }
                 break;
               }
+              case NO_LABEL: {
+                if (!torrent.labels || torrent.labels.length === 0) {
+                  result.push(torrent);
+                }
+                break;
+              }
+            }
+          } else {
+            // Filter by torrent label
+            if (torrent.labels && torrent.labels.includes(filter.label)) {
+              result.push(torrent);
             }
           }
         }

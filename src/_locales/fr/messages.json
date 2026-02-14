@@ -688,5 +688,185 @@
     },
     "minutes": {
         "message": "min"
+    },
+    "OV_CAT_NO_LABEL": {
+        "message": "Sans label"
+    },
+    "generalSettings": {
+        "message": "G\u00e9n\u00e9ral"
+    },
+    "startAddedTorrents": {
+        "message": "D\u00e9marrer automatiquement les nouveaux torrents"
+    },
+    "trashOriginalTorrentFiles": {
+        "message": "Supprimer les fichiers .torrent originaux"
+    },
+    "incompleteDirSettings": {
+        "message": "T\u00e9l\u00e9chargements incomplets"
+    },
+    "incompleteDirEnabled": {
+        "message": "Utiliser un dossier pour les t\u00e9l\u00e9chargements incomplets"
+    },
+    "incompleteDir": {
+        "message": "Dossier des t\u00e9l\u00e9chargements incomplets"
+    },
+    "renamePartialFiles": {
+        "message": "Renommer les fichiers partiels avec l'extension .part"
+    },
+    "queueSettings": {
+        "message": "File d'attente"
+    },
+    "downloadQueueEnabled": {
+        "message": "Limiter la file de t\u00e9l\u00e9chargement"
+    },
+    "downloadQueueSize": {
+        "message": "T\u00e9l\u00e9chargements simultan\u00e9s max"
+    },
+    "seedQueueEnabled": {
+        "message": "Limiter la file de partage"
+    },
+    "seedQueueSize": {
+        "message": "Partages simultan\u00e9s max"
+    },
+    "queueStalledEnabled": {
+        "message": "Consid\u00e9rer inactif apr\u00e8s"
+    },
+    "queueStalledMinutes": {
+        "message": "D\u00e9lai d'inactivit\u00e9"
+    },
+    "altSpeedSchedule": {
+        "message": "Planification de la limite de vitesse"
+    },
+    "altSpeedTimeEnabled": {
+        "message": "Activer la planification de la limite de vitesse"
+    },
+    "altSpeedTimeBegin": {
+        "message": "Heure de d\u00e9but"
+    },
+    "altSpeedTimeEnd": {
+        "message": "Heure de fin"
+    },
+    "altSpeedTimeDays": {
+        "message": "Jours actifs"
+    },
+    "daySunday": {
+        "message": "Dim"
+    },
+    "dayMonday": {
+        "message": "Lun"
+    },
+    "dayTuesday": {
+        "message": "Mar"
+    },
+    "dayWednesday": {
+        "message": "Mer"
+    },
+    "dayThursday": {
+        "message": "Jeu"
+    },
+    "dayFriday": {
+        "message": "Ven"
+    },
+    "daySaturday": {
+        "message": "Sam"
+    },
+    "scriptSettings": {
+        "message": "Script"
+    },
+    "scriptTorrentDoneEnabled": {
+        "message": "Ex\u00e9cuter un script \u00e0 la fin du t\u00e9l\u00e9chargement"
+    },
+    "scriptTorrentDoneFilename": {
+        "message": "Chemin du script"
+    },
+    "portTest": {
+        "message": "Tester le port"
+    },
+    "portOpen": {
+        "message": "Le port est ouvert"
+    },
+    "portClosed": {
+        "message": "Le port est ferm\u00e9"
+    },
+    "portTesting": {
+        "message": "Test en cours..."
+    },
+    "DT_TAB_INFO": {
+        "message": "Info"
+    },
+    "DT_TAB_TRACKERS": {
+        "message": "Trackers"
+    },
+    "DT_TAB_SEED_LIMITS": {
+        "message": "Limites de seed"
+    },
+    "DT_COMMENT": {
+        "message": "Commentaire"
+    },
+    "DT_CREATOR": {
+        "message": "Créateur"
+    },
+    "DT_DATE_CREATED": {
+        "message": "Date de création"
+    },
+    "DT_PIECES": {
+        "message": "Pièces"
+    },
+    "DT_CORRUPT": {
+        "message": "Corrompu"
+    },
+    "DT_TIME_DOWNLOADING": {
+        "message": "Temps de téléchargement"
+    },
+    "DT_TIME_SEEDING": {
+        "message": "Temps de seed"
+    },
+    "DT_WEBSEEDS": {
+        "message": "Seeds web"
+    },
+    "DT_TRACKER_URL": {
+        "message": "URL"
+    },
+    "DT_TRACKER_TIER": {
+        "message": "Tier"
+    },
+    "DT_TRACKER_SEEDS": {
+        "message": "Seeds"
+    },
+    "DT_TRACKER_PEERS": {
+        "message": "Peers"
+    },
+    "DT_TRACKER_STATUS": {
+        "message": "Statut"
+    },
+    "DT_TRACKER_LIST": {
+        "message": "Liste des trackers"
+    },
+    "DT_TRACKER_LIST_HELP": {
+        "message": "Une URL par ligne, ligne vide entre les tiers"
+    },
+    "DT_SEED_RATIO_MODE": {
+        "message": "Mode de ratio de seed"
+    },
+    "DT_SEED_RATIO_LIMIT": {
+        "message": "Limite de ratio de seed"
+    },
+    "DT_SEED_IDLE_MODE": {
+        "message": "Mode de seed inactif"
+    },
+    "DT_SEED_IDLE_LIMIT": {
+        "message": "Limite de seed inactif (min)"
+    },
+    "DT_USE_GLOBAL": {
+        "message": "Paramètres globaux"
+    },
+    "DT_CUSTOM": {
+        "message": "Personnalisé"
+    },
+    "DT_UNLIMITED": {
+        "message": "Illimité"
+    },
+    "DT_APPLY": {
+        "message": "Appliquer"
     }
 }

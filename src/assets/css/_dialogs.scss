@@ -137,8 +137,19 @@ div.loading {
 // Torrent details dialog
 .torrent-details-dialog {
   .nf-notifi {
-    width: 500px;
+    width: 550px;
     max-width: 95%;
+    max-height: calc(100vh - 16px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .torrent-details-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -moz-user-select: text;
+    user-select: text;
   }
 
   .torrent-details-header {
@@ -213,8 +224,178 @@ div.loading {
     overflow-y: auto;
   }
 
+  .torrent-details-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border-color);
+
+    button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      background: none;
+      color: var(--text-secondary);
+      font-size: $font-size-sm;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color $transition-base, border-color $transition-base;
+
+      &:hover {
+        color: var(--text-color);
+      }
+
+      &.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+      }
+    }
+  }
+
+  .tracker-list-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+    margin-bottom: 12px;
+
+    th,
+    td {
+      padding: 3px 6px;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    th {
+      position: relative;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      color: var(--text-color);
+    }
+
+    .tracker-backup {
+      opacity: 0.5;
+    }
+  }
+
+  .tracker-list-edit {
+    text-align: left;
+    margin-top: 12px;
+
+    label {
+      display: block;
+      font-size: $font-size-sm;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .tracker-list-help {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+  }
+
+  .tracker-list-textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: $radius-sm;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    margin-bottom: 8px;
+
+    &:focus {
+      @include input-focus;
+    }
+  }
+
+  .seed-limits-form {
+    text-align: left;
+
+    .seed-limit-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+
+      label {
+        flex: 0 0 auto;
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+        font-weight: 500;
+        min-width: 100px;
+        margin-bottom: 0;
+      }
+
+      select,
+      input[type="number"] {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 8px;
+        border: 1px solid var(--border-color);
+        border-radius: $radius-sm;
+        font-size: $font-size-sm;
+        background-color: var(--input-bg);
+        color: var(--text-color);
+
+        &:focus {
+          @include input-focus;
+        }
+      }
+    }
+  }
+
+  .tracker-scroll,
+  .seed-limits-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .torrent-details-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+
+    button {
+      min-width: 100px;
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: $radius-sm;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color $transition-base;
+
+      &:hover {
+        background-color: var(--primary-hover);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+    }
+  }
+
   .peer-list-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: $font-size-sm;
 
@@ -222,6 +403,8 @@ div.loading {
     td {
       padding: 3px 6px;
       text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
@@ -238,17 +421,36 @@ div.loading {
       color: var(--text-color);
     }
 
-    .peer-client {
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .peer-flags {
-      max-width: 80px;
       font-family: $font-family-mono;
       font-size: 0.85em;
       letter-spacing: 1px;
+    }
+  }
+
+  // Resize handles for detail tables
+  .tracker-list-table,
+  .peer-list-table {
+    th {
+      position: relative;
+    }
+
+    .resize-el {
+      display: block;
+      height: 100%;
+      width: 6px;
+      margin-right: -3px;
+      cursor: col-resize;
+      right: 0;
+      top: 0;
+      position: absolute !important;
+      opacity: 0;
+      z-index: 2;
+    }
+
+    th:last-child .resize-el {
+      width: 3px;
+      margin-right: 0;
     }
   }
 }
