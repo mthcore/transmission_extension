@@ -27,6 +27,7 @@ body {
 }
 
 .user-select {
+  -webkit-user-select: initial;
   -moz-user-select: initial;
   user-select: initial;
 }

@@ -148,6 +148,7 @@ div.loading {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    -webkit-user-select: text;
     -moz-user-select: text;
     user-select: text;
   }

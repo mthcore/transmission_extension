@@ -1,0 +1,171 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import TransmissionTransport from '../../bg/TransmissionTransport';
+
+describe('TransmissionTransport', () => {
+  let transport: TransmissionTransport;
+  const onConnected = vi.fn();
+  const onTokenRefresh = vi.fn();
+  const getConfig = () => ({
+    authenticationRequired: false,
+    login: '',
+    password: '',
+  });
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.clearAllMocks();
+    transport = new TransmissionTransport({
+      url: 'http://localhost:9091/transmission/rpc',
+      getConfig,
+      onConnected,
+      onTokenRefresh,
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('initializes with null token', () => {
+    expect(transport.token).toBeNull();
+  });
+
+  it('sends a successful request', async () => {
+    const responseData = { result: 'success', arguments: { torrents: [] } };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(responseData),
+      })
+    );
+
+    const result = await transport.sendAction({ method: 'torrent-get' });
+    expect(result).toEqual(responseData);
+    expect(onConnected).toHaveBeenCalled();
+  });
+
+  it('throws on non-success result', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ result: 'no method name', arguments: {} }),
+      })
+    );
+
+    await expect(transport.sendAction({ method: 'bad' })).rejects.toThrow('no method name');
+  });
+
+  it('uses custom parser when provided', async () => {
+    const raw = '{"result":"success","arguments":{}}';
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(raw),
+      })
+    );
+    const parser = vi.fn().mockReturnValue({ result: 'success', arguments: { custom: true } });
+
+    const result = await transport.sendAction({ method: 'test' }, parser);
+    expect(parser).toHaveBeenCalledWith(raw);
+    expect(result.arguments).toEqual({ custom: true });
+  });
+
+  it('retries on 409 with new token', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 409,
+        statusText: 'Conflict',
+        headers: { get: () => 'new-token-123' },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: 'success', arguments: {} }),
+      });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await transport.sendAction({ method: 'torrent-get' });
+    expect(result.result).toBe('success');
+    expect(transport.token).toBe('new-token-123');
+    expect(onTokenRefresh).toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('retries on network errors with exponential backoff', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: 'success', arguments: {} }),
+      });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const promise = transport.sendAction({ method: 'torrent-get' });
+
+    // First retry: 1000ms delay
+    await vi.advanceTimersByTimeAsync(1000);
+    // Second retry: 2000ms delay
+    await vi.advanceTimersByTimeAsync(2000);
+
+    const result = await promise;
+    expect(result.result).toBe('success');
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not retry on non-network errors', async () => {
+    const httpError = new Error('Server error');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(httpError));
+
+    await expect(transport.sendAction({ method: 'test' })).rejects.toThrow('Server error');
+  });
+
+  it('adds auth header when authentication is required', async () => {
+    const authTransport = new TransmissionTransport({
+      url: 'http://localhost:9091/transmission/rpc',
+      getConfig: () => ({
+        authenticationRequired: true,
+        login: 'admin',
+        password: 'secret',
+      }),
+      onConnected,
+    });
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ result: 'success', arguments: {} }),
+      })
+    );
+
+    await authTransport.sendAction({ method: 'test' });
+
+    const fetchCall = vi.mocked(fetch).mock.calls[0];
+    const headers = (fetchCall[1] as RequestInit).headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Basic ' + btoa('admin:secret'));
+  });
+
+  it('sends session token in header', async () => {
+    transport.token = 'my-token';
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ result: 'success', arguments: {} }),
+      })
+    );
+
+    await transport.sendAction({ method: 'test' });
+
+    const fetchCall = vi.mocked(fetch).mock.calls[0];
+    const headers = (fetchCall[1] as RequestInit).headers as Record<string, string>;
+    expect(headers['X-Transmission-Session-Id']).toBe('my-token');
+  });
+});

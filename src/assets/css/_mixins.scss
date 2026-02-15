@@ -61,11 +61,11 @@
 // Scrollable container
 @mixin scrollable {
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 // User select none
 @mixin no-select {
+  -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
 }

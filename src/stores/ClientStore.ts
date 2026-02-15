@@ -4,6 +4,7 @@ import { speedToStr, formatBytes } from '../tools/format';
 import TorrentStore, { ITorrentStore } from './TorrentStore';
 import callApi from '../tools/callApi';
 import getLogger from '../tools/getLogger';
+import type { PeerData, TrackerStat, TorrentDetailData } from '../bg/TorrentService';
 
 const logger = getLogger('ClientStore');
 
@@ -18,44 +19,6 @@ interface FileData {
   size: number;
   downloaded: number;
   priority: number;
-}
-
-interface PeerData {
-  address: string;
-  client: string;
-  progress: number;
-  downloadSpeed: number;
-  uploadSpeed: number;
-  flags: string;
-}
-
-interface TrackerStat {
-  id: number;
-  announce: string;
-  tier: number;
-  seederCount: number;
-  leecherCount: number;
-  lastAnnounceResult: string;
-  isBackup: boolean;
-}
-
-interface TorrentDetailData {
-  comment: string;
-  creator: string;
-  dateCreated: number;
-  pieceCount: number;
-  pieceSize: number;
-  corruptEver: number;
-  desiredAvailable: number;
-  secondsDownloading: number;
-  secondsSeeding: number;
-  webseeds: string[];
-  trackerList: string;
-  trackerStats: TrackerStat[];
-  seedRatioLimit: number;
-  seedRatioMode: number;
-  seedIdleLimit: number;
-  seedIdleMode: number;
 }
 
 const SettingsStore = types

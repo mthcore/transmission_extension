@@ -7,27 +7,8 @@ const version = require('../src/manifest').version;
 
 const browser = process.env.BROWSER || getArgvValue('--BROWSER') || 'chrome';
 
-let targets;
-if (browser === 'firefox') {
-  targets = {
-    firefox: mode === 'development' ? '88' : '88',
-  };
-} else {
-  targets = {
-    chrome: mode === 'development' ? '88' : '88',
-  };
-}
-
-let babelEnvOptions;
-if (mode === 'development') {
-  babelEnvOptions = {
-    targets,
-  };
-} else {
-  babelEnvOptions = {
-    targets,
-  };
-}
+const targets = browser === 'firefox' ? { firefox: '109' } : { chrome: '88' };
+const babelEnvOptions = { targets };
 
 global.BUILD_ENV = {
   distName: `transmissionEasyClient-${browser}-${version}`,

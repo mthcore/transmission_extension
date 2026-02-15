@@ -50,6 +50,7 @@ a {
 
 // User selectable text (override)
 .user-select {
+  -webkit-user-select: initial;
   -moz-user-select: initial;
   user-select: initial;
 }

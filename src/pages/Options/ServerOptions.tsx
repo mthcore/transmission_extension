@@ -40,40 +40,40 @@ interface Settings {
 
 interface ClientStore {
   settings: Settings | null;
-  updateSettings: () => Promise<unknown>;
-  setBlocklistEnabled: (enabled: boolean) => Promise<unknown>;
-  setBlocklistUrl: (url: string) => Promise<unknown>;
+  updateSettings: () => Promise<void>;
+  setBlocklistEnabled: (enabled: boolean) => Promise<void>;
+  setBlocklistUrl: (url: string) => Promise<void>;
   blocklistUpdate: () => Promise<{ blocklistSize: number }>;
-  setPeerLimitGlobal: (limit: number) => Promise<unknown>;
-  setPeerLimitPerTorrent: (limit: number) => Promise<unknown>;
-  setSeedRatioLimited: (enabled: boolean) => Promise<unknown>;
-  setSeedRatioLimit: (limit: number) => Promise<unknown>;
-  setIdleSeedingLimitEnabled: (enabled: boolean) => Promise<unknown>;
-  setIdleSeedingLimit: (limit: number) => Promise<unknown>;
-  setPeerPort: (port: number) => Promise<unknown>;
-  setPortForwardingEnabled: (enabled: boolean) => Promise<unknown>;
-  setEncryption: (mode: string) => Promise<unknown>;
-  setDhtEnabled: (enabled: boolean) => Promise<unknown>;
-  setPexEnabled: (enabled: boolean) => Promise<unknown>;
-  setLpdEnabled: (enabled: boolean) => Promise<unknown>;
-  setUtpEnabled: (enabled: boolean) => Promise<unknown>;
-  setIncompleteDirEnabled: (enabled: boolean) => Promise<unknown>;
-  setIncompleteDir: (dir: string) => Promise<unknown>;
-  setRenamePartialFiles: (enabled: boolean) => Promise<unknown>;
-  setDownloadQueueEnabled: (enabled: boolean) => Promise<unknown>;
-  setDownloadQueueSize: (size: number) => Promise<unknown>;
-  setSeedQueueEnabled: (enabled: boolean) => Promise<unknown>;
-  setSeedQueueSize: (size: number) => Promise<unknown>;
-  setQueueStalledEnabled: (enabled: boolean) => Promise<unknown>;
-  setQueueStalledMinutes: (minutes: number) => Promise<unknown>;
-  setStartAddedTorrents: (enabled: boolean) => Promise<unknown>;
-  setTrashOriginalTorrentFiles: (enabled: boolean) => Promise<unknown>;
-  setAltSpeedTimeEnabled: (enabled: boolean) => Promise<unknown>;
-  setAltSpeedTimeBegin: (minutes: number) => Promise<unknown>;
-  setAltSpeedTimeEnd: (minutes: number) => Promise<unknown>;
-  setAltSpeedTimeDay: (day: number) => Promise<unknown>;
-  setScriptTorrentDoneEnabled: (enabled: boolean) => Promise<unknown>;
-  setScriptTorrentDoneFilename: (filename: string) => Promise<unknown>;
+  setPeerLimitGlobal: (limit: number) => Promise<void>;
+  setPeerLimitPerTorrent: (limit: number) => Promise<void>;
+  setSeedRatioLimited: (enabled: boolean) => Promise<void>;
+  setSeedRatioLimit: (limit: number) => Promise<void>;
+  setIdleSeedingLimitEnabled: (enabled: boolean) => Promise<void>;
+  setIdleSeedingLimit: (limit: number) => Promise<void>;
+  setPeerPort: (port: number) => Promise<void>;
+  setPortForwardingEnabled: (enabled: boolean) => Promise<void>;
+  setEncryption: (mode: string) => Promise<void>;
+  setDhtEnabled: (enabled: boolean) => Promise<void>;
+  setPexEnabled: (enabled: boolean) => Promise<void>;
+  setLpdEnabled: (enabled: boolean) => Promise<void>;
+  setUtpEnabled: (enabled: boolean) => Promise<void>;
+  setIncompleteDirEnabled: (enabled: boolean) => Promise<void>;
+  setIncompleteDir: (dir: string) => Promise<void>;
+  setRenamePartialFiles: (enabled: boolean) => Promise<void>;
+  setDownloadQueueEnabled: (enabled: boolean) => Promise<void>;
+  setDownloadQueueSize: (size: number) => Promise<void>;
+  setSeedQueueEnabled: (enabled: boolean) => Promise<void>;
+  setSeedQueueSize: (size: number) => Promise<void>;
+  setQueueStalledEnabled: (enabled: boolean) => Promise<void>;
+  setQueueStalledMinutes: (minutes: number) => Promise<void>;
+  setStartAddedTorrents: (enabled: boolean) => Promise<void>;
+  setTrashOriginalTorrentFiles: (enabled: boolean) => Promise<void>;
+  setAltSpeedTimeEnabled: (enabled: boolean) => Promise<void>;
+  setAltSpeedTimeBegin: (minutes: number) => Promise<void>;
+  setAltSpeedTimeEnd: (minutes: number) => Promise<void>;
+  setAltSpeedTimeDay: (day: number) => Promise<void>;
+  setScriptTorrentDoneEnabled: (enabled: boolean) => Promise<void>;
+  setScriptTorrentDoneFilename: (filename: string) => Promise<void>;
   portTest: () => Promise<boolean>;
 }
 
@@ -162,12 +162,12 @@ const ServerOptions = observer(() => {
     setScriptFilenameLoaded(true);
   }
 
-  const handleToggle = (setter: (enabled: boolean) => Promise<unknown>, current: boolean) => () => {
+  const handleToggle = (setter: (enabled: boolean) => Promise<void>, current: boolean) => () => {
     setter(!current);
   };
 
   const handleNumberBlur =
-    (setter: (value: number) => Promise<unknown>) => (e: React.FocusEvent<HTMLInputElement>) => {
+    (setter: (value: number) => Promise<void>) => (e: React.FocusEvent<HTMLInputElement>) => {
       const val = parseFloat(e.target.value);
       if (Number.isFinite(val) && val > 0) {
         setter(val);
@@ -175,7 +175,7 @@ const ServerOptions = observer(() => {
     };
 
   const handleIntBlur =
-    (setter: (value: number) => Promise<unknown>) => (e: React.FocusEvent<HTMLInputElement>) => {
+    (setter: (value: number) => Promise<void>) => (e: React.FocusEvent<HTMLInputElement>) => {
       const val = parseInt(e.target.value, 10);
       if (Number.isFinite(val) && val > 0) {
         setter(val);
@@ -244,7 +244,7 @@ const ServerOptions = observer(() => {
   );
 
   const handleTimeChange =
-    (setter: (minutes: number) => Promise<unknown>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (setter: (minutes: number) => Promise<void>) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const [h, m] = e.target.value.split(':').map(Number);
       if (Number.isFinite(h) && Number.isFinite(m)) {
         setter(h * 60 + m);

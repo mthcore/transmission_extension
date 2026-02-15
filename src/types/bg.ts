@@ -37,7 +37,7 @@ export interface IBgForDaemon {
     };
   };
   client: {
-    updateTorrents(): Promise<unknown>;
+    updateTorrents(): Promise<void>;
   } | null;
 }
 
@@ -56,7 +56,7 @@ export interface IBgForContextMenu {
   };
   client: {
     putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void>;
-    updateTorrents(): Promise<unknown>;
+    updateTorrents(): Promise<void>;
   } | null;
   whenReady(): Promise<void>;
   torrentErrorNotify(message: string): void;

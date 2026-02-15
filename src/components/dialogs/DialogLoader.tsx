@@ -1,6 +1,7 @@
 import React from 'react';
 import Spinner from '../Spinner';
 import ErrorBoundary from '../ErrorBoundary';
+import getLogger from '../../tools/getLogger';
 
 const dialogComponents = {
   putFiles: React.lazy(() => import('./PutFilesDialog')),
@@ -15,6 +16,8 @@ const dialogComponents = {
 
 type DialogType = keyof typeof dialogComponents;
 
+const logger = getLogger('DialogLoader');
+
 interface DialogLoaderProps {
   type: string;
   dialogStore: unknown;
@@ -24,7 +27,7 @@ const DialogLoader = ({ type, dialogStore }: DialogLoaderProps) => {
   const Component = dialogComponents[type as DialogType];
 
   if (!Component) {
-    console.warn(`Unknown dialog type: ${type}`);
+    logger.warn(`Unknown dialog type: ${type}`);
     return null;
   }
 
