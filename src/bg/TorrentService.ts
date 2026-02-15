@@ -277,7 +277,7 @@ class TorrentService {
 
   removedatatorrent(ids: number[]): Promise<TransmissionResponse> {
     return this.transport
-      .sendAction({ method: 'torrent-remove', arguments: { ids, 'delete-local-data': true } })
+      .sendAction({ method: 'torrent-remove', arguments: { ids, delete_local_data: true, 'delete-local-data': true } })
       .then(this.thenUpdateTorrents);
   }
 
