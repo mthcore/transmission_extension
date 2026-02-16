@@ -7,6 +7,7 @@ const RemoveConfirmDialogStore = types.compose(
   types.model({
     type: types.literal('removeConfirm'),
     torrentIds: types.array(types.number),
+    deleteData: types.optional(types.boolean, false),
   })
 );
 

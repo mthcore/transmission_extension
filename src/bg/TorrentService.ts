@@ -277,7 +277,7 @@ class TorrentService {
 
   removedatatorrent(ids: number[]): Promise<TransmissionResponse> {
     return this.transport
-      .sendAction({ method: 'torrent-remove', arguments: { ids, delete_local_data: true, 'delete-local-data': true } })
+      .sendAction({ method: 'torrent-remove', arguments: { ids, 'delete-local-data': true } })
       .then(this.thenUpdateTorrents);
   }
 
@@ -382,12 +382,9 @@ class TorrentService {
   putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void> {
     return this.sendFile(data, directory).then(
       (response) => {
-        const args = response.arguments as {
-          'torrent-added'?: { id: number; name: string };
-          'torrent-duplicate'?: { id: number; name: string };
-        };
-        const torrentAdded = args['torrent-added'];
-        const torrentDuplicate = args['torrent-duplicate'];
+        const args = response.arguments as Record<string, { id: number; name: string } | undefined>;
+        const torrentAdded = args['torrent_added'] ?? args['torrent-added'];
+        const torrentDuplicate = args['torrent_duplicate'] ?? args['torrent-duplicate'];
         if (torrentAdded) {
           this.notifier.torrentAddedNotify(torrentAdded);
         }

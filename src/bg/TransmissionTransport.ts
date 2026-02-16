@@ -1,4 +1,5 @@
 import ErrorWithCode from '../tools/ErrorWithCode';
+import { toSnakeCaseKeys, RPC_VERSION_SNAKE_CASE } from '../tools/rpcCompat';
 
 export interface TransmissionResponse {
   result: string;
@@ -36,6 +37,7 @@ function isNetworkError(err: unknown): boolean {
 class TransmissionTransport {
   url: string;
   token: string | null;
+  rpcVersion = 0;
   private getConfig: () => TransportConfig;
   private onConnected: () => void;
   private onTokenRefresh?: () => void;
@@ -52,6 +54,9 @@ class TransmissionTransport {
     body: Record<string, unknown>,
     customParser?: (text: string) => TransmissionResponse
   ): Promise<TransmissionResponse> {
+    if (this.rpcVersion >= RPC_VERSION_SNAKE_CASE && body.arguments) {
+      body = { ...body, arguments: toSnakeCaseKeys(body.arguments as Record<string, unknown>) };
+    }
     return this.retryIfTokenInvalid(() => {
       return this.fetchWithRetry(body, customParser);
     }).then((response) => {

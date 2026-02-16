@@ -30,7 +30,7 @@ const ColumnContextMenuContent = observer(({ columns, onSave }: ColumnContextMen
   const handleToggleColumn = useColumnToggle(onSave);
 
   return (
-    <ContextMenu.Content className="context-menu">
+    <ContextMenu.Content className="context-menu context-menu--grid">
       {columns.map((column) => (
         <ContextMenu.Item
           key={column.column}
