@@ -1,6 +1,6 @@
 {
   "name": "transmission-easy-client",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "sideEffects": [
     "*.css",
     "*.scss",
