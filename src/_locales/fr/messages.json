@@ -868,5 +868,84 @@
     },
     "DT_APPLY": {
         "message": "Appliquer"
+    },
+    "OV_COL_ACTIVITY": {
+        "message": "Dernière activité"
+    },
+    "OV_COL_STARTED": {
+        "message": "Démarré"
+    },
+    "OV_COL_EDITED": {
+        "message": "Modifié"
+    },
+    "OV_COL_SIZE_WHEN_DONE": {
+        "message": "Taille eff."
+    },
+    "DT_METADATA": {
+        "message": "Métadonnées"
+    },
+    "DT_PRIVATE": {
+        "message": "Privé"
+    },
+    "DT_PEERS_FROM": {
+        "message": "Sources des pairs"
+    },
+    "DT_PEERS_FROM_TRACKER": {
+        "message": "Tracker"
+    },
+    "DT_PEERS_FROM_DHT": {
+        "message": "DHT"
+    },
+    "DT_PEERS_FROM_PEX": {
+        "message": "PEX"
+    },
+    "DT_PEERS_FROM_LPD": {
+        "message": "LPD"
+    },
+    "DT_PEERS_FROM_LTEP": {
+        "message": "LTEP"
+    },
+    "DT_PEERS_FROM_INCOMING": {
+        "message": "Entrant"
+    },
+    "DT_PEERS_FROM_CACHE": {
+        "message": "Cache"
+    },
+    "DT_DOWNLOAD_LIMIT": {
+        "message": "Limite de réception"
+    },
+    "DT_UPLOAD_LIMIT": {
+        "message": "Limite d'émission"
+    },
+    "DT_HONORS_SESSION_LIMITS": {
+        "message": "Respecte les limites de session"
+    },
+    "DT_ENABLED": {
+        "message": "Activé"
+    },
+    "DT_DISABLED": {
+        "message": "Désactivé"
+    },
+    "DT_ETA_IDLE": {
+        "message": "Délai d'inactivité"
+    },
+    "sessionStats": {
+        "message": "$active$ actifs, $paused$ en pause",
+        "placeholders": {
+            "active": { "content": "$1" },
+            "paused": { "content": "$2" }
+        }
+    },
+    "scriptTorrentAddedEnabled": {
+        "message": "Exécuter un script à l'ajout d'un torrent"
+    },
+    "scriptTorrentAddedFilename": {
+        "message": "Chemin du script (ajout)"
+    },
+    "scriptTorrentDoneSeedingEnabled": {
+        "message": "Exécuter un script à la fin du partage"
+    },
+    "scriptTorrentDoneSeedingFilename": {
+        "message": "Chemin du script (fin de partage)"
     }
 }

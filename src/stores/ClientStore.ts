@@ -4,7 +4,7 @@ import { speedToStr, formatBytes } from '../tools/format';
 import TorrentStore, { ITorrentStore } from './TorrentStore';
 import callApi from '../tools/callApi';
 import getLogger from '../tools/getLogger';
-import type { PeerData, TrackerStat, TorrentDetailData } from '../bg/TorrentService';
+import type { PeerData, TorrentDetailData } from '../bg/TorrentService';
 
 const logger = getLogger('ClientStore');
 
@@ -65,6 +65,10 @@ const SettingsStore = types
     altSpeedTimeDay: types.optional(types.number, 127),
     scriptTorrentDoneEnabled: types.optional(types.boolean, false),
     scriptTorrentDoneFilename: types.optional(types.string, ''),
+    scriptTorrentAddedEnabled: types.optional(types.boolean, false),
+    scriptTorrentAddedFilename: types.optional(types.string, ''),
+    scriptTorrentDoneSeedingEnabled: types.optional(types.boolean, false),
+    scriptTorrentDoneSeedingFilename: types.optional(types.string, ''),
   })
   .views((self) => {
     return {
@@ -215,6 +219,13 @@ const ClientStore = types
           downloadedStr: formatBytes(downloaded),
           uploadedStr: formatBytes(uploaded),
         };
+      },
+      get torrentCountsStr(): string {
+        const total = self.torrents.size;
+        if (total === 0) return '';
+        const active = this.activeTorrentIds.length;
+        const paused = total - active;
+        return chrome.i18n.getMessage('sessionStats', [String(active), String(paused)]);
       },
       torrentsStart: createTorrentAction('start'),
       torrentsForceStart: createTorrentAction('forcestart'),
@@ -391,6 +402,26 @@ const ClientStore = types
       },
       setScriptTorrentDoneFilename(filename: string): Promise<unknown> {
         return callApi({ action: 'setScriptTorrentDoneFilename', filename })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setScriptTorrentAddedEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setScriptTorrentAddedEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setScriptTorrentAddedFilename(filename: string): Promise<unknown> {
+        return callApi({ action: 'setScriptTorrentAddedFilename', filename })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setScriptTorrentDoneSeedingEnabled(enabled: boolean): Promise<unknown> {
+        return callApi({ action: 'setScriptTorrentDoneSeedingEnabled', enabled })
+          .then(...exceptionLog())
+          .then(thenSyncClient);
+      },
+      setScriptTorrentDoneSeedingFilename(filename: string): Promise<unknown> {
+        return callApi({ action: 'setScriptTorrentDoneSeedingFilename', filename })
           .then(...exceptionLog())
           .then(thenSyncClient);
       },

@@ -32,6 +32,10 @@ const defaultTorrentListColumnList: ColumnDef[] = [
   { column: 'completed', display: 1, order: 1, width: 110, lang: 'OV_COL_DATE_COMPLETED' },
   { column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL' },
   { column: 'priority', display: 0, order: 1, width: 70, lang: 'FI_COL_PRIO' },
+  { column: 'activity', display: 0, order: 1, width: 110, lang: 'OV_COL_ACTIVITY' },
+  { column: 'started', display: 0, order: 1, width: 110, lang: 'OV_COL_STARTED' },
+  { column: 'edited', display: 0, order: 1, width: 110, lang: 'OV_COL_EDITED' },
+  { column: 'sizeWhenDone', display: 0, order: 1, width: 70, lang: 'OV_COL_SIZE_WHEN_DONE' },
   { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 
@@ -56,6 +60,10 @@ const defaultTorrentListColumnListPopup: ColumnDef[] = [
   { column: 'completed', display: 0, order: 1, width: 140, lang: 'OV_COL_DATE_COMPLETED' },
   { column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL' },
   { column: 'priority', display: 0, order: 1, width: 70, lang: 'FI_COL_PRIO' },
+  { column: 'activity', display: 0, order: 1, width: 140, lang: 'OV_COL_ACTIVITY' },
+  { column: 'started', display: 0, order: 1, width: 140, lang: 'OV_COL_STARTED' },
+  { column: 'edited', display: 0, order: 1, width: 140, lang: 'OV_COL_EDITED' },
+  { column: 'sizeWhenDone', display: 0, order: 1, width: 80, lang: 'OV_COL_SIZE_WHEN_DONE' },
   { column: 'actions', display: 1, order: 0, width: 52, lang: 'Actions' },
 ];
 

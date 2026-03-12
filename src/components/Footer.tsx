@@ -97,9 +97,16 @@ const Footer = observer(() => {
     spaceWatcher = <SpaceWatcher />;
   }
 
+  const torrentCounts = client.torrentCountsStr;
+
   return (
     <div className="status-panel" role="contentinfo">
       {spaceWatcher}
+      {torrentCounts && (
+        <span className="torrent-counts" title={torrentCounts}>
+          {torrentCounts}
+        </span>
+      )}
       <span className="session-totals" title={chrome.i18n.getMessage('sessionTotals')}>
         <span className="total-dl">{downloadedStr}</span>
         <span className="total-up">{uploadedStr}</span>

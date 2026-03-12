@@ -26,11 +26,39 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
     </td>
   ),
 
-  name: ({ torrent }, width) => (
-    <td key="name" className="name">
-      <TorrentName name={torrent.name} width={width} />
-    </td>
-  ),
+  name: ({ torrent }, width) => {
+    // Build a rich tooltip with key torrent info
+    const tipLines: string[] = [torrent.name];
+    if (torrent.isPrivate) {
+      tipLines.push(`[${chrome.i18n.getMessage('DT_PRIVATE')}]`);
+    }
+    if (torrent.directory) {
+      tipLines.push(torrent.directory);
+    }
+    if (torrent.hash) {
+      tipLines.push(torrent.hash);
+    }
+    if (torrent.sizeWhenDoneStr && torrent.sizeWhenDoneStr !== torrent.sizeStr) {
+      tipLines.push(`${chrome.i18n.getMessage('OV_COL_SIZE_WHEN_DONE')}: ${torrent.sizeWhenDoneStr}`);
+    }
+    const title = tipLines.join('\n');
+
+    // Only show badge for metadata loading (transient important state)
+    let metaBadge: React.ReactNode = null;
+    if (torrent.metadataPercentComplete != null && torrent.metadataPercentComplete < 1) {
+      metaBadge = (
+        <span className="torrent-badge metadata" title={`${chrome.i18n.getMessage('DT_METADATA')} ${(torrent.metadataPercentComplete * 100).toFixed(0)}%`}>
+          M
+        </span>
+      );
+    }
+    return (
+      <td key="name" className="name">
+        {metaBadge}
+        <TorrentName name={torrent.name} width={width - (metaBadge ? 18 : 0)} title={title} />
+      </td>
+    );
+  },
 
   order: ({ torrent }) => {
     let value: number | string = torrent.order ?? 0;
@@ -44,9 +72,21 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
     );
   },
 
-  size: ({ torrent }) => (
-    <td key="size" className="size">
-      <div title={torrent.sizeStr}>{torrent.sizeStr}</div>
+  size: ({ torrent }) => {
+    const sizeWhenDone = torrent.sizeWhenDoneStr;
+    const title = sizeWhenDone !== torrent.sizeStr
+      ? `${torrent.sizeStr} (${chrome.i18n.getMessage('OV_COL_SIZE_WHEN_DONE')}: ${sizeWhenDone})`
+      : torrent.sizeStr;
+    return (
+      <td key="size" className="size">
+        <div title={title}>{torrent.sizeStr}</div>
+      </td>
+    );
+  },
+
+  sizeWhenDone: ({ torrent }) => (
+    <td key="sizeWhenDone" className="sizeWhenDone">
+      <div title={torrent.sizeWhenDoneStr}>{torrent.sizeWhenDoneStr}</div>
     </td>
   ),
 
@@ -115,11 +155,17 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
     </td>
   ),
 
-  eta: ({ torrent }) => (
-    <td key="eta" className="eta">
-      <div title={torrent.etaStr}>{torrent.etaStr}</div>
-    </td>
-  ),
+  eta: ({ torrent }) => {
+    const etaIdleStr = torrent.etaIdleStr;
+    const title = etaIdleStr
+      ? `${torrent.etaStr} (${chrome.i18n.getMessage('DT_ETA_IDLE')}: ${etaIdleStr})`
+      : torrent.etaStr;
+    return (
+      <td key="eta" className="eta">
+        <div title={title}>{torrent.etaStr}</div>
+      </td>
+    );
+  },
 
   upped: ({ torrent }) => (
     <td key="upped" className="upped">
@@ -160,6 +206,24 @@ const torrentColumnRenderers: Record<string, ColumnRenderer> = {
   priority: ({ torrent }) => (
     <td key="priority" className="priority">
       <div title={torrent.bandwidthPriorityStr}>{torrent.bandwidthPriorityStr}</div>
+    </td>
+  ),
+
+  activity: ({ torrent }) => (
+    <td key="activity" className="activity">
+      <div title={torrent.activityDateStr}>{torrent.activityDateStr}</div>
+    </td>
+  ),
+
+  started: ({ torrent }) => (
+    <td key="started" className="started">
+      <div title={torrent.startDateStr}>{torrent.startDateStr}</div>
+    </td>
+  ),
+
+  edited: ({ torrent }) => (
+    <td key="edited" className="edited">
+      <div title={torrent.editDateStr}>{torrent.editDateStr}</div>
     </td>
   ),
 

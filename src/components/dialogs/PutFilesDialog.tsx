@@ -45,7 +45,14 @@ const PutFilesDialog = observer(({ dialogStore }: PutFilesDialogProps) => {
       const files = dialogStore.files;
       const urls = files.map((file: File) => URL.createObjectURL(file));
 
-      client?.sendFiles(urls, directory?.path ?? undefined).catch((err) => {
+      client?.sendFiles(urls, directory?.path ?? undefined).then(() => {
+        for (const url of urls) {
+          URL.revokeObjectURL(url);
+        }
+      }).catch((err) => {
+        for (const url of urls) {
+          URL.revokeObjectURL(url);
+        }
         showError(chrome.i18n.getMessage('OV_FL_ERROR') || 'Failed to send files', err);
       });
 

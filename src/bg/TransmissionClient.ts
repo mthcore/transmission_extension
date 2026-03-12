@@ -4,10 +4,14 @@ import TorrentService, {
   type NormalizedTorrent,
   type PeerData,
   type TorrentDetailData,
-  type TrackerStat,
+  type TorrentAddOptions,
 } from './TorrentService';
 import FileService, { type NormalizedFile } from './FileService';
-import SettingsService, { type NormalizedSettings } from './SettingsService';
+import SettingsService, {
+  type NormalizedSettings,
+  type NormalizedSessionStats,
+  type NormalizedBandwidthGroup,
+} from './SettingsService';
 import type { Folder } from '../types/bg';
 
 interface BgStore {
@@ -129,8 +133,12 @@ class TransmissionClient {
   sendFiles(urls: string[], directory?: Folder): Promise<TransmissionResponse> {
     return this.torrentService.sendFiles(urls, directory);
   }
-  putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void> {
-    return this.torrentService.putTorrent(data, directory);
+  putTorrent(
+    data: { blob?: Blob; url?: string },
+    directory?: Folder,
+    options?: TorrentAddOptions
+  ): Promise<void> {
+    return this.torrentService.putTorrent(data, directory, options);
   }
   getPeers(id: number): Promise<PeerData[]> {
     return this.torrentService.getPeers(id);
@@ -157,6 +165,34 @@ class TransmissionClient {
     );
   }
 
+  // Per-torrent limits (torrent-set)
+  setTorrentDownloadLimit(
+    ids: number[],
+    limit: number,
+    enabled: boolean
+  ): Promise<TransmissionResponse> {
+    return this.torrentService.setDownloadLimit(ids, limit, enabled);
+  }
+  setTorrentUploadLimit(
+    ids: number[],
+    limit: number,
+    enabled: boolean
+  ): Promise<TransmissionResponse> {
+    return this.torrentService.setUploadLimit(ids, limit, enabled);
+  }
+  setTorrentHonorsSessionLimits(ids: number[], enabled: boolean): Promise<TransmissionResponse> {
+    return this.torrentService.setHonorsSessionLimits(ids, enabled);
+  }
+  setTorrentPeerLimit(ids: number[], limit: number): Promise<TransmissionResponse> {
+    return this.torrentService.setPeerLimit(ids, limit);
+  }
+  setTorrentQueuePosition(ids: number[], position: number): Promise<TransmissionResponse> {
+    return this.torrentService.setQueuePosition(ids, position);
+  }
+  setTorrentGroup(ids: number[], group: string): Promise<TransmissionResponse> {
+    return this.torrentService.setGroup(ids, group);
+  }
+
   // File operations
   getFileList(id: number): Promise<NormalizedFile[]> {
     return this.fileService.getFileList(id);
@@ -169,8 +205,26 @@ class TransmissionClient {
   updateSettings(): Promise<void> {
     return this.settingsService.updateSettings();
   }
-  getFreeSpace(path: string): Promise<{ path: string; sizeBytes: number }> {
+  getSessionStats(): Promise<NormalizedSessionStats> {
+    return this.settingsService.getSessionStats();
+  }
+  getFreeSpace(path: string): Promise<{ path: string; sizeBytes: number; totalSize?: number }> {
     return this.settingsService.getFreeSpace(path);
+  }
+  getGroups(names?: string[]): Promise<NormalizedBandwidthGroup[]> {
+    return this.settingsService.getGroups(names);
+  }
+  setSessionGroup(
+    name: string,
+    options: {
+      honorsSessionLimits?: boolean;
+      speedLimitDown?: number;
+      speedLimitDownEnabled?: boolean;
+      speedLimitUp?: number;
+      speedLimitUpEnabled?: boolean;
+    }
+  ): Promise<void> {
+    return this.settingsService.setGroup(name, options);
   }
   setDownloadSpeedLimitEnabled = (enabled: boolean): Promise<void> =>
     this.settingsService.setDownloadSpeedLimitEnabled(enabled);
@@ -243,6 +297,17 @@ class TransmissionClient {
     this.settingsService.setScriptTorrentDoneEnabled(enabled);
   setScriptTorrentDoneFilename = (filename: string): Promise<void> =>
     this.settingsService.setScriptTorrentDoneFilename(filename);
+  // v4.0.0+ session-set methods
+  setScriptTorrentAddedEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setScriptTorrentAddedEnabled(enabled);
+  setScriptTorrentAddedFilename = (filename: string): Promise<void> =>
+    this.settingsService.setScriptTorrentAddedFilename(filename);
+  setScriptTorrentDoneSeedingEnabled = (enabled: boolean): Promise<void> =>
+    this.settingsService.setScriptTorrentDoneSeedingEnabled(enabled);
+  setScriptTorrentDoneSeedingFilename = (filename: string): Promise<void> =>
+    this.settingsService.setScriptTorrentDoneSeedingFilename(filename);
+  setDefaultTrackers = (trackers: string): Promise<void> =>
+    this.settingsService.setDefaultTrackers(trackers);
   portTest(): Promise<boolean> {
     return this.settingsService.portTest();
   }

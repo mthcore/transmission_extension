@@ -34,6 +34,7 @@ interface Torrent {
   id: number;
   name: string;
   sizeStr: string;
+  sizeWhenDoneStr: string;
   progressStr: string;
   downloadedStr: string;
   uploadedStr: string;
@@ -46,13 +47,19 @@ interface Torrent {
   downloadSpeedStr: string;
   uploadSpeedStr: string;
   etaStr: string;
+  etaIdleStr: string;
   stateText: string;
   addedTimeStr: string;
   completedTimeStr: string;
+  activityDateStr: string;
+  startDateStr: string;
   directory?: string;
   errorMessage?: string;
   hash?: string | null;
   peersConnected?: number;
+  isPrivate?: boolean;
+  size: number;
+  sizeWhenDone?: number;
 }
 
 interface TorrentDetailsDialogStore {

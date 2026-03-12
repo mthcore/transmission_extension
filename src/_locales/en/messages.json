@@ -872,5 +872,84 @@
     },
     "DT_APPLY": {
         "message": "Apply"
+    },
+    "OV_COL_ACTIVITY": {
+        "message": "Last Active"
+    },
+    "OV_COL_STARTED": {
+        "message": "Started"
+    },
+    "OV_COL_EDITED": {
+        "message": "Edited"
+    },
+    "OV_COL_SIZE_WHEN_DONE": {
+        "message": "Eff. Size"
+    },
+    "DT_METADATA": {
+        "message": "Metadata"
+    },
+    "DT_PRIVATE": {
+        "message": "Private"
+    },
+    "DT_PEERS_FROM": {
+        "message": "Peer Sources"
+    },
+    "DT_PEERS_FROM_TRACKER": {
+        "message": "Tracker"
+    },
+    "DT_PEERS_FROM_DHT": {
+        "message": "DHT"
+    },
+    "DT_PEERS_FROM_PEX": {
+        "message": "PEX"
+    },
+    "DT_PEERS_FROM_LPD": {
+        "message": "LPD"
+    },
+    "DT_PEERS_FROM_LTEP": {
+        "message": "LTEP"
+    },
+    "DT_PEERS_FROM_INCOMING": {
+        "message": "Incoming"
+    },
+    "DT_PEERS_FROM_CACHE": {
+        "message": "Cache"
+    },
+    "DT_DOWNLOAD_LIMIT": {
+        "message": "Download Limit"
+    },
+    "DT_UPLOAD_LIMIT": {
+        "message": "Upload Limit"
+    },
+    "DT_HONORS_SESSION_LIMITS": {
+        "message": "Honors Session Limits"
+    },
+    "DT_ENABLED": {
+        "message": "Enabled"
+    },
+    "DT_DISABLED": {
+        "message": "Disabled"
+    },
+    "DT_ETA_IDLE": {
+        "message": "Idle Timeout"
+    },
+    "sessionStats": {
+        "message": "$active$ active, $paused$ paused",
+        "placeholders": {
+            "active": { "content": "$1" },
+            "paused": { "content": "$2" }
+        }
+    },
+    "scriptTorrentAddedEnabled": {
+        "message": "Run script when torrent is added"
+    },
+    "scriptTorrentAddedFilename": {
+        "message": "Script path (added)"
+    },
+    "scriptTorrentDoneSeedingEnabled": {
+        "message": "Run script when seeding completes"
+    },
+    "scriptTorrentDoneSeedingFilename": {
+        "message": "Script path (done seeding)"
     }
 }

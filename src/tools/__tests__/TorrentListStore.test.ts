@@ -213,8 +213,8 @@ describe('TorrentListStore', () => {
       const r = createRoot(
         { selectedLabel: { label: 'ALL', custom: true }, hideFinishedTorrents: true },
         [
-          makeTorrent({ id: 1, percentDone: 0.5, statusCode: 4 }),
-          makeTorrent({ id: 2, percentDone: 1, statusCode: 0 }), // finished (100% + stopped)
+          makeTorrent({ id: 1, isFinished: false }),
+          makeTorrent({ id: 2, isFinished: true }), // finished (API field)
         ]
       );
       expect(r.torrentList.filteredTorrents).toHaveLength(1);

@@ -42,9 +42,10 @@ function releaseStyle(moveName: string | null): void {
 interface TorrentNameProps {
   name: string;
   width: number;
+  title?: string;
 }
 
-const TorrentName = React.memo<TorrentNameProps>(({ name, width }) => {
+const TorrentName = React.memo<TorrentNameProps>(({ name, width, title }) => {
   const [movebleClassName, setMovebleClassName] = useState<string | null>(null);
   const [shouldUpdateCalc, setShouldUpdateCalc] = useState(true);
   const refSpan = useRef<HTMLSpanElement>(null);
@@ -94,7 +95,7 @@ const TorrentName = React.memo<TorrentNameProps>(({ name, width }) => {
       <span
         ref={refSpan}
         onMouseEnter={shouldUpdateCalc ? handleMouseEnter : undefined}
-        title={name}
+        title={title ?? name}
       >
         {name}
       </span>

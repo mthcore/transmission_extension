@@ -218,7 +218,9 @@ class Bg {
       case 'setStartAddedTorrents':
       case 'setTrashOriginalTorrentFiles':
       case 'setAltSpeedTimeEnabled':
-      case 'setScriptTorrentDoneEnabled': {
+      case 'setScriptTorrentDoneEnabled':
+      case 'setScriptTorrentAddedEnabled':
+      case 'setScriptTorrentDoneSeedingEnabled': {
         const action = message.action;
         const enabled = message.enabled;
         promise = this.whenReady().then(() => this.requireClient()[action](enabled));
@@ -299,10 +301,12 @@ class Bg {
         promise = this.whenReady().then(() => this.requireClient().setIncompleteDir(message.dir));
         break;
       }
-      case 'setScriptTorrentDoneFilename': {
-        promise = this.whenReady().then(() =>
-          this.requireClient().setScriptTorrentDoneFilename(message.filename)
-        );
+      case 'setScriptTorrentDoneFilename':
+      case 'setScriptTorrentAddedFilename':
+      case 'setScriptTorrentDoneSeedingFilename': {
+        const action = message.action;
+        const filename = message.filename;
+        promise = this.whenReady().then(() => this.requireClient()[action](filename));
         break;
       }
       case 'portTest': {
@@ -420,9 +424,8 @@ function setBadgeBackgroundColor(color: string): void {
   const colors = color.split(',').map((i) => parseFloat(i));
   if (colors.length === 4) {
     const alpha = colors.pop();
-    if (alpha !== undefined) {
-      colors.push(Math.round(255 * alpha));
-    }
+    // Ensure minimum alpha so badge is always visible
+    colors.push(Math.round(255 * Math.max(alpha ?? 1, 0.1)));
   }
   chrome.action.setBadgeBackgroundColor({ color: colors as [number, number, number, number] });
 }

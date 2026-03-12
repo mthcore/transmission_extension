@@ -15,6 +15,9 @@ interface StorageData {
   [key: string]: unknown;
 }
 
+// Keys that are transient/local-only and should not be included in backups
+const BACKUP_EXCLUDE_KEYS = ['_notifiedIds', '_activeIds'];
+
 const BackupRestoreOptions = () => {
   const refPage = useRef<HTMLDivElement>(null);
   const refData = useRef<HTMLTextAreaElement>(null);
@@ -39,10 +42,14 @@ const BackupRestoreOptions = () => {
     e?.preventDefault();
     setLoadState('pending');
     try {
-      const storage: StorageData = await storageGet(null);
+      const raw: StorageData = await storageGet(null);
       if (!refPage.current) return;
+      // Filter out transient local-only keys from backup
+      for (const key of BACKUP_EXCLUDE_KEYS) {
+        delete raw[key];
+      }
       setLoadState('done');
-      setStorage(JSON.stringify(storage, null, 2));
+      setStorage(JSON.stringify(raw, null, 2));
     } catch {
       if (!refPage.current) return;
       setLoadState('error');
@@ -110,9 +117,14 @@ const BackupRestoreOptions = () => {
     if (!window.confirm(confirmMessage)) return;
     setRestoreState('pending');
     try {
+      const parsed = JSON.parse(refData.current?.value || '{}');
+      // Strip transient keys that may have been included in older backups
+      for (const key of BACKUP_EXCLUDE_KEYS) {
+        delete parsed[key];
+      }
       const config: StorageData = {
         configVersion: 1,
-        ...JSON.parse(refData.current?.value || '{}'),
+        ...parsed,
       };
       if (config.configVersion !== 2) {
         config.configVersion = 2;

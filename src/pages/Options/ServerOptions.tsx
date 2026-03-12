@@ -36,6 +36,10 @@ interface Settings {
   altSpeedTimeDay: number;
   scriptTorrentDoneEnabled: boolean;
   scriptTorrentDoneFilename: string;
+  scriptTorrentAddedEnabled: boolean;
+  scriptTorrentAddedFilename: string;
+  scriptTorrentDoneSeedingEnabled: boolean;
+  scriptTorrentDoneSeedingFilename: string;
 }
 
 interface ClientStore {
@@ -74,6 +78,10 @@ interface ClientStore {
   setAltSpeedTimeDay: (day: number) => Promise<void>;
   setScriptTorrentDoneEnabled: (enabled: boolean) => Promise<void>;
   setScriptTorrentDoneFilename: (filename: string) => Promise<void>;
+  setScriptTorrentAddedEnabled: (enabled: boolean) => Promise<void>;
+  setScriptTorrentAddedFilename: (filename: string) => Promise<void>;
+  setScriptTorrentDoneSeedingEnabled: (enabled: boolean) => Promise<void>;
+  setScriptTorrentDoneSeedingFilename: (filename: string) => Promise<void>;
   portTest: () => Promise<boolean>;
 }
 
@@ -109,6 +117,10 @@ const ServerOptions = observer(() => {
   const [incompleteDirLoaded, setIncompleteDirLoaded] = useState(false);
   const [scriptFilename, setScriptFilenameInput] = useState('');
   const [scriptFilenameLoaded, setScriptFilenameLoaded] = useState(false);
+  const [scriptAddedFilename, setScriptAddedFilenameInput] = useState('');
+  const [scriptAddedFilenameLoaded, setScriptAddedFilenameLoaded] = useState(false);
+  const [scriptDoneSeedingFilename, setScriptDoneSeedingFilenameInput] = useState('');
+  const [scriptDoneSeedingFilenameLoaded, setScriptDoneSeedingFilenameLoaded] = useState(false);
   const [portTestResult, setPortTestResult] = useState<boolean | null>(null);
   const [portTesting, setPortTesting] = useState(false);
 
@@ -160,6 +172,16 @@ const ServerOptions = observer(() => {
   if (!scriptFilenameLoaded) {
     setScriptFilenameInput(settings.scriptTorrentDoneFilename);
     setScriptFilenameLoaded(true);
+  }
+
+  if (!scriptAddedFilenameLoaded) {
+    setScriptAddedFilenameInput(settings.scriptTorrentAddedFilename || '');
+    setScriptAddedFilenameLoaded(true);
+  }
+
+  if (!scriptDoneSeedingFilenameLoaded) {
+    setScriptDoneSeedingFilenameInput(settings.scriptTorrentDoneSeedingFilename || '');
+    setScriptDoneSeedingFilenameLoaded(true);
   }
 
   const handleToggle = (setter: (enabled: boolean) => Promise<void>, current: boolean) => () => {
@@ -220,6 +242,25 @@ const ServerOptions = observer(() => {
   const handleApplyScriptFilename = useCallback(() => {
     rootStore.client.setScriptTorrentDoneFilename(scriptFilename);
   }, [rootStore.client, scriptFilename]);
+
+  const handleScriptAddedFilenameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setScriptAddedFilenameInput(e.target.value);
+  }, []);
+
+  const handleApplyScriptAddedFilename = useCallback(() => {
+    rootStore.client.setScriptTorrentAddedFilename(scriptAddedFilename);
+  }, [rootStore.client, scriptAddedFilename]);
+
+  const handleScriptDoneSeedingFilenameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setScriptDoneSeedingFilenameInput(e.target.value);
+    },
+    []
+  );
+
+  const handleApplyScriptDoneSeedingFilename = useCallback(() => {
+    rootStore.client.setScriptTorrentDoneSeedingFilename(scriptDoneSeedingFilename);
+  }, [rootStore.client, scriptDoneSeedingFilename]);
 
   const handlePortTest = useCallback(() => {
     setPortTesting(true);
@@ -671,6 +712,64 @@ const ServerOptions = observer(() => {
           <div className="blocklist-url-row">
             <input type="text" value={scriptFilename} onChange={handleScriptFilenameChange} />
             <button type="button" onClick={handleApplyScriptFilename}>
+              {chrome.i18n.getMessage('DLG_BTN_APPLY')}
+            </button>
+          </div>
+        </label>
+      )}
+
+      <label>
+        <span>{chrome.i18n.getMessage('scriptTorrentAddedEnabled')}</span>
+        <span className="toggle-switch">
+          <input
+            onChange={handleToggle(
+              rootStore.client.setScriptTorrentAddedEnabled,
+              settings.scriptTorrentAddedEnabled
+            )}
+            type="checkbox"
+            checked={settings.scriptTorrentAddedEnabled}
+          />
+          <span className="toggle-slider"></span>
+        </span>
+      </label>
+
+      {settings.scriptTorrentAddedEnabled && (
+        <label>
+          <span>{chrome.i18n.getMessage('scriptTorrentAddedFilename')}</span>
+          <div className="blocklist-url-row">
+            <input type="text" value={scriptAddedFilename} onChange={handleScriptAddedFilenameChange} />
+            <button type="button" onClick={handleApplyScriptAddedFilename}>
+              {chrome.i18n.getMessage('DLG_BTN_APPLY')}
+            </button>
+          </div>
+        </label>
+      )}
+
+      <label>
+        <span>{chrome.i18n.getMessage('scriptTorrentDoneSeedingEnabled')}</span>
+        <span className="toggle-switch">
+          <input
+            onChange={handleToggle(
+              rootStore.client.setScriptTorrentDoneSeedingEnabled,
+              settings.scriptTorrentDoneSeedingEnabled
+            )}
+            type="checkbox"
+            checked={settings.scriptTorrentDoneSeedingEnabled}
+          />
+          <span className="toggle-slider"></span>
+        </span>
+      </label>
+
+      {settings.scriptTorrentDoneSeedingEnabled && (
+        <label>
+          <span>{chrome.i18n.getMessage('scriptTorrentDoneSeedingFilename')}</span>
+          <div className="blocklist-url-row">
+            <input
+              type="text"
+              value={scriptDoneSeedingFilename}
+              onChange={handleScriptDoneSeedingFilenameChange}
+            />
+            <button type="button" onClick={handleApplyScriptDoneSeedingFilename}>
               {chrome.i18n.getMessage('DLG_BTN_APPLY')}
             </button>
           </div>

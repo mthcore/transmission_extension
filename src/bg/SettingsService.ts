@@ -1,5 +1,6 @@
 import type TransmissionTransport from './TransmissionTransport';
 import { readKey } from '../tools/rpcCompat';
+import type { SessionStatistics, BandwidthGroup } from '../types/transmission';
 
 export interface NormalizedSettings {
   downloadSpeedLimit: number;
@@ -44,6 +45,33 @@ export interface NormalizedSettings {
   altSpeedTimeDay: number;
   scriptTorrentDoneEnabled: boolean;
   scriptTorrentDoneFilename: string;
+  // v4.0.0+ fields
+  scriptTorrentAddedEnabled?: boolean;
+  scriptTorrentAddedFilename?: string;
+  scriptTorrentDoneSeedingEnabled?: boolean;
+  scriptTorrentDoneSeedingFilename?: string;
+  defaultTrackers?: string;
+  rpcVersionSemver?: string;
+  version?: string;
+}
+
+export interface NormalizedSessionStats {
+  activeTorrentCount: number;
+  downloadSpeed: number;
+  pausedTorrentCount: number;
+  torrentCount: number;
+  uploadSpeed: number;
+  cumulativeStats: SessionStatistics;
+  currentStats: SessionStatistics;
+}
+
+export interface NormalizedBandwidthGroup {
+  name: string;
+  honorsSessionLimits: boolean;
+  speedLimitDown: number;
+  speedLimitDownEnabled: boolean;
+  speedLimitUp: number;
+  speedLimitUpEnabled: boolean;
 }
 
 class SettingsService {
@@ -66,7 +94,30 @@ class SettingsService {
     });
   }
 
-  getFreeSpace(path: string): Promise<{ path: string; sizeBytes: number }> {
+  getSessionStats(): Promise<NormalizedSessionStats> {
+    return this.transport.sendAction({ method: 'session-stats' }).then((response) => {
+      const args = response.arguments as Record<string, unknown>;
+      const cumulative = (args['cumulative_stats'] ?? args['cumulative-stats'] ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const current = (args['current_stats'] ?? args['current-stats'] ?? {}) as Record<
+        string,
+        unknown
+      >;
+      return {
+        activeTorrentCount: (args['active_torrent_count'] ?? args['activeTorrentCount'] ?? 0) as number,
+        downloadSpeed: (args['download_speed'] ?? args['downloadSpeed'] ?? 0) as number,
+        pausedTorrentCount: (args['paused_torrent_count'] ?? args['pausedTorrentCount'] ?? 0) as number,
+        torrentCount: (args['torrent_count'] ?? args['torrentCount'] ?? 0) as number,
+        uploadSpeed: (args['upload_speed'] ?? args['uploadSpeed'] ?? 0) as number,
+        cumulativeStats: this.normalizeStatistics(cumulative),
+        currentStats: this.normalizeStatistics(current),
+      };
+    });
+  }
+
+  getFreeSpace(path: string): Promise<{ path: string; sizeBytes: number; totalSize?: number }> {
     return this.transport
       .sendAction({
         method: 'free-space',
@@ -77,8 +128,54 @@ class SettingsService {
         return {
           path: args.path as string,
           sizeBytes: readKey<number>(args, 'size-bytes', 0),
+          totalSize: readKey<number>(args, 'total-size', 0) || undefined,
         };
       });
+  }
+
+  // Bandwidth groups (v4.0.0+)
+  getGroups(names?: string[]): Promise<NormalizedBandwidthGroup[]> {
+    const args: Record<string, unknown> = {};
+    if (names) {
+      args.group = names;
+    }
+    return this.transport
+      .sendAction({ method: 'group-get', arguments: args })
+      .then((response) => {
+        const result = response.arguments as { group: BandwidthGroup[] };
+        return (result.group || []).map(
+          (g): NormalizedBandwidthGroup => ({
+            name: g.name,
+            honorsSessionLimits: g.honorsSessionLimits,
+            speedLimitDown: readKey<number>(g as unknown as Record<string, unknown>, 'speed-limit-down', 0),
+            speedLimitDownEnabled: readKey<boolean>(g as unknown as Record<string, unknown>, 'speed-limit-down-enabled', false),
+            speedLimitUp: readKey<number>(g as unknown as Record<string, unknown>, 'speed-limit-up', 0),
+            speedLimitUpEnabled: readKey<boolean>(g as unknown as Record<string, unknown>, 'speed-limit-up-enabled', false),
+          })
+        );
+      });
+  }
+
+  setGroup(
+    name: string,
+    options: {
+      honorsSessionLimits?: boolean;
+      speedLimitDown?: number;
+      speedLimitDownEnabled?: boolean;
+      speedLimitUp?: number;
+      speedLimitUpEnabled?: boolean;
+    }
+  ): Promise<void> {
+    const args: Record<string, unknown> = { name };
+    if (options.honorsSessionLimits !== undefined)
+      args['honors-session-limits'] = options.honorsSessionLimits;
+    if (options.speedLimitDown !== undefined) args['speed-limit-down'] = options.speedLimitDown;
+    if (options.speedLimitDownEnabled !== undefined)
+      args['speed-limit-down-enabled'] = options.speedLimitDownEnabled;
+    if (options.speedLimitUp !== undefined) args['speed-limit-up'] = options.speedLimitUp;
+    if (options.speedLimitUpEnabled !== undefined)
+      args['speed-limit-up-enabled'] = options.speedLimitUpEnabled;
+    return this.transport.sendAction({ method: 'group-set', arguments: args }).then(() => {});
   }
 
   private thenUpdateSettings = (): Promise<void> => {
@@ -209,6 +306,22 @@ class SettingsService {
   setScriptTorrentDoneFilename = (filename: string): Promise<void> =>
     this.setSessionSetting({ 'script-torrent-done-filename': filename });
 
+  // v4.0.0+ session-set methods
+  setScriptTorrentAddedEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-added-enabled': enabled });
+
+  setScriptTorrentAddedFilename = (filename: string): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-added-filename': filename });
+
+  setScriptTorrentDoneSeedingEnabled = (enabled: boolean): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-done-seeding-enabled': enabled });
+
+  setScriptTorrentDoneSeedingFilename = (filename: string): Promise<void> =>
+    this.setSessionSetting({ 'script-torrent-done-seeding-filename': filename });
+
+  setDefaultTrackers = (trackers: string): Promise<void> =>
+    this.setSessionSetting({ 'default-trackers': trackers });
+
   portTest(): Promise<boolean> {
     return this.transport.sendAction({ method: 'port-test' }).then((response) => {
       const args = response.arguments as Record<string, unknown>;
@@ -227,6 +340,16 @@ class SettingsService {
         return this.updateSettings().then(() => result);
       });
   }
+
+  private normalizeStatistics = (stats: Record<string, unknown>): SessionStatistics => {
+    return {
+      uploadedBytes: (stats['uploaded_bytes'] ?? stats['uploadedBytes'] ?? 0) as number,
+      downloadedBytes: (stats['downloaded_bytes'] ?? stats['downloadedBytes'] ?? 0) as number,
+      filesAdded: (stats['files_added'] ?? stats['filesAdded'] ?? 0) as number,
+      sessionCount: (stats['session_count'] ?? stats['sessionCount'] ?? 0) as number,
+      secondsActive: (stats['seconds_active'] ?? stats['secondsActive'] ?? 0) as number,
+    };
+  };
 
   private normalizeSettings = (settings: Record<string, unknown>): NormalizedSettings => {
     return {
@@ -272,6 +395,14 @@ class SettingsService {
       altSpeedTimeDay: readKey<number>(settings, 'alt-speed-time-day', 127),
       scriptTorrentDoneEnabled: readKey<boolean>(settings, 'script-torrent-done-enabled', false),
       scriptTorrentDoneFilename: readKey<string>(settings, 'script-torrent-done-filename', ''),
+      // v4.0.0+ fields (optional, undefined on older versions)
+      scriptTorrentAddedEnabled: readKey<boolean | undefined>(settings, 'script-torrent-added-enabled', undefined) ?? undefined,
+      scriptTorrentAddedFilename: readKey<string | undefined>(settings, 'script-torrent-added-filename', undefined) ?? undefined,
+      scriptTorrentDoneSeedingEnabled: readKey<boolean | undefined>(settings, 'script-torrent-done-seeding-enabled', undefined) ?? undefined,
+      scriptTorrentDoneSeedingFilename: readKey<string | undefined>(settings, 'script-torrent-done-seeding-filename', undefined) ?? undefined,
+      defaultTrackers: readKey<string | undefined>(settings, 'default-trackers', undefined) ?? undefined,
+      rpcVersionSemver: readKey<string | undefined>(settings, 'rpc-version-semver', undefined) ?? undefined,
+      version: (settings['version'] as string) ?? undefined,
     };
   };
 }

@@ -6,6 +6,7 @@ import { RECENTLY_ACTIVE_THRESHOLD } from '../constants';
 import type TransmissionTransport from './TransmissionTransport';
 import type { TransmissionResponse } from './TransmissionTransport';
 import type { Folder } from '../types/bg';
+import type { BandwidthPriority } from '../types/transmission';
 
 const logger = getLogger('TorrentService');
 
@@ -16,6 +17,23 @@ export interface PeerData {
   downloadSpeed: number;
   uploadSpeed: number;
   flags: string;
+  isEncrypted: boolean;
+  isUTP: boolean;
+  isIncoming: boolean;
+}
+
+export interface TorrentAddOptions {
+  paused?: boolean;
+  cookies?: string;
+  peerLimit?: number;
+  bandwidthPriority?: BandwidthPriority;
+  filesWanted?: number[];
+  filesUnwanted?: number[];
+  priorityHigh?: number[];
+  priorityLow?: number[];
+  priorityNormal?: number[];
+  labels?: string[];
+  sequentialDownload?: boolean;
 }
 
 export interface TrackerStat {
@@ -26,6 +44,16 @@ export interface TrackerStat {
   leecherCount: number;
   lastAnnounceResult: string;
   isBackup: boolean;
+}
+
+export interface PeersFromData {
+  fromCache: number;
+  fromDht: number;
+  fromIncoming: number;
+  fromLpd: number;
+  fromLtep: number;
+  fromPex: number;
+  fromTracker: number;
 }
 
 export interface TorrentDetailData {
@@ -45,6 +73,12 @@ export interface TorrentDetailData {
   seedRatioMode: number;
   seedIdleLimit: number;
   seedIdleMode: number;
+  peersFrom: PeersFromData | null;
+  downloadLimit: number;
+  downloadLimited: boolean;
+  uploadLimit: number;
+  uploadLimited: boolean;
+  honorsSessionLimits: boolean;
 }
 
 export interface NormalizedTorrent {
@@ -54,6 +88,7 @@ export interface NormalizedTorrent {
   errorString: string;
   name: string;
   size: number;
+  sizeWhenDone: number;
   percentDone: number;
   recheckProgress: number;
   downloaded: number;
@@ -62,6 +97,7 @@ export interface NormalizedTorrent {
   uploadSpeed: number;
   downloadSpeed: number;
   eta: number;
+  etaIdle: number;
   activePeers: number;
   peers: number;
   activeSeeds: number;
@@ -69,10 +105,16 @@ export interface NormalizedTorrent {
   order: number;
   addedTime: number;
   completedTime: number;
+  activityDate: number;
+  startDate: number;
+  editDate: number;
   directory: string;
   magnetLink: string;
   hashString?: string;
   isStalled: boolean;
+  isPrivate: boolean;
+  isFinished: boolean;
+  metadataPercentComplete: number;
   peersConnected: number;
   labels: string[];
   bandwidthPriority: number;
@@ -148,17 +190,22 @@ class TorrentService {
             'id',
             'name',
             'totalSize',
+            'sizeWhenDone',
             'percentDone',
             'downloadedEver',
             'uploadedEver',
             'rateUpload',
             'rateDownload',
             'eta',
+            'etaIdle',
             'peersSendingToUs',
             'peersGettingFromUs',
             'queuePosition',
             'addedDate',
             'doneDate',
+            'activityDate',
+            'startDate',
+            'editDate',
             'downloadDir',
             'recheckProgress',
             'status',
@@ -169,6 +216,9 @@ class TorrentService {
             'uploadRatio',
             'hashString',
             'isStalled',
+            'isPrivate',
+            'isFinished',
+            'metadataPercentComplete',
             'peersConnected',
             'labels',
             'bandwidthPriority',
@@ -333,13 +383,17 @@ class TorrentService {
       .then(this.thenUpdateTorrents);
   }
 
-  sendFile(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<TransmissionResponse> {
+  sendFile(
+    data: { blob?: Blob; url?: string },
+    directory?: Folder,
+    options?: TorrentAddOptions
+  ): Promise<TransmissionResponse> {
     const transport = this.transport;
     return Promise.resolve()
       .then(() => {
         if (data.url) {
           return transport.sendAction(
-            putDirectory({
+            applyOptions({
               method: 'torrent-add',
               arguments: { filename: data.url },
             })
@@ -349,7 +403,7 @@ class TorrentService {
             .then((ab) => arrayBufferToBase64(ab))
             .then((base64) => {
               return transport.sendAction(
-                putDirectory({
+                applyOptions({
                   method: 'torrent-add',
                   arguments: { metainfo: base64 },
                 })
@@ -368,19 +422,38 @@ class TorrentService {
         throw err;
       });
 
-    function putDirectory(query: { method: string; arguments: Record<string, unknown> }): {
+    function applyOptions(query: { method: string; arguments: Record<string, unknown> }): {
       method: string;
       arguments: Record<string, unknown>;
     } {
       if (directory) {
         query.arguments['download-dir'] = directory.path;
       }
+      if (options) {
+        if (options.paused !== undefined) query.arguments['paused'] = options.paused;
+        if (options.cookies !== undefined) query.arguments['cookies'] = options.cookies;
+        if (options.peerLimit !== undefined) query.arguments['peer-limit'] = options.peerLimit;
+        if (options.bandwidthPriority !== undefined)
+          query.arguments['bandwidthPriority'] = options.bandwidthPriority;
+        if (options.filesWanted) query.arguments['files-wanted'] = options.filesWanted;
+        if (options.filesUnwanted) query.arguments['files-unwanted'] = options.filesUnwanted;
+        if (options.priorityHigh) query.arguments['priority-high'] = options.priorityHigh;
+        if (options.priorityLow) query.arguments['priority-low'] = options.priorityLow;
+        if (options.priorityNormal) query.arguments['priority-normal'] = options.priorityNormal;
+        if (options.labels) query.arguments['labels'] = options.labels;
+        if (options.sequentialDownload !== undefined)
+          query.arguments['sequentialDownload'] = options.sequentialDownload;
+      }
       return query;
     }
   }
 
-  putTorrent(data: { blob?: Blob; url?: string }, directory?: Folder): Promise<void> {
-    return this.sendFile(data, directory).then(
+  putTorrent(
+    data: { blob?: Blob; url?: string },
+    directory?: Folder,
+    options?: TorrentAddOptions
+  ): Promise<void> {
+    return this.sendFile(data, directory, options).then(
       (response) => {
         const args = response.arguments as Record<string, { id: number; name: string } | undefined>;
         const torrentAdded = args['torrent_added'] ?? args['torrent-added'];
@@ -454,6 +527,9 @@ class TorrentService {
           rateToClient: number;
           rateToPeer: number;
           flagStr: string;
+          isEncrypted?: boolean;
+          isUTP?: boolean;
+          isIncoming?: boolean;
         };
         type TorrentPeers = { id: number; peers: RawPeer[] };
         const torrents = (response.arguments as { torrents: TorrentPeers[] }).torrents;
@@ -467,6 +543,9 @@ class TorrentService {
             downloadSpeed: peer.rateToClient,
             uploadSpeed: peer.rateToPeer,
             flags: peer.flagStr,
+            isEncrypted: peer.isEncrypted ?? false,
+            isUTP: peer.isUTP ?? false,
+            isIncoming: peer.isIncoming ?? false,
           })
         );
       });
@@ -496,6 +575,12 @@ class TorrentService {
               'seedRatioMode',
               'seedIdleLimit',
               'seedIdleMode',
+              'peersFrom',
+              'downloadLimit',
+              'downloadLimited',
+              'uploadLimit',
+              'uploadLimited',
+              'honorsSessionLimits',
             ],
             ids: [id],
           },
@@ -511,6 +596,15 @@ class TorrentService {
           leecherCount: number;
           lastAnnounceResult: string;
           isBackup: boolean;
+        };
+        type RawPeersFrom = {
+          fromCache: number;
+          fromDht: number;
+          fromIncoming: number;
+          fromLpd: number;
+          fromLtep: number;
+          fromPex: number;
+          fromTracker: number;
         };
         type RawTorrent = {
           id: number;
@@ -530,6 +624,12 @@ class TorrentService {
           seedRatioMode: number;
           seedIdleLimit: number;
           seedIdleMode: number;
+          peersFrom?: RawPeersFrom;
+          downloadLimit?: number;
+          downloadLimited?: boolean;
+          uploadLimit?: number;
+          uploadLimited?: boolean;
+          honorsSessionLimits?: boolean;
         };
         const torrents = (response.arguments as { torrents: RawTorrent[] }).torrents;
         const torrent = torrents.find((t) => t.id === id);
@@ -561,6 +661,12 @@ class TorrentService {
           seedRatioMode: torrent.seedRatioMode ?? 0,
           seedIdleLimit: torrent.seedIdleLimit ?? 0,
           seedIdleMode: torrent.seedIdleMode ?? 0,
+          peersFrom: torrent.peersFrom ?? null,
+          downloadLimit: torrent.downloadLimit ?? 0,
+          downloadLimited: torrent.downloadLimited ?? false,
+          uploadLimit: torrent.uploadLimit ?? 0,
+          uploadLimited: torrent.uploadLimited ?? false,
+          honorsSessionLimits: torrent.honorsSessionLimits ?? true,
         };
       });
 
@@ -585,6 +691,60 @@ class TorrentService {
       }
       return `"${key}":"${value}"`;
     }
+  }
+
+  setDownloadLimit(ids: number[], limit: number, enabled: boolean): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, downloadLimit: limit, downloadLimited: enabled },
+      })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setUploadLimit(ids: number[], limit: number, enabled: boolean): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, uploadLimit: limit, uploadLimited: enabled },
+      })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setHonorsSessionLimits(ids: number[], enabled: boolean): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, honorsSessionLimits: enabled },
+      })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setPeerLimit(ids: number[], limit: number): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, 'peer-limit': limit },
+      })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setQueuePosition(ids: number[], position: number): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, queuePosition: position },
+      })
+      .then(this.thenUpdateTorrents);
+  }
+
+  setGroup(ids: number[], group: string): Promise<TransmissionResponse> {
+    return this.transport
+      .sendAction({
+        method: 'torrent-set',
+        arguments: { ids, group },
+      })
+      .then(this.thenUpdateTorrents);
   }
 
   setTrackerList(ids: number[], trackerList: string): Promise<TransmissionResponse> {
@@ -615,6 +775,7 @@ class TorrentService {
     const errorString = torrent.errorString as string;
     const name = torrent.name as string;
     const size = torrent.totalSize as number;
+    const sizeWhenDone = (torrent.sizeWhenDone as number) ?? size;
     const percentDone = torrent.percentDone as number;
     const recheckProgress = torrent.recheckProgress as number;
     const downloaded = torrent.downloadedEver as number;
@@ -624,6 +785,7 @@ class TorrentService {
     const uploadSpeed = torrent.rateUpload as number;
     const downloadSpeed = torrent.rateDownload as number;
     const eta = (torrent.eta as number) < 0 ? 0 : (torrent.eta as number);
+    const etaIdle = (torrent.etaIdle as number) ?? -1;
 
     let _peers = 0;
     let _seeds = 0;
@@ -649,10 +811,16 @@ class TorrentService {
     const order = torrent.queuePosition as number;
     const addedTime = torrent.addedDate as number;
     const completedTime = torrent.doneDate as number;
+    const activityDate = (torrent.activityDate as number) ?? 0;
+    const startDate = (torrent.startDate as number) ?? 0;
+    const editDate = (torrent.editDate as number) ?? 0;
     const directory = torrent.downloadDir as string;
     const magnetLink = torrent.magnetLink as string;
     const hashString = (torrent.hashString as string) ?? undefined;
     const isStalled = (torrent.isStalled as boolean) ?? false;
+    const isPrivate = (torrent.isPrivate as boolean) ?? false;
+    const isFinished = (torrent.isFinished as boolean) ?? false;
+    const metadataPercentComplete = (torrent.metadataPercentComplete as number) ?? 1;
     const peersConnected = (torrent.peersConnected as number) ?? 0;
     const labels = (torrent.labels as string[] | undefined) ?? [];
     const bandwidthPriority = (torrent.bandwidthPriority as number) ?? 0;
@@ -664,6 +832,7 @@ class TorrentService {
       errorString,
       name,
       size,
+      sizeWhenDone,
       percentDone,
       recheckProgress,
       downloaded,
@@ -672,6 +841,7 @@ class TorrentService {
       uploadSpeed,
       downloadSpeed,
       eta,
+      etaIdle,
       activePeers,
       peers,
       activeSeeds,
@@ -679,10 +849,16 @@ class TorrentService {
       order,
       addedTime,
       completedTime,
+      activityDate,
+      startDate,
+      editDate,
       directory,
       magnetLink,
       hashString,
       isStalled,
+      isPrivate,
+      isFinished,
+      metadataPercentComplete,
       peersConnected,
       labels,
       bandwidthPriority,

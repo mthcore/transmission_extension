@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { RgbaColorPicker, RgbaColor } from 'react-colorful';
+import { RgbColorPicker, RgbColor } from 'react-colorful';
 import { Popover } from 'react-tiny-popover';
 import { useOptionsPage } from '../../hooks/useOptionsPage';
 
@@ -12,31 +12,43 @@ interface ConfigStore {
   setOptions: (options: Record<string, unknown>) => void;
 }
 
+function parseBadgeColor(badgeColor: string): RgbColor {
+  const [r, g, b] = badgeColor.split(',');
+  return {
+    r: parseInt(r, 10) || 0,
+    g: parseInt(g, 10) || 0,
+    b: parseInt(b, 10) || 0,
+  };
+}
+
+function rgbToStorageString(color: RgbColor): string {
+  return [color.r, color.g, color.b, 1].join(',');
+}
+
 const NotifyOptions = observer(() => {
   const { configStore, handleChange, handleSetInt } = useOptionsPage<ConfigStore>();
   const [colorPickerOpened, setColorPickerOpened] = useState(false);
+  const [pickerColor, setPickerColor] = useState<RgbColor>(() =>
+    parseBadgeColor(configStore.badgeColor)
+  );
+  const pickerColorRef = useRef(pickerColor);
 
-  const handleToggleColorPicker = useCallback(() => {
-    setColorPickerOpened((prev) => !prev);
+  const handleColorChange = useCallback((color: RgbColor) => {
+    pickerColorRef.current = color;
+    setPickerColor(color);
   }, []);
 
-  const handleChangeColor = useCallback(
-    (color: RgbaColor) => {
-      const rgba = [color.r, color.g, color.b, color.a].join(',');
-      configStore.setOptions({
-        badgeColor: rgba,
-      });
-    },
-    [configStore]
-  );
+  const handleOpenColorPicker = useCallback(() => {
+    const color = parseBadgeColor(configStore.badgeColor);
+    pickerColorRef.current = color;
+    setPickerColor(color);
+    setColorPickerOpened(true);
+  }, [configStore]);
 
-  const [r, g, b, a] = configStore.badgeColor.split(',');
-  const pickerColor: RgbaColor = {
-    r: parseInt(r, 10),
-    g: parseInt(g, 10),
-    b: parseInt(b, 10),
-    a: parseFloat(a),
-  };
+  const handleCloseColorPicker = useCallback(() => {
+    setColorPickerOpened(false);
+    configStore.setOptions({ badgeColor: rgbToStorageString(pickerColorRef.current) });
+  }, [configStore]);
 
   return (
     <div className="page notify">
@@ -69,14 +81,14 @@ const NotifyOptions = observer(() => {
         <span>{chrome.i18n.getMessage('badgeColor')}</span>
         <Popover
           isOpen={colorPickerOpened}
-          onClickOutside={handleToggleColorPicker}
+          onClickOutside={handleCloseColorPicker}
           positions={['bottom']}
-          content={<RgbaColorPicker color={pickerColor} onChange={handleChangeColor} />}
+          content={<RgbColorPicker color={pickerColor} onChange={handleColorChange} />}
         >
           <span
-            onClick={handleToggleColorPicker}
+            onClick={colorPickerOpened ? handleCloseColorPicker : handleOpenColorPicker}
             className="selectColor"
-            style={{ backgroundColor: `rgba(${configStore.badgeColor})` }}
+            style={{ backgroundColor: `rgb(${pickerColor.r},${pickerColor.g},${pickerColor.b})` }}
           />
         </Popover>
       </label>

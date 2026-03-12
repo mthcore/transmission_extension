@@ -191,3 +191,20 @@ div.torrent-list-layer table tr:nth-child(even) td.actions {
 div.torrent-list-layer table tr.selected td.actions {
   background-color: var(--primary-color);
 }
+
+// Torrent name badges (metadata loading, etc.)
+.torrent-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 4px;
+  color: #fff;
+
+  &.metadata {
+    background-color: var(--warning-color, #e6a23c);
+  }
+}

@@ -91,6 +91,12 @@
   }
 }
 
+// Torrent counts in footer
+.torrent-counts {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
 // Speed limit badges
 .speed .limit {
   padding: 1px 5px;

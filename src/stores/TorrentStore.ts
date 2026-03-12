@@ -10,6 +10,7 @@ const TorrentStore = types
     errorString: types.string,
     name: types.string,
     size: types.number,
+    sizeWhenDone: types.optional(types.number, 0),
     percentDone: types.number,
     recheckProgress: types.number,
     downloaded: types.number,
@@ -18,6 +19,7 @@ const TorrentStore = types
     uploadSpeed: types.number,
     downloadSpeed: types.number,
     eta: types.number,
+    etaIdle: types.optional(types.number, -1),
     activePeers: types.number,
     peers: types.number,
     activeSeeds: types.number,
@@ -25,10 +27,16 @@ const TorrentStore = types
     order: types.maybe(types.number),
     addedTime: types.number,
     completedTime: types.number,
+    activityDate: types.optional(types.number, 0),
+    startDate: types.optional(types.number, 0),
+    editDate: types.optional(types.number, 0),
     directory: types.maybe(types.string),
     magnetLink: types.maybe(types.string),
     hashString: types.maybe(types.string),
     isStalled: types.optional(types.boolean, false),
+    isPrivate: types.optional(types.boolean, false),
+    isFinished: types.optional(types.boolean, false),
+    metadataPercentComplete: types.optional(types.number, 1),
     peersConnected: types.optional(types.number, 0),
     labels: types.optional(types.array(types.string), []),
     bandwidthPriority: types.optional(types.number, 0),
@@ -48,7 +56,8 @@ const TorrentStore = types
         return rootStore.client.torrentsStop([self.id]);
       },
       get remaining(): number {
-        let result = self.size - self.downloaded;
+        const base = self.sizeWhenDone > 0 ? self.sizeWhenDone : self.size;
+        let result = base - self.downloaded;
         if (result < 0) {
           result = 0;
         }
@@ -61,6 +70,12 @@ const TorrentStore = types
         return self.percentDone === 1;
       },
       get sizeStr(): string {
+        return formatBytes(self.size);
+      },
+      get sizeWhenDoneStr(): string {
+        if (self.sizeWhenDone > 0 && self.sizeWhenDone !== self.size) {
+          return formatBytes(self.sizeWhenDone);
+        }
         return formatBytes(self.size);
       },
       get progress(): number {
@@ -94,6 +109,10 @@ const TorrentStore = types
       get etaStr(): string {
         return getEta(self.eta);
       },
+      get etaIdleStr(): string {
+        if (self.etaIdle < 0) return '';
+        return getEta(self.etaIdle);
+      },
       get uploadedStr(): string {
         return formatBytes(self.uploaded);
       },
@@ -114,10 +133,40 @@ const TorrentStore = types
           return new Date(self.completedTime * 1000).toLocaleString();
         }
       },
+      get activityDateStr(): string {
+        if (!self.activityDate) {
+          return '∞';
+        } else {
+          return new Date(self.activityDate * 1000).toLocaleString();
+        }
+      },
+      get startDateStr(): string {
+        if (!self.startDate) {
+          return '-';
+        } else {
+          return new Date(self.startDate * 1000).toLocaleString();
+        }
+      },
+      get editDateStr(): string {
+        if (!self.editDate) {
+          return '-';
+        } else {
+          return new Date(self.editDate * 1000).toLocaleString();
+        }
+      },
+      get metadataStatusStr(): string {
+        if (self.metadataPercentComplete >= 1) return '';
+        return `${(self.metadataPercentComplete * 100).toFixed(0)}%`;
+      },
       get stateText(): string {
+        // Show metadata resolution progress for magnets
+        if (self.metadataPercentComplete < 1) {
+          const pct = (self.metadataPercentComplete * 100).toFixed(0);
+          return `${chrome.i18n.getMessage('OV_FL_DOWNLOADING')} (${chrome.i18n.getMessage('DT_METADATA')} ${pct}%)`;
+        }
         switch (self.statusCode) {
           case 0: {
-            if (self.percentDone === 1) {
+            if (self.isFinished || self.percentDone === 1) {
               return chrome.i18n.getMessage('OV_FL_FINISHED');
             } else {
               return chrome.i18n.getMessage('OV_FL_STOPPED');
@@ -209,9 +258,6 @@ const TorrentStore = types
         }
 
         return actions;
-      },
-      get isFinished(): boolean {
-        return self.percentDone === 1 && this.isStopped;
       },
       get isActive(): boolean {
         return !!(self.downloadSpeed || self.uploadSpeed);

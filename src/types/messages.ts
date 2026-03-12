@@ -40,6 +40,8 @@ export type BgMessage =
   | EncryptionMessage
   | IncompleteDirMessage
   | ScriptTorrentDoneFilenameMessage
+  | ScriptTorrentAddedFilenameMessage
+  | ScriptTorrentDoneSeedingFilenameMessage
   | PortTestMessage
   | GetTorrentDetailsMessage
   | SetTrackerListMessage
@@ -120,7 +122,9 @@ type SpeedEnabledAction =
   | 'setStartAddedTorrents'
   | 'setTrashOriginalTorrentFiles'
   | 'setAltSpeedTimeEnabled'
-  | 'setScriptTorrentDoneEnabled';
+  | 'setScriptTorrentDoneEnabled'
+  | 'setScriptTorrentAddedEnabled'
+  | 'setScriptTorrentDoneSeedingEnabled';
 
 export interface SpeedEnabledMessage {
   action: SpeedEnabledAction;
@@ -222,6 +226,18 @@ export interface IncompleteDirMessage {
 // Script on completion
 export interface ScriptTorrentDoneFilenameMessage {
   action: 'setScriptTorrentDoneFilename';
+  filename: string;
+}
+
+// Script on torrent added (v4.0.0+)
+export interface ScriptTorrentAddedFilenameMessage {
+  action: 'setScriptTorrentAddedFilename';
+  filename: string;
+}
+
+// Script on seeding complete (v4.0.0+)
+export interface ScriptTorrentDoneSeedingFilenameMessage {
+  action: 'setScriptTorrentDoneSeedingFilename';
   filename: string;
 }
 

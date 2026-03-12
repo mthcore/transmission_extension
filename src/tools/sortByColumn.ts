@@ -64,6 +64,9 @@ export const torrentColumnMap: ColumnMap = {
   upped: 'uploaded',
   added: 'addedTime',
   completed: 'completedTime',
+  activity: 'activityDate',
+  started: 'startDate',
+  edited: 'editDate',
   status: 'statusCode',
   label: 'labelsStr',
   priority: 'bandwidthPriority',
@@ -73,6 +76,9 @@ export const torrentSpecialHandlers: SpecialHandlers = {
   eta: etaHandler,
   addedTime: dateHandler,
   completedTime: dateHandler,
+  activityDate: dateHandler,
+  startDate: dateHandler,
+  editDate: dateHandler,
 };
 
 // Pre-configured sorter for files

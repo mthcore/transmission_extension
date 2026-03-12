@@ -10,6 +10,7 @@ interface ResizeHandleProps {
 
 interface Torrent {
   sizeStr: string;
+  sizeWhenDoneStr: string;
   progressStr: string;
   downloadedStr: string;
   uploadedStr: string;
@@ -22,13 +23,19 @@ interface Torrent {
   downloadSpeedStr: string;
   uploadSpeedStr: string;
   etaStr: string;
+  etaIdleStr: string;
   stateText: string;
   addedTimeStr: string;
   completedTimeStr: string;
+  activityDateStr: string;
+  startDateStr: string;
   directory?: string;
   errorMessage?: string;
   hash?: string | null;
   peersConnected?: number;
+  isPrivate?: boolean;
+  size: number;
+  sizeWhenDone?: number;
 }
 
 interface TorrentDetailsInfoTabProps {
@@ -74,12 +81,24 @@ const TorrentDetailsInfoTab = ({
         ? '∞'
         : '0.000';
 
+  const showEffectiveSize =
+    torrent.sizeWhenDone != null &&
+    torrent.sizeWhenDone > 0 &&
+    torrent.sizeWhenDone !== torrent.size;
+
   return (
     <>
       <div className="torrent-details-grid">
         <div className="nf-subItem">
           <label>{chrome.i18n.getMessage('OV_COL_SIZE')}</label>
-          <span>{torrent.sizeStr}</span>
+          <span>
+            {torrent.sizeStr}
+            {showEffectiveSize && (
+              <span className="detail-secondary">
+                {' '}({chrome.i18n.getMessage('OV_COL_SIZE_WHEN_DONE')}: {torrent.sizeWhenDoneStr})
+              </span>
+            )}
+          </span>
         </div>
 
         <div className="nf-subItem">
@@ -129,12 +148,26 @@ const TorrentDetailsInfoTab = ({
 
         <div className="nf-subItem">
           <label>{chrome.i18n.getMessage('OV_COL_ETA')}</label>
-          <span>{torrent.etaStr}</span>
+          <span>
+            {torrent.etaStr}
+            {torrent.etaIdleStr && (
+              <span className="detail-secondary">
+                {' '}({chrome.i18n.getMessage('DT_ETA_IDLE')}: {torrent.etaIdleStr})
+              </span>
+            )}
+          </span>
         </div>
 
         <div className="nf-subItem">
           <label>{chrome.i18n.getMessage('OV_COL_STATUS')}</label>
-          <span>{torrent.stateText}</span>
+          <span>
+            {torrent.stateText}
+            {torrent.isPrivate && (
+              <span className="torrent-badge private" title={chrome.i18n.getMessage('DT_PRIVATE')}>
+                {chrome.i18n.getMessage('DT_PRIVATE')}
+              </span>
+            )}
+          </span>
         </div>
 
         <div className="nf-subItem">
@@ -146,6 +179,18 @@ const TorrentDetailsInfoTab = ({
           <label>{chrome.i18n.getMessage('OV_COL_DATE_COMPLETED')}</label>
           <span>{torrent.completedTimeStr}</span>
         </div>
+
+        <div className="nf-subItem">
+          <label>{chrome.i18n.getMessage('OV_COL_ACTIVITY')}</label>
+          <span>{torrent.activityDateStr}</span>
+        </div>
+
+        {torrent.startDateStr !== '-' && (
+          <div className="nf-subItem">
+            <label>{chrome.i18n.getMessage('OV_COL_STARTED')}</label>
+            <span>{torrent.startDateStr}</span>
+          </div>
+        )}
 
         {details && (
           <>
@@ -192,6 +237,46 @@ const TorrentDetailsInfoTab = ({
                 <span>{formatDuration(details.secondsSeeding)}</span>
               </div>
             )}
+
+            {(details.downloadLimited || details.uploadLimited) && (
+              <div className="nf-subItem torrent-details-full-width">
+                <label>{chrome.i18n.getMessage('DT_DOWNLOAD_LIMIT')}</label>
+                <span>
+                  {details.downloadLimited
+                    ? `${speedToStr(details.downloadLimit * 1024)}`
+                    : chrome.i18n.getMessage('DT_DISABLED')}
+                  {' / '}
+                  {chrome.i18n.getMessage('DT_UPLOAD_LIMIT')}:{' '}
+                  {details.uploadLimited
+                    ? `${speedToStr(details.uploadLimit * 1024)}`
+                    : chrome.i18n.getMessage('DT_DISABLED')}
+                  {' — '}
+                  {chrome.i18n.getMessage('DT_HONORS_SESSION_LIMITS')}:{' '}
+                  {details.honorsSessionLimits
+                    ? chrome.i18n.getMessage('DT_ENABLED')
+                    : chrome.i18n.getMessage('DT_DISABLED')}
+                </span>
+              </div>
+            )}
+
+            {details.peersFrom && (() => {
+              const pf = details.peersFrom;
+              const sources: string[] = [];
+              if (pf.fromTracker > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_TRACKER')}: ${pf.fromTracker}`);
+              if (pf.fromDht > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_DHT')}: ${pf.fromDht}`);
+              if (pf.fromPex > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_PEX')}: ${pf.fromPex}`);
+              if (pf.fromLpd > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_LPD')}: ${pf.fromLpd}`);
+              if (pf.fromLtep > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_LTEP')}: ${pf.fromLtep}`);
+              if (pf.fromIncoming > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_INCOMING')}: ${pf.fromIncoming}`);
+              if (pf.fromCache > 0) sources.push(`${chrome.i18n.getMessage('DT_PEERS_FROM_CACHE')}: ${pf.fromCache}`);
+              if (sources.length === 0) return null;
+              return (
+                <div className="nf-subItem torrent-details-full-width">
+                  <label>{chrome.i18n.getMessage('DT_PEERS_FROM')}</label>
+                  <span>{sources.join(' \u2022 ')}</span>
+                </div>
+              );
+            })()}
 
             {details.comment && (
               <div className="nf-subItem torrent-details-full-width">

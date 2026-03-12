@@ -187,16 +187,16 @@ describe('TorrentStore computed views', () => {
   });
 
   describe('isFinished', () => {
-    it('returns true when complete and stopped', () => {
-      expect(createTorrent({ percentDone: 1, statusCode: 0 }).isFinished).toBe(true);
+    it('returns true when isFinished field is true', () => {
+      expect(createTorrent({ isFinished: true }).isFinished).toBe(true);
     });
 
-    it('returns false when complete but active', () => {
-      expect(createTorrent({ percentDone: 1, statusCode: 6 }).isFinished).toBe(false);
+    it('returns false when isFinished field is false', () => {
+      expect(createTorrent({ isFinished: false }).isFinished).toBe(false);
     });
 
-    it('returns false when incomplete and stopped', () => {
-      expect(createTorrent({ percentDone: 0.5, statusCode: 0 }).isFinished).toBe(false);
+    it('defaults to false when not provided', () => {
+      expect(createTorrent({}).isFinished).toBe(false);
     });
   });
 
